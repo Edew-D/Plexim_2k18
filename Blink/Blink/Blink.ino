@@ -4,7 +4,7 @@
 #define on 1
 #define off 0
 dRecord ledPin;
-dRecord ledPin2;
+dRecord dOutPins[16];
 
 int main(void) {
 
@@ -14,7 +14,7 @@ int main(void) {
   sei();
 
   configDout(&ledPin, 13);
-  configDout(&ledPin2, 2);
+  //configDout(&ledPin2, 2);
 
   for (;;) {
 
@@ -27,12 +27,12 @@ ISR(TIMER1_COMPA_vect) {       //This is our interrupt service routine
   
   if (PORTB == (0 << PB5)) { //if Pin13 is LOW
     setPin(&ledPin, on);
-    setPin(&ledPin2, off);
+  //  setPin(&ledPin2, off);
   }
 
   else {
     setPin(&ledPin, off); //turn on pin
-    setPin(&ledPin2, on);
+  //  setPin(&ledPin2, on);
   }
 
 }
