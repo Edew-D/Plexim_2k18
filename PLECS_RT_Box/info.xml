@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TargetSupportPackage
+  xmlns="http://www.plexim.com/xml/codegentarget/"
+  version="1.0">
+<MinPlecsVersion>4.1.3</MinPlecsVersion>
+<TargetFamily>PLECS RT Box</TargetFamily>
+
+ <BlockLibrary file="PLECSRTBoxLib">PLECS RT Box</BlockLibrary>
+
+ <Target help="rtboxhelp.qch">
+  <Name>PLECS RT Box 1</Name>
+  <Version>1.6</Version>
+  <Parameters>
+    <ComboBox prompt="Analog input voltage range" variable="analogInputRange" default="1" tab="General" >
+      <Item>-10 ... 10 V</Item>
+      <Item>-5 ... 5 V</Item>
+    </ComboBox>
+    <ComboBox prompt="Analog output voltage range" variable="analogOutputRange" default="1" tab="General" >
+      <Item>0 ... 5 V</Item>
+      <Item>0 ... 10 V</Item>
+      <Item>-5 ... 5 V</Item>
+      <Item>-10 ... 10 V</Item>
+    </ComboBox>
+    <ComboBox prompt="Digital output voltage level" variable="digitalOutputLevel" default="1" tab="General" >
+      <Item>3.3 V</Item>
+      <Item>5 V</Item>
+    </ComboBox>
+    <ComboBox prompt="Analog input sampling" variable="analogSampling" default="1" tab="General" >
+      <Item>Minimize latency</Item>
+      <Item>Specify delay</Item>
+    </ComboBox>
+    <LineEdit prompt="Sampling delay (s)" variable="samplingDelay" default="0" eval="true" tab="General" />
+    
+    <CheckBox prompt="Enable external mode" variable="EXTERNAL_MODE" default="1" tab="General" />
+    <LineEdit prompt="Overrun limit" variable="max_overruns" default="5" eval="true" tab="General" />
+    <ComboBox prompt="Master for startup/clock" variable="masterSFP" default="1" tab="Interconnect" >
+      <Item>Self</Item>
+      <Item>SFP A</Item>
+      <Item>SFP B</Item>
+      <Item>SFP C</Item>
+      <Item>SFP D</Item>
+    </ComboBox>
+    <CheckBox prompt="Synchronize startup with SFP A" variable="startupSFP_A" default="0" tab="Interconnect" />
+    <CheckBox prompt="Synchronize startup with SFP B" variable="startupSFP_B" default="0" tab="Interconnect" />
+    <CheckBox prompt="Synchronize startup with SFP C" variable="startupSFP_C" default="0" tab="Interconnect" />
+    <CheckBox prompt="Synchronize startup with SFP D" variable="startupSFP_D" default="0" tab="Interconnect" />
+    <CheckBox prompt="Use clock from master" variable="synchronizeTime" default="0" tab="Interconnect" />
+  </Parameters>
+  <CodeFunction>
+<![CDATA[
+Provide("Analog input", 0, 15);
+Provide("Analog output", 0, 15);
+Provide("Digital input", 0, 31);
+Provide("Digital output", 0, 31);
+Provide("Incremental encoder", 1, 2);
+Provide("SPI master", 0, 1);
+Provide("SFP output", 0, 3);
+Provide("SFP input", 0, 3);
+Provide("Encoder counter", 0, 1);
+
+Include("hw_wrapper.h");
+Include("DigitalOut.h");
+Include("DigitalIn.h");
+Include("AnalogOut.h");
+Include("SFP.h");
+Include("HIL_Framework.h");
+Include("DataCapture.h");
+Include("DataCaptureDefs.h");
+Include("ProgrammableValue.h");
+Include("ProgrammableValueDefs.h");
+
+Print(PreInitCode, "setAnalogInputVoltage(%i);\n", (int) TargetRealData(TARGET_VAR_analogInputRange, 0) - 1);
+Print(PreInitCode, "setupDACs(%i);\n", (int) TargetRealData(TARGET_VAR_analogOutputRange, 0) - 1);
+Print(PreInitCode, "setDigitalOutVoltage(%i);\n", (int) TargetRealData(TARGET_VAR_digitalOutputLevel, 0) - 1);
+Print(PreInitCode, "initDigitalOut();\n");
+Print(PreInitCode, "initPWMCapture();\n");
+
+double sampleTime = TargetRealData(TARGET_VAR_SAMPLE_TIME, 0);
+double maxOverruns = TargetRealData(TARGET_VAR_max_overruns, 0);
+if (maxOverruns != (int)maxOverruns || maxOverruns < 0)
+{
+   SetErrorStatus("Parameter 'Overrun limit' must be a positive integer.");
+}
+else
+{
+   Print(PreInitCode, "plxSetMaxNumConsecutiveOverruns(%d);\n", (int)maxOverruns);
+}
+
+int sfpA = (TargetRealData(TARGET_VAR_startupSFP_A, 0) == 1);
+int sfpB = (TargetRealData(TARGET_VAR_startupSFP_B, 0) == 1);
+int sfpC = (TargetRealData(TARGET_VAR_startupSFP_C, 0) == 1);
+int sfpD = (TargetRealData(TARGET_VAR_startupSFP_D, 0) == 1);
+int master = TargetRealData(TARGET_VAR_masterSFP, 0);
+int syncTime = (TargetRealData(TARGET_VAR_synchronizeTime, 0) == 1);
+int syncStartupMaster = ((master == 2) && sfpA) || ((master == 3) && sfpB) || ((master == 4) && sfpC) || ((master == 5) && sfpD);
+Print(PreInitCode, "setupSFPSyncMaster(%i, %i, %i, %i);\n", sfpA && (master != 2), sfpB && (master != 3), sfpC && (master != 4), sfpD && (master != 5));
+Print(PreInitCode, "setupSFPSyncSlave(%i, %i, %i);\n", master-1, syncTime, syncStartupMaster);
+if (syncTime && master < 2)
+{
+   SetErrorStatus("Cannot use master clock with no selected master.");
+}
+
+int minimizeAnalogInLatency = (TargetRealData(TARGET_VAR_analogSampling, 0) == 1);
+if (minimizeAnalogInLatency)
+{
+   Print(PreInitCode, "plxSetupAnalogSampling(1, 0, %.17e);\n", sampleTime);
+}
+else
+{
+   double samplingDelay = TargetRealData(TARGET_VAR_samplingDelay, 0);
+   if (samplingDelay != samplingDelay || samplingDelay < 0)
+   {
+       SetErrorStatus("Sampling delay must be positive.");
+   }
+   else
+   {
+      Print(PreInitCode, "plxSetupAnalogSampling(0, %i, %.17e);\n", 
+            (int)((samplingDelay+3.75e-9)/7.5e-9), sampleTime);
+   } 
+}
+
+/* Data Capture block setup */
+int len = strlen(TargetStringData(TARGET_VAR_BUILD_ROOT)) + 1 + strlen("DataCaptureDefs.h");
+char *filenameBuffer = malloc((len+1) * sizeof(char));
+if (filenameBuffer)
+{
+  sprintf(filenameBuffer, "%s/%s", TargetStringData(TARGET_VAR_BUILD_ROOT), "DataCaptureDefs.h");
+  FILE *fp = fopen(filenameBuffer, "wt");
+  free (filenameBuffer);
+  if (fp != NULL)
+  {
+     fprintf(fp, "#define NUM_DATA_CAPTURE_BLOCKS 0\n");
+     fclose(fp);
+  }
+  else
+  {
+     SetErrorStatus("Fatal error: Could not open \"DataCaptureDefs.h\" for writing.");
+     return;
+  }
+}
+else
+{
+  SetErrorStatus("Fatal error: Could not allocate memory for filename buffer.");
+  return;
+}
+Print(CodeDeclarations, "#if NUM_DATA_CAPTURE_BLOCKS > 0\n");
+Print(CodeDeclarations, "   struct PlxDataCaptureRegistry plxDataCaptureRegistry[NUM_DATA_CAPTURE_BLOCKS];");
+Print(CodeDeclarations, "#else\n");
+Print(CodeDeclarations, "   struct PlxDataCaptureRegistry plxDataCaptureRegistry[1];");
+Print(CodeDeclarations, "#endif /* NUM_DATA_CAPTURE_BLOCKS */\n");
+
+/* Programmable Value block setup */
+len = strlen(TargetStringData(TARGET_VAR_BUILD_ROOT)) + 1 + strlen("ProgrammableValueDefs.h");
+filenameBuffer = malloc((len+1) * sizeof(char));
+if (filenameBuffer)
+{
+  sprintf(filenameBuffer, "%s/%s", TargetStringData(TARGET_VAR_BUILD_ROOT), "ProgrammableValueDefs.h");
+  FILE *fp = fopen(filenameBuffer, "wt");
+  
+  free (filenameBuffer);
+  if (fp != NULL)
+  {
+     fprintf(fp, "#define NUM_PROGRAMMABLE_VALUE_BLOCKS 0\n");
+     fclose(fp);
+  }
+  else
+  {
+     SetErrorStatus("Fatal error: Could not open \"ProgrammableValueDefs.h\" for writing.");
+     return;
+  }
+}
+else
+{
+  SetErrorStatus("Fatal error: Could not allocate memory for filename buffer.");
+  return;
+}
+Print(CodeDeclarations, "#if NUM_PROGRAMMABLE_VALUE_BLOCKS > 0\n");
+Print(CodeDeclarations, "   struct PlxProgrammableValueRegistry plxProgrammableValueRegistry[NUM_PROGRAMMABLE_VALUE_BLOCKS];");
+Print(CodeDeclarations, "#else\n");
+Print(CodeDeclarations, "   struct PlxProgrammableValueRegistry plxProgrammableValueRegistry[1];");
+Print(CodeDeclarations, "#endif /* NUM_PROGRAMMABLE_VALUE_BLOCKS */\n");
+]]>
+
+
+  </CodeFunction>
+  <BuildSteps>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/src/main.c</Source>
+      <Destination>$(BASE_NAME)_main.c</Destination>
+      <Replace>
+        <Before><![CDATA[|>BASE_NAME<|]]></Before>
+        <After>$(BASE_NAME)</After>
+      </Replace>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/Makefile.in</Source>
+      <Destination>$(BASE_NAME).mk</Destination>
+      <Replace>
+        <Before><![CDATA[|>COMPILER_BIN<|]]></Before>
+        <After>$(TARGET_ROOT)/bin/$(HOST_OS)/arm-none-eabi/bin</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>SOURCE_FILES<|]]></Before>
+        <After>$(BASE_NAME)_main.c $(SOURCE_FILES)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>TARGET_ROOT<|]]></Before>
+        <After>$(TARGET_ROOT)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>BASE_NAME<|]]></Before>
+        <After>$(BASE_NAME)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>EXTERNAL_MODE<|]]></Before>
+        <After>$(EXTERNAL_MODE)</After>
+      </Replace>
+    </CopyFile>
+    <Make>
+     <Timeout>120</Timeout>
+     <Makefile>$(BASE_NAME).mk</Makefile>
+    </Make>
+  </BuildSteps>
+ </Target>
+
+</TargetSupportPackage>

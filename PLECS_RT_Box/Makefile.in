@@ -1,0 +1,35 @@
+CROSS            ?= "|>COMPILER_BIN<|/arm-none-eabi-"
+CFLAGS           := -Wall -O3 -g  -c -fmessage-length=0 -DEXTERNAL_MODE=|>EXTERNAL_MODE<| -funsafe-math-optimizations -fopt-info-vec --param max-completely-peeled-insns=1000 --param max-completely-peel-times=100
+CC               = $(CROSS)gcc
+STRIP            = $(CROSS)strip
+INCLUDE          := -I"|>TARGET_ROOT<|/include"
+LIBS             := -L"|>TARGET_ROOT<|/lib" -L"|>TARGET_ROOT<|/lib/OpenAmp" -L"|>TARGET_ROOT<|/lib/Xilinx" -lplexim_hil -lopen_amp -lbaremetal_remote -lm -Wl,--start-group,-lxil,-lgcc,-lc,--end-group
+RM               := rm -f
+CP               := cp
+LFLAGS           := -Wl,-T -Wl,"|>TARGET_ROOT<|/lscript.ld"
+
+APP = |>BASE_NAME<|.elf
+
+HEADERS += |>BASE_NAME<|.h
+C_SRCFILES += |>SOURCE_FILES<|
+
+OBJFILES := $(patsubst %.c, %.o, $(C_SRCFILES))
+DEPFILES := $(patsubst %.c, %.d, $(C_SRCFILES))
+
+all: $(APP)
+
+$(APP): $(OBJFILES)
+	@echo LINK $@
+	$(CC) -o $@ $(LFLAGS) $(OBJFILES) $(LIBS)
+	$(STRIP) $@
+
+%.o:%.c $(HEADERS)
+	@echo CC $(<:.c=.o)
+	$(CC) $(CFLAGS) $(ARCH_CFLAGS) $(INCLUDE) -c $< -o $@
+
+clean:
+	-$(RM) $(LIB) $(OBJFILES)
+
+FORCE:
+
+PHONY: all clean

@@ -1,0 +1,8 @@
+isl_version.lo: ../isl-0.14/isl_version.c isl_config.h \
+ ../isl-0.14/isl_config_post.h gitversion.h
+
+isl_config.h:
+
+../isl-0.14/isl_config_post.h:
+
+gitversion.h:
