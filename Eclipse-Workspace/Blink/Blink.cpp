@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-//#include <avr/io.h>
-//#include <avr/interrupt.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
 #include "portConfig.h"
 #define on 1
 #define off 0

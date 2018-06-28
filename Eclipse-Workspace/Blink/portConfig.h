@@ -11,8 +11,7 @@
 
 typedef struct {
   volatile uint8_t *portAddr;
-  byte portIndex;
-  byte portMask;
+  volatile uint8_t portMask;
 } dRecord;
 
 
