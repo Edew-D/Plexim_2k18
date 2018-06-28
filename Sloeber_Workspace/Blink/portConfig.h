@@ -5,6 +5,16 @@ typedef struct {
   byte portMask;
 } dRecord;
 
+/*dRecord *configDoutt(int channel, int pin) {
+  if ((pin > 1) && (pin < 8)) {
+    digitalPin[channel].portAddr = &PORTD;
+    //digitalPin[channel].portMask = pin;
+    return true;
+  }
+ // digitalPin[channel]
+
+  return *digitalPin[channel]
+}*/
 
 bool configDout(dRecord *record, unsigned char pin) {
 

@@ -1,3 +1,13 @@
+/*
+ * portConfig.h
+ *
+ *  Created on: Jun 28, 2018
+ *      Author: wede
+ */
+
+#ifndef PORTCONFIG_H_
+#define PORTCONFIG_H_
+
 
 typedef struct {
   volatile uint8_t *portAddr;
@@ -69,3 +79,8 @@ void setPin(dRecord *record, int state) {
 
 
 
+
+
+
+
+#endif /* PORTCONFIG_H_ */
