@@ -10,15 +10,15 @@
 
 
 typedef struct {
-  volatile uint8_t *portAddr;
+  volatile uint8_t *portAddr; //portAddr must be a pointer because PORTD cannot be assigned to a normal variable, so we use its address
   volatile uint8_t portMask;
-} dRecord;
+} dRecord; //Create structure called dRecord that stores the pin's port(portAddr) and which indexes are on or off(portMask)
 
 
-bool configDout(dRecord *record, unsigned char pin) {
+bool configDout(dRecord *record, unsigned char pin) { //configure pin as output and stores info in the structure that the record variable points to
 
-  if ((pin > 1) && (pin < 8)) {
-    DDRB = (1 << pin);
+  if ((pin > 1) && (pin < 8)) { //configures pins less than 8 as PORTD and sets the accompanying pin index to portMask
+    DDRB = (1 << pin); //sets pin as OUTPUT
     record->portAddr = &PORTD;
     record->portMask = pin;
     return true;
@@ -37,7 +37,7 @@ bool configDout(dRecord *record, unsigned char pin) {
 bool configDin(dRecord *record, unsigned char pin) {
 
   if ((pin > 1) && (pin < 8)) {
-    DDRD = (0 << pin);
+    DDRD = (0 << pin); //sets pin as INPUT
     record->portAddr = &PORTD;
     record->portMask = pin;
     return true;
@@ -54,15 +54,15 @@ bool configDin(dRecord *record, unsigned char pin) {
 }
 
 
-void setPin(dRecord *record, int state) {
+void setPin(dRecord *record, int state) { //either sets the pin as HIGH or LOW based on the state passed into the function
 
   if (state == 1) {
     *(record->portAddr) |= record->portMask;
-    return true;
+    return;
   }
   else {
     *(record->portAddr) ^= record->portMask;
-    return true;
+    return;
   }
 
 }
