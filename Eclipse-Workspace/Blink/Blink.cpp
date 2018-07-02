@@ -6,8 +6,6 @@
 #include "portConfig.h" //This is where most of the functions are stored
 #define on 1
 #define off 0
-dRecord ledPin; //creates ledPin variable of type dRecord
-//dRecord dOutPins[16];
 
 
 int main(void) {
@@ -24,10 +22,6 @@ int main(void) {
   assert(success);
  // setDout(0, getDin(1)); // set pin 13 to value of pin 5
 
-
-  //configDout(&ledPin, 13); //passed the address of ledPin and the pin to configure as output
-  //configDout(&ledPin2, 2);
-
   Serial.begin(9600);
 
   for (;;) {
@@ -40,6 +34,7 @@ int main(void) {
 ISR(TIMER1_COMPA_vect) {       //This is our interrupt service routine
 
   setDout(0, getDin(1));
+
 /*
   if (PIND & (1 << digiPin[1].portMask)) { //if Pin13 is LOW
    // setDout(0, on); //toggles pin 13 to HIGH

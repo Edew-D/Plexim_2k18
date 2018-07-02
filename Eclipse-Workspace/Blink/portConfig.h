@@ -16,7 +16,7 @@ typedef struct {
 
 dRecord digiPin[16];
 
-bool configDout(int channel, int pin) {
+bool configDout(int channel, int pin) { //configures a digital pin as output
 
   if ((pin > 1) && (pin < 8)) {
     DDRB = (1 << pin);
@@ -35,7 +35,7 @@ bool configDout(int channel, int pin) {
   }
 }
 
-bool configDin(int channel, unsigned char pin) {
+bool configDin(int channel, unsigned char pin) { //Configures digital pin as Input
 
   if ((pin > 1) && (pin < 8)) {
     DDRD = (0 << pin);
@@ -54,27 +54,20 @@ bool configDin(int channel, unsigned char pin) {
   }
 }
 
-int getDin(int channel){
+int getDin(int channel){ //Reads a digital pin
 	dRecord *rec = &digiPin[channel];
-	//Serial.println("getdin");
+
 	if (*rec->portAddr & (1 << digiPin[channel].portMask)){
-		//Serial.println("func success");
 		return 1;
 	}
 	else{
-		//Serial.println("func Fail");
 		return 0;
 	}
 
-	/*else{
-		Serial.println("elsing");
-		assert(false);
-		return 0;
-	}*/
 }
 
 
-void setDout(int channel, int state) {
+void setDout(int channel, int state) { //sets a digital pin as high or low based on passed state
   dRecord *record;
   record = &digiPin[channel];
 
@@ -101,12 +94,6 @@ void __assert(const char *__func, const char *__file, int __lineno, const char *
     // abort program execution.
     abort();
 }
-
-
-
-
-
-
 
 
 
