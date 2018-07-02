@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#define __ASSERT_USE_STDERR
+#include <assert.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "portConfig.h" //This is where most of the functions are stored
@@ -6,6 +8,7 @@
 #define off 0
 dRecord ledPin; //creates ledPin variable of type dRecord
 //dRecord dOutPins[16];
+
 
 int main(void) {
 
@@ -17,6 +20,8 @@ int main(void) {
   configDout(&ledPin, 13); //passed the address of ledPin and the pin to configure as output
   //configDout(&ledPin2, 2);
 
+//  Serial.begin(9600);
+
   for (;;) {
 
   }
@@ -25,7 +30,7 @@ int main(void) {
 }
 
 ISR(TIMER1_COMPA_vect) {       //This is our interrupt service routine
-
+  //assert(false);
   if (PORTB == (0 << PB5)) { //if Pin13 is LOW
     setPin(&ledPin, on); //toggles pin 13 to HIGH
   //  setPin(&ledPin2, off);
