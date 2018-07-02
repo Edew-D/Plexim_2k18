@@ -11,16 +11,24 @@ dRecord ledPin; //creates ledPin variable of type dRecord
 
 
 int main(void) {
+  init();
 
   TCCR1B = (1 << WGM12) | (1 << CS12); //CS12 sets prescaler of 256
   OCR1A = 12499;
   TIMSK1 = (1 << OCIE1A);
   sei(); //setup compare on match interrupt using timer1
 
-  configDout(&ledPin, 13); //passed the address of ledPin and the pin to configure as output
+  bool success = configDout(0, 13); // configure pin 13 as output
+  assert(success);
+  success = configDin(1, 5); // configure pin 5 as input
+  assert(success);
+ // setDout(0, getDin(1)); // set pin 13 to value of pin 5
+
+
+  //configDout(&ledPin, 13); //passed the address of ledPin and the pin to configure as output
   //configDout(&ledPin2, 2);
 
-//  Serial.begin(9600);
+  Serial.begin(9600);
 
   for (;;) {
 
@@ -30,16 +38,21 @@ int main(void) {
 }
 
 ISR(TIMER1_COMPA_vect) {       //This is our interrupt service routine
-  //assert(false);
-  if (PORTB == (0 << PB5)) { //if Pin13 is LOW
-    setPin(&ledPin, on); //toggles pin 13 to HIGH
+
+  setDout(0, getDin(1));
+/*
+  if (PIND & (1 << digiPin[1].portMask)) { //if Pin13 is LOW
+   // setDout(0, on); //toggles pin 13 to HIGH
   //  setPin(&ledPin2, off);
+
   }
 
   else {
-    setPin(&ledPin, off); //toggle pin 13 to LOW
+    //setDout(0, off); //toggle pin 13 to LOW
   //  setPin(&ledPin2, on);
-  }
+	//  Serial.println("HIGH");
+	//  Serial.println(PIND);
+  }*/
 
 }
 

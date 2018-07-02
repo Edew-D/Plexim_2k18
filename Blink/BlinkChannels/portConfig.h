@@ -26,7 +26,7 @@ bool configDout(int channel, int pin) {
   }
 }
 
-dRecord *configDin(int channel, unsigned char pin) {
+bool configDin(int channel, unsigned char pin) {
 
   if ((pin > 1) && (pin < 8)) {
     DDRD = (0 << pin);
