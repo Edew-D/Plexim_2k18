@@ -41,13 +41,15 @@ bool configDin(int channel, unsigned char pin) { //Configures digital pin as Inp
     DDRD = (0 << pin);
     digiPin[channel].portAddr = &PIND;
     digiPin[channel].portMask = pin;
-    return &digiPin[channel];
+    //return &digiPin[channel];
+    return true;
   }
   else if ((pin > 7) && (pin < 14 )) {
     DDRB = (0 << (pin % 8));
     digiPin[channel].portAddr = &PIND;
     digiPin[channel].portMask = (1 << (pin % 8));
-    return &digiPin[channel];
+    //return &digiPin[channel];
+    return true;
   }
   else {
     return false;
@@ -68,17 +70,17 @@ int getDin(int channel){ //Reads a digital pin
 
 
 void setDout(int channel, int state) { //sets a digital pin as high or low based on passed state
-  dRecord *record;
-  record = &digiPin[channel];
+  dRecord *pin;
+  pin = &digiPin[channel];
 
   if (state == 1) {
     //digiPin[channel].portAddr |= digiPin[channel].portMask;
-    *(record->portAddr) |= record->portMask;
+    *(pin->portAddr) |= pin->portMask;
     return;
   }
   else {
     //digiPin[channel].portAddr ^= digiPin[channel].portMask;
-	 *(record->portAddr) ^= record->portMask;
+	 *(pin->portAddr) ^= pin->portMask;
     return;
   }
 
