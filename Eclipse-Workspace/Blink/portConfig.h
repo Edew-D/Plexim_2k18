@@ -35,7 +35,7 @@ bool configDout(int channel, int pin) { //configures a digital pin as output
   }
 }
 
-bool configDin(int channel, unsigned char pin) { //Configures digital pin as Input
+bool configDin(int channel, int pin) { //Configures digital pin as Input
 
   if ((pin > 1) && (pin < 8)) {
     DDRD = (0 << pin);
@@ -56,13 +56,15 @@ bool configDin(int channel, unsigned char pin) { //Configures digital pin as Inp
   }
 }
 
-int getDin(int channel){ //Reads a digital pin
+int getDin(int channel){ //Reads a digital pin and returns its state
 	dRecord *rec = &digiPin[channel];
 
 	if (*rec->portAddr & (1 << digiPin[channel].portMask)){
+		Serial.println("Returning On");
 		return 1;
 	}
 	else{
+		Serial.println("Returning OFF");
 		return 0;
 	}
 

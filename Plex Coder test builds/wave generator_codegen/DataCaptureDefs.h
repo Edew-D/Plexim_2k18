@@ -1,0 +1,1 @@
+#define NUM_DATA_CAPTURE_BLOCKS 0

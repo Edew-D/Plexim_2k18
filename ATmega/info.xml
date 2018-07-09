@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TargetSupportPackage
+  xmlns="http://www.plexim.com/xml/codegentarget/"
+  version="1.0">
+<TargetFamily>ATmega</TargetFamily>
+
+ <BlockLibrary file="ATmega_Lib">ATmega Target</BlockLibrary>
+
+ <Target>
+  <Name>ATmega328</Name>
+  <Version>0.1</Version>
+  <Parameters>
+     <LineEdit prompt="Install directory" variable="installDir" default="" eval="false" />
+  </Parameters>
+
+  <CodeFunction lang="Lua"><![CDATA[
+  	_G.package.path = Target.Variables.TARGET_ROOT .. "/lua/?.lua"
+	return require "Coder"
+	]]>
+  </CodeFunction>
+  <BuildSteps>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/gensrcs.mk</Source>
+      <Destination>gensrcs.mk</Destination>
+      <Replace>
+        <Before><![CDATA[|>SOURCE_FILES<|]]></Before>
+        <After>$(SOURCE_FILES)</After>
+      </Replace>
+    </CopyFile>
+
+    <Make>
+     <Timeout></Timeout>
+     <Makefile>$(BASE_NAME).mk</Makefile>
+    </Make>
+  </BuildSteps>
+ </Target>
+</TargetSupportPackage>

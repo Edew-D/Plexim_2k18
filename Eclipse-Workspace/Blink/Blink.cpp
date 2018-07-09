@@ -11,8 +11,9 @@
 int main(void) {
   init();
 
-  TCCR1B = (1 << WGM12) | (1 << CS12); //CS12 sets prescaler of 256
-  OCR1A = 12499; //timer will clear and interrupt upon reaching this count
+  //TCCR1B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
+  TCCR1B = B00001100;                                                     //CS12 sets prescaler of 1024
+  OCR1A = 28000; //timer will clear and interrupt upon reaching this count
   TIMSK1 = (1 << OCIE1A); //will interrupt when timer1 matches the value of OCR1A
   sei(); //setup compare on match interrupt using timer1
 
@@ -21,7 +22,7 @@ int main(void) {
   success = configDin(1, 5); // configure pin 5 as input
   assert(success);
 
- // Serial.begin(9600);
+  Serial.begin(9600);
 
   for (;;) {
 
@@ -31,7 +32,7 @@ int main(void) {
 }
 
 ISR(TIMER1_COMPA_vect) {       //This is our interrupt service routine
-
+  Serial.println("interrupting");
   setDout(0, getDin(1)); //set pin 13 to value of pin 5
 
 /*
