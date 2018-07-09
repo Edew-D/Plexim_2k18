@@ -31,7 +31,6 @@ copy_file = function (src, dest, subs)
   end
 end
 
-Resources:add("gpio", 0, 199)
 
 local Registry = {
   NumDigitalOutBlocks = 0
@@ -53,6 +52,7 @@ function Coder.Initialize()
 
   local dummy = print -- dummy access to global environment ("attempt to call a table value" workaround)
 
+  Resources:add("GPIO", 0, 199)
 
 
   return {

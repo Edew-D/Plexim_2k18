@@ -18,7 +18,7 @@
 
 include gensrcs.mk
 
-INSTALL_DIR="|>INSTALL_DIR<|"
+INSTALL_DIR=|>INSTALL_DIR<|
 MAKEFILE="|>BASE_NAME<|.mk"
 HFILE = "|>BASE_NAME<|.h"
 

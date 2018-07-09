@@ -18,9 +18,9 @@
 
 include gensrcs.mk
 
-INSTALL_DIR="C:\Users\wede\Documents\GitHub\Plexim_2k18"
-MAKEFILE="Blink.mk"
-HFILE = "Blink.h"
+INSTALL_DIR=C:\Users\wede\Documents\GitHub\Plexim_2k18\Atmega_Code
+MAKEFILE="ArduinoTest.mk"
+HFILE = "ArduinoTest.h"
 
 ##############################################################
 

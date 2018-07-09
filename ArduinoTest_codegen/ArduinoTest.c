@@ -1,14 +1,14 @@
 /*
- * Implementation file for: ArduinoTest/Blink
+ * Implementation file for: ArduinoTest
  * Generated with         : PLECS 4.2.0-DEV
- * Generated on           : 9 Jul 2018 11:35:18
+ * Generated on           : 9 Jul 2018 14:24:49
  */
-#include "Blink.h"
-#ifndef PLECS_HEADER_Blink_h_
-#error The wrong header file "Blink.h" was included. Please check your
-#error include path to see whether this file name conflicts with the name
-#error of another header file.
-#endif /* PLECS_HEADER_Blink_h_ */
+#include "ArduinoTest.h"
+#ifndef PLECS_HEADER_ArduinoTest_h_
+#error The wrong header file "ArduinoTest.h" was included. Please check
+#error your include path to see whether this file name conflicts with the
+#error name of another header file.
+#endif /* PLECS_HEADER_ArduinoTest_h_ */
 #if defined(__GNUC__) && (__GNUC__ > 4)
 #   define _ALIGNMENT 16
 #   define _RESTRICT __restrict
@@ -36,28 +36,28 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#define PLECSRunTimeError(msg) Blink_errorStatus = msg
-const char * Blink_errorStatus;
-const double Blink_sampleTime = 0.00100000000000000002;
-const char * const Blink_checksum =
-   "7144a578c14177e23c5ba4387175853a9fa2d7d7";
-void Blink_initialize(double time)
+#define PLECSRunTimeError(msg) ArduinoTest_errorStatus = msg
+const char * ArduinoTest_errorStatus;
+const double ArduinoTest_sampleTime = 0.00100000000000000002;
+const char * const ArduinoTest_checksum =
+   "f55c3ec8f79b2d3c43e750653ffd728a22008799";
+void ArduinoTest_initialize(double time)
 {
-   Blink_errorStatus = NULL;
+   ArduinoTest_errorStatus = NULL;
 }
 
-void Blink_step()
+void ArduinoTest_step()
 {
-   if (Blink_errorStatus)
+   if (ArduinoTest_errorStatus)
    {
       return;
    }
-   if (Blink_errorStatus)
+   if (ArduinoTest_errorStatus)
    {
       return;
    }
 }
 
-void Blink_terminate()
+void ArduinoTest_terminate()
 {
 }
