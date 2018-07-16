@@ -38,21 +38,21 @@ end
 
 
 local Registry = {
-  NumDigitalOutBlocks = 0,
-  NumDigitalInBlocks = 0
+  NumDigitalBlocks = 0,
+  --NumDigitalInBlocks = 0
 }
 
-function Coder.RegisterDigitalOutBlock()
-  local ret = Registry.NumDigitalOutBlocks
-  Registry.NumDigitalOutBlocks = ret+1
+function Coder.RegisterDigitalBlock()
+  local ret = Registry.NumDigitalBlocks
+  Registry.NumDigitalBlocks = ret+1
   return ret
 end
 
-function Coder.RegisterDigitalInBlock()
-  local ret = Registry.NumDigitalInBlocks
-  Registry.NumDigitalInBlocks = ret+1
-  return ret
-end
+--function Coder.RegisterDigitalInBlock()
+--  local ret = Registry.NumDigitalInBlocks
+--  Registry.NumDigitalInBlocks = ret+1
+--  return ret
+--end
 
 function Coder.Initialize()
   local Resources = ResourceList:new()

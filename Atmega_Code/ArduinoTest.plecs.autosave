@@ -70,7 +70,7 @@ Plecs {
       TreatAsAtomicUnit on
       SampleTime    "-1"
       CodeGenEnable on
-      CodeGenSampleTime "1e-3"
+      CodeGenSampleTime "1e-1"
       CodeGenTarget "ATmega328"
       CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAEAA"
 "AAUAGkAbgBzAHQAYQBsAGwARABpAHIAAACKAEMAOgBcAFUAcwBlAHIAcwBcAHcAZQBkAGUAXABEAG"
@@ -124,12 +124,12 @@ Plecs {
           CodeFcnLang   "2"
           CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
 "Code = {}\n\nfor i = 1, #Block.InputSignal[1] do\n  local instance = Target.C"
-"oder.RegisterDigitalOutBlock()\n  local channel = Block.Mask.channel[i]\n\n  "
-"table.insert(Require, string.format(\"GPIO:%i\", channel))    \n  table.inser"
-"t(InitCode, string.format(\"configDout(%i, %i);\", instance, channel))\n  tab"
-"le.insert(OutputCode, string.format(\"setDout(%i, %s);\", instance, Block.Inp"
-"utSignal[1][i]))\nend\n\nreturn {\n  Include = \"setup.h\",\n  InitCode = Ini"
-"tCode,\n  OutputCode = OutputCode,\n  Require = Require\n}"
+"oder.RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n\n  tab"
+"le.insert(Require, string.format(\"GPIO:%i\", channel))    \n  table.insert(I"
+"nitCode, string.format(\"configDout(%i, %i);\", instance, channel))\n  table."
+"insert(OutputCode, string.format(\"setDout(%i, %s);\", instance, Block.InputS"
+"ignal[1][i]))\nend\n\nreturn {\n  Include = \"setup.h\",\n  InitCode = InitCo"
+"de,\n  OutputCode = OutputCode,\n  Require = Require\n}"
           MaskType      "Digital Out"
           MaskDescription "Set a digital output.\n\nThe output is set low if t"
 "he input signal is zero, it is set high for all other values."
@@ -145,7 +145,7 @@ Plecs {
             Variable      "channel"
             Prompt        "Digital output pin(s)"
             Type          FreeText
-            Value         "11"
+            Value         "6"
             Show          on
             Tunable       off
             TabName       ""
@@ -156,7 +156,7 @@ Plecs {
             Direction     left
           }
           Schematic {
-            Location      [390, 80; 1301, 224]
+            Location      [390, 80; 1312, 224]
             ZoomFactor    1
             SliderPosition [0, 0]
             ShowBrowser   off
@@ -220,7 +220,7 @@ Plecs {
           }
           Parameter {
             Variable      "Ts"
-            Value         "1000"
+            Value         "1"
             Show          on
           }
         }
@@ -257,12 +257,12 @@ Plecs {
           CodeFcnLang   "2"
           CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
 "Code = {}\n\nfor i = 1, #Block.InputSignal[1] do\n  local instance = Target.C"
-"oder.RegisterDigitalOutBlock()\n  local channel = Block.Mask.channel[i]\n\n  "
-"table.insert(Require, string.format(\"GPIO:%i\", channel))    \n  table.inser"
-"t(InitCode, string.format(\"configDout(%i, %i);\", instance, channel))\n  tab"
-"le.insert(OutputCode, string.format(\"setDout(%i, %s);\", instance, Block.Inp"
-"utSignal[1][i]))\nend\n\nreturn {\n  Include = \"setup.h\",\n  InitCode = Ini"
-"tCode,\n  OutputCode = OutputCode,\n  Require = Require\n}"
+"oder.RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n\n  tab"
+"le.insert(Require, string.format(\"GPIO:%i\", channel))    \n  table.insert(I"
+"nitCode, string.format(\"configDout(%i, %i);\", instance, channel))\n  table."
+"insert(OutputCode, string.format(\"setDout(%i, %s);\", instance, Block.InputS"
+"ignal[1][i]))\nend\n\nreturn {\n  Include = \"setup.h\",\n  InitCode = InitCo"
+"de,\n  OutputCode = OutputCode,\n  Require = Require\n}"
           MaskType      "Digital Out"
           MaskDescription "Set a digital output.\n\nThe output is set low if t"
 "he input signal is zero, it is set high for all other values."
@@ -278,7 +278,7 @@ Plecs {
             Variable      "channel"
             Prompt        "Digital output pin(s)"
             Type          FreeText
-            Value         "10"
+            Value         "9"
             Show          on
             Tunable       off
             TabName       ""
@@ -349,12 +349,12 @@ Plecs {
           CodeFcnLang   "2"
           CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
 "Signal = {}\n\nfor i = 1, Block.NumOutputSignals[1] do\n  local instance = Ta"
-"rget.Coder.RegisterDigitalInBlock()\n  local channel = Block.Mask.channel[i]"
-"\n\n  table.insert(Require, string.format(\"GPIO:%i\", channel))  \n  table.i"
-"nsert(InitCode, string.format(\"configDin(%i, %i);\", instance, channel))\n  "
-"table.insert(OutputSignal, string.format(\"getDin(%i)\", instance))   \nend\n"
-"\nreturn {\n  Include = \"setup.h\",\n  InitCode = InitCode,\n  OutputSignal "
-"= { OutputSignal },\n  Require = Require\n}\n"
+"rget.Coder.RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n"
+"\n  table.insert(Require, string.format(\"GPIO:%i\", channel))  \n  table.ins"
+"ert(InitCode, string.format(\"configDin(%i, %i);\", instance, channel))\n  ta"
+"ble.insert(OutputSignal, string.format(\"getDin(%i)\", instance))   \nend\n\n"
+"return {\n  Include = \"setup.h\",\n  InitCode = InitCode,\n  OutputSignal = "
+"{ OutputSignal },\n  Require = Require\n}\n"
           MaskType      "Digital In"
           MaskDescription "Reads a digital input.\n\nThe output signal is 1 if"
 " the input voltage is higher than 2 Volts and 0 if it is lower than 0.8 Volts"
@@ -371,7 +371,7 @@ Plecs {
             Variable      "channel"
             Prompt        "Digital input channel(s)"
             Type          FreeText
-            Value         "8"
+            Value         "13"
             Show          on
             Tunable       off
             TabName       ""
@@ -382,7 +382,7 @@ Plecs {
             Direction     right
           }
           Schematic {
-            Location      [642, 164; 1344, 531]
+            Location      [35, 165; 737, 532]
             ZoomFactor    1
             SliderPosition [0, 0]
             ShowBrowser   off

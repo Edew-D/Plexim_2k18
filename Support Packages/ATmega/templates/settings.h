@@ -1,3 +1,3 @@
-#define SAMPLE_TIME 0.001
-#define prescaler 1
-#define count 15999.0
+#define SAMPLE_TIME 0.1
+#define prescaler 64
+#define count 24999.0

@@ -1,7 +1,7 @@
 /*
  * Implementation file for: ArduinoTest/Blink
  * Generated with         : PLECS 4.2.0-DEV
- * Generated on           : 13 Jul 2018 13:22:45
+ * Generated on           : 16 Jul 2018 14:02:59
  */
 #include "Blink.h"
 #ifndef PLECS_HEADER_Blink_h_
@@ -39,17 +39,17 @@
 #include "setup.h"
 #define PLECSRunTimeError(msg) Blink_errorStatus = msg
 static const uint32_t Blink_taskPeriod[1]= {
-   /* [1000, 0] */
-   1000000
+   /* [1, 0] */
+   10
 };
 static uint32_t Blink_taskTick[1];
 static char Blink_taskHit[1];
 Blink_BlockOutputs Blink_B;
 Blink_ModelStates Blink_X _ALIGN;
 const char * Blink_errorStatus;
-const double Blink_sampleTime = 0.00100000000000000002;
+const double Blink_sampleTime = 0.100000000000000006;
 const char * const Blink_checksum =
-   "15190d26a2c5d3119923d815c1a9a9b5f194253a";
+   "aa829e079738d94dc5a849f82c7a449fe8696190";
 void Blink_initialize(double time)
 {
    uint32_t Blink_tickLo;
@@ -66,7 +66,7 @@ void Blink_initialize(double time)
          "Start time must be an integer multiple of the base sample time.";
    }
    /* Initialize sub-task tick counters */
-   Blink_taskTick[0] = 0;           /* [1000, 0] */
+   Blink_taskTick[0] = 0;           /* [1, 0] */
 
 
    /* Offset sub-task tick counters */
@@ -96,13 +96,13 @@ void Blink_initialize(double time)
    Blink_X.Delay1 = 0.;
 
    /* Initialization for Digital Out : 'Blink/Digital Out2' */
-   configDout(0, 11);
+   configDout(0, 6);
 
    /* Initialization for Digital In : 'Blink/Digital In2' */
-   configDin(0, 8);
+   configDin(1, 13);
 
    /* Initialization for Digital Out : 'Blink/Digital Out3' */
-   configDout(1, 10);
+   configDout(2, 9);
 }
 
 void Blink_step()
@@ -130,7 +130,7 @@ void Blink_step()
    /* Digital Out : 'Blink/Digital Out2' */
    setDout(0, Blink_B.LogicalOperator1);
    /* Digital Out : 'Blink/Digital Out3' */
-   setDout(1, getDin(0));
+   setDout(2, getDin(1));
    if (Blink_errorStatus)
    {
       return;

@@ -51,8 +51,8 @@ int main(void) {
   set_prescale();
   sei();
 
-  configDout(0, 11);
-  configDin(1, 10);
+  configDout(0, 9);
+  configDin(1, 3);
   Serial.begin(9600);
 
   for (;;) {

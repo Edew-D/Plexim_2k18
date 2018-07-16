@@ -36,9 +36,9 @@ Plecs {
   CodeGenExtraOpts ""
   CodeGenTarget "ATmega328"
   CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAEAAAAUA"
-"GkAbgBzAHQAYQBsAGwARABpAHIAAABsAEMAOgBcAFUAcwBlAHIAcwBcAHcAZQBkAGUAXABEAG8AYw"
-"B1AG0AZQBuAHQAcwBcAEcAaQB0AEgAdQBiAFwAUABsAGUAeABpAG0AXwAyAGsAMQA4AFwAQQB0AG0"
-"AZQBnAGEAXwBDAG8AZABl"
+"GkAbgBzAHQAYQBsAGwARABpAHIAAACKAEMAOgBcAFUAcwBlAHIAcwBcAHcAZQBkAGUAXABEAG8AYw"
+"B1AG0AZQBuAHQAcwBcAEcAaQB0AEgAdQBiAFwAUABsAGUAeABpAG0AXwAyAGsAMQA4AFwAUwBsAG8"
+"AZQBiAGUAcgBfAFcAbwByAGsAcwBwAGEAYwBlAFwAQgBsAGkAbgBrAHAAdAAy"
   ExtendedMatrixPrecision "1"
   MatrixSignificanceCheck "2"
   EnableStateSpaceSplitting "2"
@@ -51,12 +51,8 @@ Plecs {
 "GMAaQBtAGEAdABpAG8AbgAAAAIAMQ=="
   AlgebraicLoopMethod "1"
   AlgebraicLoopTolerance "1e-6"
-  Terminal {
-    Type          Output
-    Index         "1"
-  }
   Schematic {
-    Location      [186, 400; 867, 691]
+    Location      [196, 225; 877, 516]
     ZoomFactor    1
     SliderPosition [0, 0]
     ShowBrowser   off
@@ -91,21 +87,33 @@ Plecs {
       MaskIconRotates on
       Terminal {
         Type          Output
-        Position      [44, 0]
+        Position      [44, 10]
         Direction     right
         Index         "1"
       }
+      Terminal {
+        Type          Output
+        Position      [44, -5]
+        Direction     right
+        Index         "2"
+      }
+      Terminal {
+        Type          Input
+        Position      [-40, 5]
+        Direction     left
+        Index         "1"
+      }
       Schematic {
-        Location      [82, 77; 745, 459]
+        Location      [235, 153; 898, 535]
         ZoomFactor    1
         SliderPosition [0, 0]
         ShowBrowser   off
         BrowserWidth  100
         Component {
           Type          TargetCode
-          Name          "Digital Out1"
+          Name          "Digital Out2"
           Show          on
-          Position      [420, 165]
+          Position      [410, 165]
           Direction     up
           Flipped       off
           Frame         [-25, -20; 25, 20]
@@ -137,7 +145,7 @@ Plecs {
             Variable      "channel"
             Prompt        "Digital output pin(s)"
             Type          FreeText
-            Value         "13"
+            Value         "11"
             Show          on
             Tunable       off
             TabName       ""
@@ -148,7 +156,7 @@ Plecs {
             Direction     left
           }
           Schematic {
-            Location      [390, 80; 1263, 224]
+            Location      [390, 80; 1301, 224]
             ZoomFactor    1
             SliderPosition [0, 0]
             ShowBrowser   off
@@ -197,7 +205,7 @@ Plecs {
           Type          Delay
           Name          "Delay1"
           Show          off
-          Position      [210, 200]
+          Position      [75, 200]
           Direction     right
           Flipped       off
           Parameter {
@@ -220,7 +228,7 @@ Plecs {
           Type          LogicalOperator
           Name          "Logical\nOperator1"
           Show          off
-          Position      [260, 200]
+          Position      [160, 200]
           Direction     up
           Flipped       off
           Parameter {
@@ -234,6 +242,196 @@ Plecs {
             Show          off
           }
         }
+        Component {
+          Type          TargetCode
+          Name          "Digital Out3"
+          Show          on
+          Position      [415, 80]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "2"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
+"Code = {}\n\nfor i = 1, #Block.InputSignal[1] do\n  local instance = Target.C"
+"oder.RegisterDigitalOutBlock()\n  local channel = Block.Mask.channel[i]\n\n  "
+"table.insert(Require, string.format(\"GPIO:%i\", channel))    \n  table.inser"
+"t(InitCode, string.format(\"configDout(%i, %i);\", instance, channel))\n  tab"
+"le.insert(OutputCode, string.format(\"setDout(%i, %s);\", instance, Block.Inp"
+"utSignal[1][i]))\nend\n\nreturn {\n  Include = \"setup.h\",\n  InitCode = Ini"
+"tCode,\n  OutputCode = OutputCode,\n  Require = Require\n}"
+          MaskType      "Digital Out"
+          MaskDescription "Set a digital output.\n\nThe output is set low if t"
+"he input signal is zero, it is set high for all other values."
+          MaskHelp      "do_rtbox.html"
+          MaskDisplay   "text(['Digital' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || "
+"any(floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital outpu"
+"t pin(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "channel"
+            Prompt        "Digital output pin(s)"
+            Type          FreeText
+            Value         "10"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [684, 31; 1365, 665]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "Digital In2"
+          Show          on
+          Position      [85, 80]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "3"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
+"Signal = {}\n\nfor i = 1, Block.NumOutputSignals[1] do\n  local instance = Ta"
+"rget.Coder.RegisterDigitalInBlock()\n  local channel = Block.Mask.channel[i]"
+"\n\n  table.insert(Require, string.format(\"GPIO:%i\", channel))  \n  table.i"
+"nsert(InitCode, string.format(\"configDin(%i, %i);\", instance, channel))\n  "
+"table.insert(OutputSignal, string.format(\"getDin(%i)\", instance))   \nend\n"
+"\nreturn {\n  Include = \"setup.h\",\n  InitCode = InitCode,\n  OutputSignal "
+"= { OutputSignal },\n  Require = Require\n}\n"
+          MaskType      "Digital In"
+          MaskDescription "Reads a digital input.\n\nThe output signal is 1 if"
+" the input voltage is higher than 2 Volts and 0 if it is lower than 0.8 Volts"
+". \nFor other input voltages the output signal is undefined."
+          MaskHelp      "di_rtbox.html"
+          MaskDisplay   "text(['Digital' char(10) 'In'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || "
+"any(floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital input"
+" pin(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "channel"
+            Prompt        "Digital input channel(s)"
+            Type          FreeText
+            Value         "8"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Output
+            Position      [29, 0]
+            Direction     right
+          }
+          Schematic {
+            Location      [642, 164; 1344, 531]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetInput
+              Name          "1"
+              Show          on
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Output
+              Name          "Out1"
+              Show          off
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "DataType"
+                Value         "10"
+                Show          off
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "1"
+              SrcTerminal   1
+              DstComponent  "Out1"
+              DstTerminal   1
+            }
+          }
+        }
         Connection {
           Type          Signal
           SrcComponent  "Delay1"
@@ -243,55 +441,31 @@ Plecs {
         }
         Connection {
           Type          Signal
+          SrcComponent  "Digital In2"
+          SrcTerminal   1
+          DstComponent  "Digital Out3"
+          DstTerminal   1
+        }
+        Connection {
+          Type          Signal
           SrcComponent  "Logical\nOperator1"
           SrcTerminal   1
-          Points        [295, 200; 295, 165]
+          Points        [180, 165]
           Branch {
-            Points        [170, 165; 170, 200]
+            Points        [35, 165; 35, 200]
             DstComponent  "Delay1"
             DstTerminal   1
           }
           Branch {
-            DstComponent  "Digital Out1"
+            DstComponent  "Digital Out2"
             DstTerminal   1
           }
         }
       }
     }
-    Component {
-      Type          Reference
-      SrcComponent  "PLECSRTBoxLib/Digital Out1"
-      Name          "Digital Out1"
-      Show          on
-      Position      [285, 110]
-      Direction     up
-      Flipped       off
-      Frame         [-25, -20; 25, 20]
-      LabelPosition [0, 23]
-      LabelAlign    up
-      Parameter {
-        Variable      "channel"
-        Value         "0"
-        Show          off
-      }
-      Parameter {
-        Variable      "TargetPortIndices"
-        Value         "1"
-        Show          off
-      }
-      Terminal {
-        Type          Input
-        Position      [-25, 0]
-        Direction     left
-      }
-    }
     Connection {
       Type          Signal
-      SrcComponent  "Blink"
-      SrcTerminal   1
-      Points        [245, 115]
-      DstComponent  "Digital Out1"
-      DstTerminal   1
+      Points        [239, 115; 245, 115; 245, 110; 260, 110]
     }
   }
 }

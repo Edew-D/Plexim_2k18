@@ -20,12 +20,12 @@ typedef struct {
 
 dRecord digiPin[16];
 
-bool configDout(int channel, int pin) { //configures a digital pin as output
+bool configDout(int channel, byte pin) { //configures a digital pin as output
 
   if ((pin > 0) && (pin < 8)) {
-    DDRB |= (1 << pin);
+    DDRD |= (1 << (pin));
     digiPin[channel].portAddr = &PORTD;
-    digiPin[channel].portMask = pin;
+    digiPin[channel].portMask = (1 << (pin));
     return true;
   }
   else if ((pin > 7) && (pin < 14 )) {
@@ -34,39 +34,50 @@ bool configDout(int channel, int pin) { //configures a digital pin as output
     digiPin[channel].portMask = (1 << (pin % 8));
     return true;
   }
+
   else {
     return false;
   }
 }
 
-bool configDin(int channel, int pin) { //Configures digital pin as Input
+bool configDin(int channel, byte pin) { //Configures digital pin as Input
+  byte off = 1;
 
   if ((pin > 1) && (pin < 8)) {
-    DDRD = (0 << pin);
+	off = (off << pin);
+    DDRD = DDRD & ~off;
     digiPin[channel].portAddr = &PIND;
-    digiPin[channel].portMask = pin;
+    digiPin[channel].portMask = (1 << (pin));
     //return &digiPin[channel];
     return true;
   }
+
   else if ((pin > 7) && (pin < 14 )) {
-    DDRB = (0 << (pin % 8));
-    digiPin[channel].portAddr = &PIND;
+	off = (off << (pin % 8));
+    DDRB = DDRB & ~off;
+    digiPin[channel].portAddr = &PINB;
     digiPin[channel].portMask = (1 << (pin % 8));
     //return &digiPin[channel];
     return true;
   }
+
   else {
     return false;
   }
 }
 
 int getDin(int channel){ //Reads a digital pin and returns its state
-	dRecord *rec = &digiPin[channel];
+	  dRecord *pin = &digiPin[channel];
+	  byte test_pin = *(pin->portAddr);
 
-	if (*rec->portAddr & (1 << digiPin[channel].portMask)){
+	  //byte test_pin = *(pin->portAddr);
+
+	if (test_pin & digiPin[channel].portMask){
+		//Serial.println("returning HIGH");
 		return 1;
 	}
 	else{
+		//Serial.println("Returning LOW");
 		return 0;
 	}
 
@@ -79,12 +90,15 @@ void setDout(int channel, int state) { //sets a digital pin as high or low based
 
   if (state == 1) {
     *(pin->portAddr) |= pin->portMask;
+   // Serial.println("SetHIGH");
     return;
   }
   else {
-	 *(pin->portAddr) ^= pin->portMask;
+	 *(pin->portAddr) &=  ~pin->portMask;
+	// Serial.println("SetLOW");
     return;
   }
+
 
 }
 
