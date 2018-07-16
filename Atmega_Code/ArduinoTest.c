@@ -1,7 +1,7 @@
 /*
  * Implementation file for: ArduinoTest
  * Generated with         : PLECS 4.2.0-DEV
- * Generated on           : 9 Jul 2018 14:24:49
+ * Generated on           : 12 Jul 2018 11:03:16
  */
 #include "ArduinoTest.h"
 #ifndef PLECS_HEADER_ArduinoTest_h_
@@ -37,10 +37,11 @@
 #include <math.h>
 #include <string.h>
 #define PLECSRunTimeError(msg) ArduinoTest_errorStatus = msg
+ArduinoTest_ModelStates ArduinoTest_X _ALIGN;
 const char * ArduinoTest_errorStatus;
 const double ArduinoTest_sampleTime = 0.00100000000000000002;
 const char * const ArduinoTest_checksum =
-   "f55c3ec8f79b2d3c43e750653ffd728a22008799";
+   "5d42762ea30c41f6680fc46a1efef4531a74ba79";
 void ArduinoTest_initialize(double time)
 {
    ArduinoTest_errorStatus = NULL;

@@ -1,0 +1,171 @@
+local Coder = { }
+
+local Registry = {
+  NumDigitalOutBlocks = 0,
+  NumDigitalInBlocks = 0,
+  GpioUsed = {},
+  PwmOutConfigs = {},
+  AdcConfigs = {}  
+}
+
+function Coder.RegisterDigitalOutBlock()
+  local ret = Registry.NumDigitalOutBlocks
+  Registry.NumDigitalOutBlocks = ret+1
+  return ret
+end
+
+function Coder.RegisterDigitalInBlock()
+  local ret = Registry.NumDigitalInBlocks
+  Registry.NumDigitalInBlocks = ret+1
+  return ret
+end
+
+function Coder.RegisterPwmOutBlock(pwm, params)
+	if Registry.PwmOutConfigs[pwm] ~= nil then
+		return nil, "Resource already claimed."
+	else  
+  		local ret = #Registry.PwmOutConfigs
+  		Registry.PwmOutConfigs[pwm] = params
+  		return ret, ""
+  	end
+end
+
+function Coder.RequireGpio(gpio)
+	if Registry.GpioUsed[gpio] ~= nil then
+		return "Resource already claimed."
+	else
+		Registry.GpioUsed[gpio] = true
+		return nil
+	end
+end
+
+function Coder.Initialize()
+  local Resources = {}
+  local Include = {}
+  local Declarations = {}
+  local PreInitCode = {}
+  local PostInitCode = {}
+  local TerminateCode = {}
+  
+  local dummy = print -- dummy access to global environment ("attempt to call a table value" workaround)
+  
+  return {
+     Declarations = Declarations,
+     PreInitCode = PreInitCode,
+     PostInitCode = PostInitCode,
+     TerminateCode = TerminateCode,
+     Include = Include,
+     Resources = Resources
+  }
+end
+
+update_file_if_different = function (src, dest)
+  local file = io.open(src, "rb")
+  local src_content = file:read("*all")
+  io.close(file)
+  local dest_content
+
+  file = io.open(dest, "rb")
+  if(file == nil) then
+    dest_content = nil
+  else
+    dest_content = file:read("*all")
+    io.close(file)
+  end
+  
+  if not (src_content == dest_content) then
+    file = io.open(dest, "w")
+    io.output(file)
+    io.write(src_content)
+    file.close() 
+  end
+end
+
+
+function Coder.Finalize()
+  local Include = {}
+  local Declarations = {}
+  local PreInitCode = {}
+  local PostInitCode = {}
+  local TerminateCode = {}
+
+  local file = io.open(Target.Variables.BUILD_ROOT .. "/settings.tmp", "w")
+  io.output(file)
+  
+  -- clock settings
+  io.write("// Clock configurations\n")
+  io.write("#define SYSCLK_HZ " .. Target.Variables.sysClkHz .. "L\n")
+  local pllDiv = 18
+  io.write("#define PLL_DIV " .. pllDiv .. "\n")
+  io.write("#define CLK_SRC 0\n")
+  local cpuRate = 100.0/ Target.Variables.sysClkHz * 10000000;
+  io.write("#define PLX_CPU_RATE " .. cpuRate .. "L\n")
+  
+  io.write("// Dispatcher configurations\n")
+  io.write("#define TIMEBASE_CLOCK_AUTO 0\n")
+  io.write("#define TIMEBASE_CLOCK_CPUTIMER -1\n")
+  io.write("#define TIMEBASE_CLOCK_PWM -2\n")
+  
+  io.write("#define TIMEBASE_TRIGGER_AUTO 0\n")
+  io.write("#define TIMEBASE_TRIGGER_ADC -1\n")
+  
+  if Target.Variables.timeBaseClk == 2 then 
+    io.write("#define TIMEBASE_CLOCK TIMEBASE_CLOCK_CPUTIMER\n")
+    io.write("#define TIMEBASE_CLOCK_RESOURCE " .. Target.Variables.timeBaseClkResource .."\n")
+    
+    --[[
+    should check to see if achievable given clock rate
+    ]]
+    
+    if Target.Variables.timeBaseTrigger == 1 then
+    	io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_AUTO\n")
+    elseif Target.Variables.timeBaseTrigger == 2 then
+    	local adcConf = Registry.AdcConfigs[Target.Variables.timeBaseTriggerResource]
+    	if adcConf == nil then
+    		return string.format("ADC%i not configured and therefore not avaiable as time base trigger.", Target.Variables.timeBaseTriggerResource)
+    	end
+    end    
+  
+  elseif Target.Variables.timeBaseClk == 3 then 
+    io.write("#define TIMEBASE_CLOCK TIMEBASE_CLOCK_PWM\n")
+    io.write("#define TIMEBASE_CLOCK_RESOURCE " .. Target.Variables.timeBaseClkResource .."\n")
+    local conf = Registry.PwmOutConfigs[Target.Variables.timeBaseClkResource]
+    if conf == nil then
+    	return string.format("PWM%i not configured and therefore not avaiable as time base clock.", Target.Variables.timeBaseClkResource)
+    end
+    local prd = conf["period"]
+    local pwmClkHz = Target.Variables.sysClkHz/4/prd
+    local socprd = math.min(math.floor(1/Target.Variables.SAMPLE_TIME/pwmClkHz), 3)
+    
+    if not (pwmClkHz * socprd == 1/Target.Variables.SAMPLE_TIME) then
+    	return "PWM resource selected as time base clock cannot provide desired discretization step size."
+    end
+    
+    if Target.Variables.timeBaseTrigger == 1 then
+    	io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_AUTO\n")
+    elseif Target.Variables.timeBaseTrigger == 2 then
+    	local adcConf = Registry.AdcConfigs[Target.Variables.timeBaseTriggerResource]
+    	if adcConf == nil then
+    		return string.format("ADC%i not configured and therefore not avaiable as time base trigger.", Target.Variables.timeBaseTriggerResource)
+    	end
+    end    
+  else 
+    io.write("#define TIMEBASE_CLOCK TIMEBASE_CLOCK_AUTO\n")
+    io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_AUTO\n")
+  end
+  
+  io.close(file)
+
+  update_file_if_different(Target.Variables.BUILD_ROOT .. "/settings.tmp", Target.Variables.BUILD_ROOT .. "/settings.inc")
+  
+  return {
+     Declarations = Declarations,
+     PreInitCode = PreInitCode,
+     PostInitCode = PostInitCode,
+     TerminateCode = TerminateCode,
+     Include = Include,
+     Resources = Resources
+  }
+end
+
+return Coder

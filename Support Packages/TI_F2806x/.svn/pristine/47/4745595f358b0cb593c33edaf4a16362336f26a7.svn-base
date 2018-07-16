@@ -1,0 +1,234 @@
+local Coder = { }
+
+copy_file = function (src, dest, subs)
+  local file = io.open(src, "rb")
+  local src_content = file:read("*all")
+  io.close(file)
+  local dest_content
+
+  file = io.open(dest, "rb")
+  if(file == nil) then
+    dest_content = nil
+  else
+    dest_content = file:read("*all")
+    io.close(file)
+  end
+  
+  if subs ~= nil then
+  	for _,v in pairs(subs) do 
+  		local before = v["before"]
+  		local after = v["after"]
+  		src_content = string.gsub( src_content, before, after)  
+	end
+  end
+  
+  if not (src_content == dest_content) then
+    file = io.open(dest, "w")
+    io.output(file)
+    io.write(src_content)
+    file.close() 
+  end
+end
+
+local Registry = {
+  NumDigitalOutBlocks = 0,
+  NumDigitalInBlocks = 0,
+  GpioUsed = {},
+  NumPwmOutBlocks = 0,
+  PwmOutConfigs = {},
+  NumAdcBlocks = 0,
+  AdcConfigs = {}  
+}
+
+function Coder.RegisterDigitalOutBlock()
+  local ret = Registry.NumDigitalOutBlocks
+  Registry.NumDigitalOutBlocks = ret+1
+  return ret
+end
+
+function Coder.RegisterDigitalInBlock()
+  local ret = Registry.NumDigitalInBlocks
+  Registry.NumDigitalInBlocks = ret+1
+  return ret
+end
+
+function Coder.RegisterPwmOutBlock(pwm, params)
+	if Registry.PwmOutConfigs[pwm] ~= nil then
+		return nil, "Resource already claimed."
+	else  
+  		local ret = Registry.NumPwmOutBlocks
+  		Registry.NumPwmOutBlocks = ret+1
+  		Registry.PwmOutConfigs[pwm] = params
+  		return ret, ""
+  	end
+end
+
+function Coder.RegisterAdcBlock(adc, params)
+	if Registry.AdcConfigs[adc] ~= nil then
+		return nil, "Resource already claimed."
+	else  
+  		local ret = Registry.NumAdcBlocks
+  		Registry.NumAdcBlocks = ret+1
+  		Registry.AdcConfigs[adc] = params
+  		return ret, ""
+  	end
+end
+
+function Coder.RequireGpio(gpio)
+	if Registry.GpioUsed[gpio] ~= nil then
+		return "Resource already claimed."
+	else
+		Registry.GpioUsed[gpio] = true
+		return nil
+	end
+end
+
+function Coder.Initialize()
+  local Resources = {}
+  local Include = {}
+  local Declarations = {}
+  local PreInitCode = {}
+  local PostInitCode = {}
+  local TerminateCode = {}
+  
+  local dummy = print -- dummy access to global environment ("attempt to call a table value" workaround)
+        
+  return {
+     Declarations = Declarations,
+     PreInitCode = PreInitCode,
+     PostInitCode = PostInitCode,
+     TerminateCode = TerminateCode,
+     Include = Include,
+     Resources = Resources
+  }
+end
+
+function Coder.Finalize()
+  local Include = {}
+  local Declarations = {}
+  local PreInitCode = {}
+  local PostInitCode = {}
+  local TerminateCode = {}
+  
+  local dict = {}
+  table.insert(dict, {before = "|>BASE_NAME<|", after = Target.Variables.BASE_NAME}) 
+  table.insert(dict, {before = "|>TARGET_ROOT<|", after = Target.Variables.TARGET_ROOT})
+  table.insert(dict, {before = "|>TASK2_HZ<|", after = Target.Variables.task2Hz}) 
+  table.insert(dict, {before = "|>DOUT_PS_ENABLE_GPIO<|", after = Target.Variables.dOutPsEnableGPIO}) 
+  table.insert(dict, {before = "|>CG_PATH<|", after = Target.Variables.TARGET_ROOT .. "/bin/" .. Target.Variables.HOST_OS .. "/c2000"}) 
+  table.insert(dict, {before = "|>PPT_PATH<|", after = Target.Variables.TARGET_ROOT .. "/bin/" .. Target.Variables.HOST_OS .. "/pil"})
+   
+  copy_file(Target.Variables.TARGET_ROOT .. "/templates/settings.h", Target.Variables.BUILD_ROOT .. "/settings_cg.h", dict)  
+  copy_file(Target.Variables.TARGET_ROOT .. "/templates/main.lkf", Target.Variables.BUILD_ROOT .. "/" .. Target.Variables.BASE_NAME .. ".lkf", dict)  
+  
+  if Target.Variables.genOnly == 0 then  
+  	copy_file(Target.Variables.TARGET_ROOT .. "/templates/main.mk", Target.Variables.BUILD_ROOT .. "/" .. Target.Variables.BASE_NAME .. ".mk", dict) 
+  else
+  	table.insert(dict, {before = "|>INSTALL_DIR<|", after = Target.Variables.installDir})  
+  	copy_file(Target.Variables.TARGET_ROOT .. "/templates/install.mk", Target.Variables.BUILD_ROOT .. "/" .. Target.Variables.BASE_NAME .. ".mk", dict) 
+  end
+  
+  local file = io.open(Target.Variables.BUILD_ROOT .. "/settings.tmp", "w")
+  io.output(file)
+  
+  -- clock settings
+  io.write("// Clock configurations\n")
+  io.write("#define SYSCLK_HZ " .. Target.Variables.sysClkHz .. "L\n")
+  local pllDiv = 18
+  io.write("#define PLL_DIV " .. pllDiv .. "\n")
+  io.write("#define CLK_SRC 0\n")
+  local cpuRate = 100.0/ Target.Variables.sysClkHz * 10000000;
+  io.write("#define PLX_CPU_RATE " .. cpuRate .. "L\n")
+  io.write("\n")
+  
+  -- memory allocation
+  io.write("// HAL object allocations\n")
+  io.write("#define NUM_DOUT " .. Registry.NumDigitalOutBlocks .. "\n")
+  io.write("#define NUM_DIN " .. Registry.NumDigitalInBlocks .. "\n")
+  io.write("#define NUM_PWM " .. Registry.NumPwmOutBlocks .. "\n")
+  io.write("#define NUM_ADC " .. Registry.NumAdcBlocks .. "\n")
+  io.write("\n")
+  
+  -- dispatcher settings
+  io.write("// Dispatcher configurations\n")
+  io.write("#define TIMEBASE_CLOCK_AUTO 0\n")
+  io.write("#define TIMEBASE_CLOCK_CPUTIMER -1\n")
+  io.write("#define TIMEBASE_CLOCK_PWM -2\n")
+  io.write("\n")
+  io.write("#define TIMEBASE_TRIGGER_AUTO 0\n")
+  io.write("#define TIMEBASE_TRIGGER_ADC -1\n")
+  io.write("\n")
+  if Target.Variables.timeBaseClk == 2 then 
+    io.write("#define TIMEBASE_CLOCK TIMEBASE_CLOCK_CPUTIMER\n")
+    io.write("#define TIMEBASE_CLOCK_RESOURCE " .. Target.Variables.timeBaseTriggerResourceAdcCpuTimer .."\n")
+    
+    --[[
+    should check to see if achievable given clock rate
+    ]]
+    
+    if Target.Variables.timeBaseTrigger == 1 then
+    	io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_AUTO\n")
+    elseif Target.Variables.timeBaseTrigger == 2 then
+    	io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_ADC\n")
+    	io.write("#define TIMEBASE_TRIGGER_RESOURCE " .. Target.Variables.timeBaseTriggerResource .."\n")
+    	local adcConf = Registry.AdcConfigs[Target.Variables.timeBaseTriggerResource]
+    	if adcConf == nil then
+    		return string.format("ADC%i not configured and therefore not available as time base trigger.", Target.Variables.timeBaseTriggerResource)
+    	end
+    	local lastsoc = adcConf['lastsoc']
+    	if lastsoc == nil then
+    		return "Unable to determine which SOC shall trigger interrupt."
+    	end
+    end    
+  
+  elseif Target.Variables.timeBaseClk == 3 then 
+    io.write("#define TIMEBASE_CLOCK TIMEBASE_CLOCK_PWM\n")
+    io.write("#define TIMEBASE_CLOCK_RESOURCE " .. Target.Variables.timeBaseTriggerResourceAdcEPwm .."\n")
+    local conf = Registry.PwmOutConfigs[Target.Variables.timeBaseTriggerResourceAdcEPwm]
+    if conf == nil then
+    	return string.format("PWM%i not configured and therefore not available as time base clock.", Target.Variables.timeBaseTriggerResourceAdc)
+    end
+    local prd = conf["period"]
+    local pwmClkHz = Target.Variables.sysClkHz/4/prd
+    local socprd = math.min(math.floor(1/Target.Variables.SAMPLE_TIME/pwmClkHz), 3)
+    
+    if not (pwmClkHz * socprd == 1/Target.Variables.SAMPLE_TIME) then
+    	return "PWM resource selected as time base clock cannot provide desired discretization step size."
+    end
+    
+    if Target.Variables.timeBaseTrigger == 1 then
+    	io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_AUTO\n")
+    elseif Target.Variables.timeBaseTrigger == 2 then
+    	io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_ADC\n")
+    	io.write("#define TIMEBASE_TRIGGER_RESOURCE " .. Target.Variables.timeBaseTriggerResource .."\n")
+    	local adcConf = Registry.AdcConfigs[Target.Variables.timeBaseTriggerResource]
+    	if adcConf == nil then
+    		return string.format("ADC%i not configured and therefore not available as time base trigger.", Target.Variables.timeBaseTriggerResource)
+    	end
+    	local lastsoc = adcConf['lastsoc']
+    	if lastsoc == nil then
+    		return "Unable to determine which SOC shall trigger interrupt."
+    	end
+    end    
+  else 
+    io.write("#define TIMEBASE_CLOCK TIMEBASE_CLOCK_AUTO\n")
+    io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_AUTO\n")
+  end
+  
+  io.close(file)
+
+  copy_file(Target.Variables.BUILD_ROOT .. "/settings.tmp", Target.Variables.BUILD_ROOT .. "/settings.inc")
+  os.remove(Target.Variables.BUILD_ROOT .. "/settings.tmp")
+  
+  
+  return {
+     Declarations = Declarations,
+     PreInitCode = PreInitCode,
+     PostInitCode = PostInitCode,
+     TerminateCode = TerminateCode,
+     Include = Include,
+     Resources = Resources
+  }
+end
+
+return Coder

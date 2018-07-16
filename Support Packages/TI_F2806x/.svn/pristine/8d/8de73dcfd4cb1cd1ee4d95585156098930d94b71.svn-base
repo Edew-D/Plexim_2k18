@@ -1,0 +1,721 @@
+Plecs {
+  Name          "Target28069-Blink"
+  Version       "4.2"
+  CircuitModel  "ContStateSpace"
+  StartTime     "0.0"
+  StopTime      "1.0"
+  Timeout       ""
+  Solver        "dopri"
+  MaxStep       "1e-3"
+  InitStep      "-1"
+  FixedStep     "1e-3"
+  Refine        "1"
+  ZCStepSize    "1e-9"
+  RelTol        "1e-3"
+  AbsTol        "-1"
+  TurnOnThreshold "0"
+  SyncFixedStepTasks "2"
+  UseSingleCommonBaseRate "2"
+  LossVariableLimitExceededMsg "3"
+  NegativeSwitchLossMsg "3"
+  DivisionByZeroMsg "3"
+  StiffnessDetectionMsg "2"
+  MaxConsecutiveZCs "1000"
+  AlgebraicLoopWithStateMachineMsg "2"
+  AssertionAction "1"
+  InitializationCommands "Ts_plant = 5e-6;\nTs_controller = 100e-6;"
+  InitialState  "1"
+  SystemState   ""
+  CodeGenParameterInlining "2"
+  CodeGenInliningExceptions "AAAACwAAAAAA"
+  CodeGenFloatingPointFormat "2"
+  CodeGenIntegerWordSize "32"
+  CodeGenAbsTimeUsageMsg "3"
+  CodeGenBaseName ""
+  CodeGenOutputDir ""
+  CodeGenExtraOpts ""
+  CodeGenTarget "TI28069 (Lua)"
+  CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAoAAAASA"
+"HUAcwBlAEkAbgB0AE8AcwBjAAAAAgAxAAAALgB0AGkAbQBlAEIAYQBzAGUAVAByAGkAZwBnAGUAcg"
+"BSAGUAcwBvAHUAcgBjAGUAAAACADEAAAAeAHQAaQBtAGUAQgBhAHMAZQBUAHIAaQBnAGcAZQByAAA"
+"AAgAxAAAAJgB0AGkAbQBlAEIAYQBzAGUAQwBsAGsAUgBlAHMAbwB1AHIAYwBlAAAAAgAxAAAAFgB0"
+"AGkAbQBlAEIAYQBzAGUAQwBsAGsAAAACADEAAAAOAHQAYQBzAGsAMgBIAHoAAAAGADEAMAAwAAAAE"
+"ABzAHkAcwBDAGwAawBIAHoAAAAQADkAMAAwADAAMAAwADAAMAAAABAAZQB4AHQAQwBsAGsASAB6AA"
+"AAEAAyADAAMAAwADAAMAAwADAAAAAgAGQATwB1AHQAUABzAEUAbgBhAGIAbABlAEcAUABJAE8AAAA"
+"EADIANwAAAAQAVABzAAAAGgBUAHMAXwBjAG8AbgB0AHIAbwBsAGwAZQBy"
+  ExtendedMatrixPrecision "1"
+  MatrixSignificanceCheck "2"
+  EnableStateSpaceSplitting "2"
+  DisplayStateSpaceSplitting "1"
+  DiscretizationMethod "2"
+  ExternalModeSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAYAAAAYAF"
+"QAcgBpAGcAZwBlAHIAVgBhAGwAdQBlAAAAAgAwAAAAGABUAHIAaQBnAGcAZQByAEQAZQBsAGEAeQA"
+"AAAIAMAAAABYAUwBlAG4AcwBpAHQAaQB2AGkAdAB5AAAAAgAwAAAAFgBSAGUAZgByAGUAcwBoAFIA"
+"YQB0AGUAAAAEADIAMAAAABQATgB1AG0AUwBhAG0AcABsAGUAcwAAAAgAOAAxADkAMgAAABQARABlA"
+"GMAaQBtAGEAdABpAG8AbgAAAAIAMQ=="
+  AlgebraicLoopMethod "1"
+  AlgebraicLoopTolerance "1e-6"
+  Schematic {
+    Location      [723, 477; 1065, 664]
+    ZoomFactor    1
+    SliderPosition [0, 0]
+    ShowBrowser   off
+    BrowserWidth  100
+    Component {
+      Type          Subsystem
+      Name          "Controls"
+      Show          on
+      Position      [175, 75]
+      Direction     up
+      Flipped       off
+      Frame         [-95, -25; 95, 25]
+      LabelPosition [0, 28]
+      LabelAlign    up
+      TreatAsAtomicUnit on
+      SampleTime    "-1"
+      CodeGenEnable on
+      CodeGenSampleTime "Ts_controller"
+      CodeGenTarget "TI28069 (Lua)"
+      CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAoAA"
+"AASAHUAcwBlAEkAbgB0AE8AcwBjAAAAAgAxAAAALgB0AGkAbQBlAEIAYQBzAGUAVAByAGkAZwBnAG"
+"UAcgBSAGUAcwBvAHUAcgBjAGUAAAACADEAAAAeAHQAaQBtAGUAQgBhAHMAZQBUAHIAaQBnAGcAZQB"
+"yAAAAAgAxAAAAJgB0AGkAbQBlAEIAYQBzAGUAQwBsAGsAUgBlAHMAbwB1AHIAYwBlAAAAAgAxAAAA"
+"FgB0AGkAbQBlAEIAYQBzAGUAQwBsAGsAAAACADMAAAAOAHQAYQBzAGsAMgBIAHoAAAAGADEAMAAwA"
+"AAAEABzAHkAcwBDAGwAawBIAHoAAAAQADkAMAAwADAAMAAwADAAMAAAABAAZQB4AHQAQwBsAGsASA"
+"B6AAAAEAAyADAAMAAwADAAMAAwADAAAAAgAGQATwB1AHQAUABzAEUAbgBhAGIAbABlAEcAUABJAE8"
+"AAAAEADIANwAAAAQAVABzAAAAGgBUAHMAXwBjAG8AbgB0AHIAbwBsAGwAZQBy"
+      ExternalModeSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAYAAA"
+"AYAFQAcgBpAGcAZwBlAHIAVgBhAGwAdQBlAAAAAgAwAAAAGABUAHIAaQBnAGcAZQByAEQAZQBsAGE"
+"AeQAAAAIAMAAAABYAUwBlAG4AcwBpAHQAaQB2AGkAdAB5AAAAAgAwAAAAFgBSAGUAZgByAGUAcwBo"
+"AFIAYQB0AGUAAAAEADIAMAAAABQATgB1AG0AUwBhAG0AcABsAGUAcwAAAAgAOAAxADkAMgAAABQAR"
+"ABlAGMAaQBtAGEAdABpAG8AbgAAAAIAMQ=="
+      MaskIconFrame on
+      MaskIconOpaque off
+      MaskIconRotates on
+      Terminal {
+        Type          Output
+        Position      [99, -15]
+        Direction     right
+        Index         "1"
+      }
+      Terminal {
+        Type          Output
+        Position      [99, -5]
+        Direction     right
+        Index         "2"
+      }
+      Terminal {
+        Type          Input
+        Position      [-95, -15]
+        Direction     left
+        Index         "1"
+      }
+      Terminal {
+        Type          Output
+        Position      [99, 5]
+        Direction     right
+        Index         "3"
+      }
+      Schematic {
+        Location      [681, 423; 1173, 1070]
+        ZoomFactor    1
+        SliderPosition [0, 0]
+        ShowBrowser   off
+        BrowserWidth  100
+        Component {
+          Type          Delay
+          Name          "Delay1"
+          Show          off
+          Position      [105, 100]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "N"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "X0"
+            Value         "0"
+            Show          off
+          }
+          Parameter {
+            Variable      "Ts"
+            Value         "floor(0.5/Ts_controller)*Ts_controller"
+            Show          off
+          }
+        }
+        Component {
+          Type          LogicalOperator
+          Name          "Logical\nOperator1"
+          Show          off
+          Position      [155, 100]
+          Direction     up
+          Flipped       off
+          Parameter {
+            Variable      "Operator"
+            Value         "6"
+            Show          off
+          }
+          Parameter {
+            Variable      "Inputs"
+            Value         "1"
+            Show          off
+          }
+        }
+        Component {
+          Type          CScript
+          Name          "C-Script"
+          Show          on
+          Position      [250, 65]
+          Direction     up
+          Flipped       off
+          Parameter {
+            Variable      "NumInputs"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "NumOutputs"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "NumContStates"
+            Value         "0"
+            Show          off
+          }
+          Parameter {
+            Variable      "NumDiscStates"
+            Value         "0"
+            Show          off
+          }
+          Parameter {
+            Variable      "NumZCSignals"
+            Value         "0"
+            Show          off
+          }
+          Parameter {
+            Variable      "DirectFeedthrough"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "Ts"
+            Value         "1e-3"
+            Show          off
+          }
+          Parameter {
+            Variable      "Parameters"
+            Value         ""
+            Show          off
+          }
+          Parameter {
+            Variable      "LangStandard"
+            Value         "2"
+            Show          off
+          }
+          Parameter {
+            Variable      "GnuExtensions"
+            Value         "2"
+            Show          off
+          }
+          Parameter {
+            Variable      "RuntimeCheck"
+            Value         "2"
+            Show          off
+          }
+          Parameter {
+            Variable      "Declarations"
+            Value         ""
+            Show          off
+          }
+          Parameter {
+            Variable      "StartFcn"
+            Value         ""
+            Show          off
+          }
+          Parameter {
+            Variable      "OutputFcn"
+            Value         "Output(0)=Input(0);"
+            Show          off
+          }
+          Parameter {
+            Variable      "UpdateFcn"
+            Value         ""
+            Show          off
+          }
+          Parameter {
+            Variable      "DerivativeFcn"
+            Value         ""
+            Show          off
+          }
+          Parameter {
+            Variable      "TerminateFcn"
+            Value         ""
+            Show          off
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "Digital Out (LED)"
+          Show          on
+          Position      [330, 65]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "1"
+          CodeFcnLang   "2"          CodeFcn       "local Require = {}\nlocal "
+"InitCode = {}\nlocal OutputCode = {}\n\nfor i = 1, #Block.InputSignal[1] do\n"
+"  local instance = Target.Coder.RegisterDigitalOutBlock()\n  local gpio = Blo"
+"ck.Mask.gpio[i]\n\n  local error = Target.Coder.RequireGpio(gpio);\n  if(erro"
+"r ~= nil) then\n  \t\treturn  string.format(\"Unable to register GPIO%i: %s\""
+", gpio, error)\n  end\n  \n  \n  table.insert(InitCode, string.format(\"HAL_s"
+"etupDigitalOut(%i, %i, false);\", instance, gpio))\n  table.insert(OutputCode"
+", string.format(\"HAL_setDigitalOut(%i, %s);\", instance, Block.InputSignal[1"
+"][i]))\nend\n\nreturn {\n  Require = Require,\n  Include = \"hal.h\",\n  Init"
+"Code = InitCode,\n  OutputCode = OutputCode,\n}"
+          MaskType      "Digital Out"
+          MaskDisplay   "text(['Digital' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(gpio) || ~isvector(gpio) ...\n   || any(fl"
+"oor(gpio) ~= gpio) || any(gpio < 0),\n  error('\"Digital output GPIO resource"
+"s(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "gpio"
+            Prompt        "Digital output GPIO resource(s)"
+            Type          FreeText
+            Value         "[34]"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [1449, 864; 2517, 1044]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(gpio)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(gpio)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "Digital Out (LED)1"
+          Show          on
+          Position      [330, 235]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "2"
+          CodeFcnLang   "2"          CodeFcn       "local Require = {}\nlocal "
+"InitCode = {}\nlocal OutputCode = {}\n\nfor i = 1, #Block.InputSignal[1] do\n"
+"  local instance = Target.Coder.RegisterDigitalOutBlock()\n  local gpio = Blo"
+"ck.Mask.gpio[i]\n\n  local error = Target.Coder.RequireGpio(gpio);\n  if(erro"
+"r ~= nil) then\n  \t\treturn  string.format(\"Unable to register GPIO%i: %s\""
+", gpio, error)\n  end\n  \n  \n  table.insert(InitCode, string.format(\"HAL_s"
+"etupDigitalOut(%i, %i, false);\", instance, gpio))\n  table.insert(OutputCode"
+", string.format(\"HAL_setDigitalOut(%i, %s);\", instance, Block.InputSignal[1"
+"][i]))\nend\n\nreturn {\n  Require = Require,\n  Include = \"hal.h\",\n  Init"
+"Code = InitCode,\n  OutputCode = OutputCode,\n}"
+          MaskType      "Digital Out"
+          MaskDisplay   "text(['Digital' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(gpio) || ~isvector(gpio) ...\n   || any(fl"
+"oor(gpio) ~= gpio) || any(gpio < 0),\n  error('\"Digital output GPIO resource"
+"s(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "gpio"
+            Prompt        "Digital output GPIO resource(s)"
+            Type          FreeText
+            Value         "[35]"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [1326, 236; 2457, 416]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(gpio)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(gpio)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "Digital In1"
+          Show          off
+          Position      [105, 235]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "3"
+          CodeFcnLang   "2"          CodeFcn       "local Require = {}\nlocal "
+"InitCode = {}\nlocal OutputSignal = {}\n\nfor i = 1, #Block.NumOutputSignals["
+"1] do\n  local instance = Target.Coder.RegisterDigitalInBlock()\n  local gpio"
+" = Block.Mask.gpio[i]\n\n  local error = Target.Coder.RequireGpio(gpio);\n  i"
+"f(error ~= nil) then\n  \t\treturn  string.format(\"Unable to register GPIO%i"
+": %s\", gpio, error)\n  end\n  \n  table.insert(InitCode, string.format(\"HAL"
+"_setupDigitalIn(%i, %i);\", instance, gpio))\n  table.insert(OutputSignal, st"
+"ring.format(\"HAL_getDigitalIn(%i)\", instance))   \nend\n\nreturn {\n  Requi"
+"re = Require,\n  Include = \"hal.h\",\n  InitCode = InitCode,\n  OutputSignal"
+" = { OutputSignal },\n}\n"
+          MaskType      "Digital In"
+          MaskDescription "Reads a digital input.\n\nThe output signal is 1 if"
+" the input voltage is higher than 2 Volts and 0 if it is lower than 0.8 Volts"
+". \nFor other input voltages the output signal is undefined."
+          MaskHelp      "di_rtbox.html"
+          MaskDisplay   "text(['Digital' char(10) 'In'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(gpio) || ~isvector(gpio) ...\n   || any(fl"
+"oor(gpio) ~= gpio) || any(gpio < 0),\n  error('\"Digital output GPIO resource"
+"s(s)\" must be a scalar or vector of positive or zero integers.')\nend"
+          Parameter {
+            Variable      "gpio"
+            Prompt        "Digital input GPIO resource(s)"
+            Type          FreeText
+            Value         "13"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Output
+            Position      [29, 0]
+            Direction     right
+          }
+          Schematic {
+            Location      [1387, 202; 2385, 382]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetInput
+              Name          "1"
+              Show          on
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(gpio)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Output
+              Name          "Out1"
+              Show          off
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "DataType"
+                Value         "9"
+                Show          off
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(gpio)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "1"
+              SrcTerminal   1
+              DstComponent  "Out1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "PWM Out (ePWM0)"
+          Show          on
+          Position      [335, 340]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "4"
+          CodeFcnLang   "2"          CodeFcn       "local Require = {}\nlocal "
+"InitCode = {}\nlocal OutputCode = {}\n\nfor i = 1, #Block.InputSignal[1] do\n"
+"  local pwm = Block.Mask.pwm[i]\n  local prd = Block.Mask.prd[i]\n  local dt "
+"= Block.Mask.dt[i]\n  \n  local pwmParams = {period = prd, dt = dt}\n  \n  lo"
+"cal instance, error = Target.Coder.RegisterPwmOutBlock(pwm, pwmParams)\n  if("
+"instance == nil) then\n  \t return string.format(\"Unable to register PWM%i: "
+"%s\", pwm, error)\n  end\n  \n  table.insert(InitCode, string.format(\"{\")) "
+" \n  table.insert(InitCode, string.format(\"  PWM_Params_t *params = HAL_getD"
+"efaultPwmParams(%i, %i);\", prd, dt))\n  table.insert(InitCode, string.format"
+"(\"  HAL_setupPwmOut(%i, %i, params);\", instance, pwm))  \n  table.insert(In"
+"itCode, string.format(\"}\"))\n     \n  table.insert(OutputCode, string.forma"
+"t(\"HAL_setPwmOutF(%i, %s);\", instance, Block.InputSignal[1][i]))\nend\n\nre"
+"turn {\n  Require = Require,\n  Include = \"hal.h\",\n  InitCode = InitCode,"
+"\n  OutputCode = OutputCode,\n}\n\n"
+          MaskType      "PWM Out"
+          MaskDescription "Generate a configurable PWM signal on a digital out"
+"put."
+          MaskHelp      "pwmout_rtbox.html"
+          MaskDisplay   "text(['PWM' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(pwm) || ~isvector(pwm) ...\n   || any(floo"
+"r(pwm) ~= pwm) || any(pwm < 0),\n  error('\"PWM resource(s)\" must be a scala"
+"r or vector of positive or zero integers.')\nend"
+          Parameter {
+            Variable      "pwm"
+            Prompt        "PWM resources(s)"
+            Type          FreeText
+            Value         "1"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "prd"
+            Prompt        "Period (counts)"
+            Type          FreeText
+            Value         "2250"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "dt"
+            Prompt        "Deadtime (counts)"
+            Type          FreeText
+            Value         "50"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [468, 218; 1471, 816]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [260, 80]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(pwm)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [60, 80]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(pwm)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          Constant
+          Name          "Constant"
+          Show          on
+          Position      [225, 340]
+          Direction     right
+          Flipped       off
+          Frame         [-10, -10; 10, 10]
+          LabelPosition [0, 13]
+          LabelAlign    up
+          Parameter {
+            Variable      "Value"
+            Value         "0.5"
+            Show          on
+          }
+          Parameter {
+            Variable      "DataType"
+            Value         "9"
+            Show          off
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Delay1"
+          SrcTerminal   2
+          DstComponent  "Logical\nOperator1"
+          DstTerminal   2
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "C-Script"
+          SrcTerminal   2
+          DstComponent  "Digital Out (LED)"
+          DstTerminal   1
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Logical\nOperator1"
+          SrcTerminal   1
+          Points        [190, 100; 190, 65]
+          Branch {
+            Points        [65, 65; 65, 100]
+            DstComponent  "Delay1"
+            DstTerminal   1
+          }
+          Branch {
+            DstComponent  "C-Script"
+            DstTerminal   1
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Digital In1"
+          SrcTerminal   1
+          DstComponent  "Digital Out (LED)1"
+          DstTerminal   1
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Constant"
+          SrcTerminal   1
+          DstComponent  "PWM Out (ePWM0)"
+          DstTerminal   1
+        }
+        Annotation {
+          Name          "Blinking on Launchpad"
+          Position      [100, 45]
+        } 
+      }
+    }
+  }
+}
+DemoSignature "CT5mokY/toRVdhAp53fHfMhssVoh9ucvkspZVNK+l8g="

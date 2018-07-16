@@ -1,0 +1,60 @@
+-- for prototyping missing functionality
+
+count_unique = function (t)
+    local hash = {}
+    local res = {}
+    for _,v in ipairs(t) do
+        if (not hash[v]) then
+            res[#res+1] = v 
+            hash[v] = true
+        end
+    end
+    return #res
+end
+
+-- we extract configurations from comments embedded in the generated source
+-- and create lua executable file
+file = io.open("|>BASE_NAME<|.c", "rb")
+content = file:read("*all")
+file.close()
+file = io.open("settings_inc.lua", "w")
+io.output(file)
+for p in content:gmatch("//>.-<//") do
+   if p ~= "" then io.write(p:sub(4,-4) .. "\n") end
+end
+io.close(file)
+
+-- load and run the script
+require("settings_inc")
+
+-- create meta-configuration
+file = io.open("settings.inc", "w")
+io.output(file)
+
+io.write("#define SYSCLK_HZ " .. sysClkHz .. "L\n")
+io.write("#define PLL_DIV " .. pllDiv .. "\n")
+io.write("#define CLK_SRC 0\n")
+cpuRate = 100.0/ sysClkHz * 10000000;
+io.write("#define PLX_CPU_RATE " .. cpuRate .. "L\n")
+
+io.write("#define TIMEBASE_AUTO 0\n")io.write("#define TIMEBASE_CPUTIMER -1\n")io.write("#define TIMEBASE_PWM -2\n")io.write("#define TIMEBASE_ADC -3\n")
+
+if timeBase == 2 then io.write("#define TIMEBASE TIMEBASE_CPUTIMER\n")
+elseif timeBase == 3 then io.write("#define TIMEBASE TIMEBASE_PWM\n")
+elseif timeBase == 4 then io.write("#define TIMEBASE TIMEBASE_ADC\n")
+else io.write("#define TIMEBASE TIMEBASE_AUTO\n")
+end
+
+if(count_unique(doutUsed) ~= #doutUsed) then error("Dout resources not unique.") end
+io.write("#define NUM_DOUT " .. #doutUsed .. "\n")
+
+if(count_unique(dinUsed) ~= #dinUsed) then error("Din resources not unique.") end
+io.write("#define NUM_DIN " .. #dinUsed .. "\n")
+
+if(count_unique(adcUsed) ~= #adcUsed) then error("ADC resources not unique.") end
+io.write("#define NUM_ADC " .. #adcUsed .. "\n")
+
+if(count_unique(pwmUsed) ~= #pwmUsed) then error("ADC resources not unique.") end
+io.write("#define NUM_PWM " .. #pwmUsed .. "\n")
+
+io.close(file)

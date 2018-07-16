@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TargetSupportPackage
+  xmlns="http://www.plexim.com/xml/codegentarget/"
+  version="1.0">
+<TargetFamily>TI F2806x</TargetFamily>
+
+ <BlockLibrary file="TI2806x_Lib">TI2806x Target</BlockLibrary>
+
+ <Target>
+  <Name>TI28069</Name>
+  <Version>0.1</Version>
+  <Parameters>
+   <LineEdit prompt="System clock frequency (SYSCLK) [Hz]" variable="sysClkHz" default="90000000" eval="true" />
+   <CheckBox prompt="Use internal oscillator" variable="useIntOsc" default="1" />
+   <LineEdit prompt="External clock frequency" variable="extClkHz" default="20000000" eval="true" />
+   <ComboBox prompt="Time base clock" variable="timeBaseClk" default="1">
+      <Item>Auto</Item>
+      <Item>CpuTimer</Item>
+      <Item>ePWM</Item>
+   </ComboBox>
+   <LineEdit prompt="Cpu Timer" variable="timeBaseTriggerResourceAdcCpuTimer" default="1" eval="true" />
+   <LineEdit prompt="ePWM" variable="timeBaseTriggerResourceAdcEPwm" default="1" eval="true" />
+   <ComboBox prompt="Time base trigger" variable="timeBaseTrigger" default="1">
+      <Item>Auto</Item>
+      <Item>ADC</Item>
+   </ComboBox>
+   <LineEdit prompt="ADC" variable="timeBaseTriggerResource" default="1" eval="true" />
+   <LineEdit prompt="Infrastructure task frequency [Hz]" variable="task2Hz" default="100" eval="true" />
+   <LineEdit prompt="Powerstage enable GPIO" variable="dOutPsEnableGPIO" default="27" eval="true" />
+   
+   <CheckBox prompt="Only generate code" variable="genOnly" default="1" />
+   <LineEdit prompt="Install directory" variable="installDir" default="" eval="true" />
+   
+  </Parameters>
+  
+  <DialogCallback><![CDATA[
+  
+  
+if Dialog:get('useIntOsc') ~= '0' then
+ Dialog:set('extClkHz', 'Visible', false)
+else
+ Dialog:set('extClkHz', 'Visible', true)
+end
+
+if Dialog:get('timeBaseClk') == '1' then
+ Dialog:set('timeBaseTriggerResourceAdcCpuTimer', 'Visible', false)
+ Dialog:set('timeBaseTriggerResourceAdcEPwm', 'Visible', false)
+elseif Dialog:get('timeBaseClk') == '2' then
+ Dialog:set('timeBaseTriggerResourceAdcCpuTimer', 'Visible', true)
+ Dialog:set('timeBaseTriggerResourceAdcEPwm', 'Visible', false)
+else
+ Dialog:set('timeBaseTriggerResourceAdcCpuTimer', 'Visible', false)
+ Dialog:set('timeBaseTriggerResourceAdcEPwm', 'Visible', true)	
+end
+
+if Dialog:get('timeBaseTrigger') == '1' then
+ Dialog:set('timeBaseTriggerResource', 'Visible', false)
+else
+ Dialog:set('timeBaseTriggerResource', 'Visible', true)
+end
+
+]]>
+  </DialogCallback>
+
+ 
+  <CodeFunction lang="Lua"><![CDATA[
+_G.package.path = Target.Variables.TARGET_ROOT .. "/lua/?.lua"
+return require "Coder"
+]]>
+  </CodeFunction>
+  <BuildSteps> 
+  
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/gensrcs.mk</Source>
+      <Destination>gensrcs.mk</Destination>
+      <Replace>
+        <Before><![CDATA[|>SOURCE_FILES<|]]></Before>
+        <After>$(SOURCE_FILES)</After>
+      </Replace>
+    </CopyFile>
+    
+    <Make>
+     <Timeout></Timeout>
+     <Makefile>$(BASE_NAME).mk</Makefile>
+    </Make>
+  </BuildSteps>
+ </Target>
+</TargetSupportPackage>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TargetSupportPackage
+  xmlns="http://www.plexim.com/xml/codegentarget/"
+  version="1.0">
+<TargetFamily>TI F2806x</TargetFamily>
+
+ <BlockLibrary file="TI2806x_Lib">TI2806x Target</BlockLibrary>
+
+ <Target>
+  <Name>TI28069</Name>
+  <Version>0.1</Version>
+  <Parameters>
+    <LineEdit prompt="System Clock Frequency (SYSCLK)" variable="sysClkHz" default="90000000" eval="true" />
+    <CheckBox prompt="Use internal Oscillator" variable="useIntOsc" default="1" />
+    <LineEdit prompt="External Clock Frequency" variable="extClkHz" default="20000000" eval="true" />
+   <ComboBox prompt="Time Base" variable="timeBase" default="1">
+      <Item>Auto</Item>
+      <Item>CpuTimer</Item>
+      <Item>ePWM</Item>
+      <Item>ADC</Item>
+    </ComboBox>
+    <LineEdit prompt="Infrastructure Task Frequency" variable="task2Hz" default="100" eval="true" />
+    <LineEdit prompt="Powerstage Enable GPIO" variable="dOutPsEnableGPIO" default="27" eval="true" />
+  </Parameters>
+  <CodeFunction>
+<![CDATA[
+Provide("Digital output", 0, 7);
+Provide("Digital input", 0, 7);
+Provide("Analog input", 0, 15);
+Provide("PWM output", 0, 5);
+
+if(!TargetRealData(TARGET_VAR_useIntOsc, 0))
+{
+    SetErrorStatus("Only internal oscillator supported.");
+    return;
+}
+
+// internal oscillator config
+double intOscHz = 10000000.0;
+double sysClk = TargetRealData(TARGET_VAR_sysClkHz, 0);
+double pllRatio = TargetRealData(TARGET_VAR_sysClkHz, 0) / intOscHz;
+int pllDiv = (int)(2*pllRatio);
+
+if((double)(pllDiv)/2.0*intOscHz != TargetRealData(TARGET_VAR_sysClkHz, 0))
+{
+    SetErrorStatus("Unable to configure internal oscillator.");
+    return;	
+}
+
+// save configurations for post processing
+Print(PreInitCode, "//>sysClkHz=%i<//\n", (int)sysClk);
+Print(PreInitCode, "//>pllDiv=%i<//\n", pllDiv);
+Print(PreInitCode, "//>timeBase=%i<//\n", (int)TargetRealData(TARGET_VAR_timeBase, 0));
+
+Print(PreInitCode, "//>doutUsed={}<//\n");
+Print(PreInitCode, "//>dinUsed={}<//\n");
+Print(PreInitCode, "//>pwmUsed={}<//\n");
+Print(PreInitCode, "//>adcUsed={}<//\n");
+
+]]>
+  
+</CodeFunction>
+  <BuildSteps>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/includes.h</Source>
+      <Destination>includes.h</Destination>
+     </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/main.c</Source>
+      <Destination>main.c</Destination>
+     </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/calib.h</Source>
+      <Destination>calib.h</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/calib.c</Source>
+      <Destination>calib.c</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pu.h</Source>
+      <Destination>pu.h</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pu.c</Source>
+      <Destination>pu.c</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pil_ctrl.h</Source>
+      <Destination>pil_ctrl.h</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pil_ctrl.c</Source>
+      <Destination>pil_ctrl.c</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pil_symbols_c.c</Source>
+      <Destination>pil_symbols_c.c</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pil_symbols_p.c</Source>
+      <Destination>pil_symbols_p.c</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/F28069.cmd</Source>
+      <Destination>F28069.cmd</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/F2806x_Headers_nonBIOS.cmd</Source>
+      <Destination>F2806x_Headers_nonBIOS.cmd</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/main.h</Source>
+      <Destination>main.h</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/settings.h</Source>
+      <Destination>settings_cg.h</Destination>
+      <Replace>
+        <Before><![CDATA[|>BASE_NAME<|]]></Before>
+        <After>$(BASE_NAME)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>TASK2_HZ<|]]></Before>
+        <After>$(task2Hz)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>DOUT_PS_ENABLE_GPIO<|]]></Before>
+        <After>$(dOutPsEnableGPIO)</After>
+      </Replace>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/main.lkf</Source>
+      <Destination>$(BASE_NAME).lkf</Destination>
+      <Replace>
+        <Before><![CDATA[|>TARGET_ROOT<|]]></Before>
+        <After>$(TARGET_ROOT)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>CG_PATH<|]]></Before>
+        <After>$(TARGET_ROOT)/bin/$(HOST_OS)/c2000</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>BASE_NAME<|]]></Before>
+        <After>$(BASE_NAME)</After>
+      </Replace>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/main.mk</Source>
+      <Destination>$(BASE_NAME).mk</Destination>
+      <Replace>
+        <Before><![CDATA[|>TARGET_ROOT<|]]></Before>
+        <After>$(TARGET_ROOT)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>PPT_PATH<|]]></Before>
+        <After>$(TARGET_ROOT)/bin/$(HOST_OS)/pil</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>CG_PATH<|]]></Before>
+        <After>$(TARGET_ROOT)/bin/$(HOST_OS)/c2000</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>BASE_NAME<|]]></Before>
+        <After>$(BASE_NAME)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>SOURCE_FILES<|]]></Before>
+        <After>$(SOURCE_FILES)</After>
+      </Replace>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/settings.lua</Source>
+      <Destination>settings.lua</Destination>
+      <Replace>
+        <Before><![CDATA[|>BASE_NAME<|]]></Before>
+        <After>$(BASE_NAME)</After>
+      </Replace>
+    </CopyFile>
+
+    <Execute>
+      <Command>$(TARGET_ROOT)/bin/$(HOST_OS)/lua/lua53</Command>
+      <Argument>settings.lua</Argument>
+    </Execute>
+
+    <Make>
+     <Timeout></Timeout>
+     <Makefile>$(BASE_NAME).mk</Makefile>
+    </Make>
+  </BuildSteps>
+ </Target>
+</TargetSupportPackage>

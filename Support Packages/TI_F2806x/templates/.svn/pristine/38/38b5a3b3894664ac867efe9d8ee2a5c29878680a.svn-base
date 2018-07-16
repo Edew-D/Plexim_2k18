@@ -1,0 +1,155 @@
+-- for prototyping missing coder functionality
+
+my_error = function (msg)
+  print (msg)
+  os.exit(-1)
+end
+
+--[[ 
+  extract configurations from comments embedded in the generated source
+  ]]
+extract_script = function (src, dest)
+  local file = io.open(src, "rb")
+  content = file:read("*all")
+  file.close()
+  file = io.open(dest, "w")
+  io.output(file)
+  for p in content:gmatch("//>.-<//") do
+    if p ~= "" then io.write(p:sub(4,-4) .. "\n") end
+  end
+  io.close(file)
+end
+
+has_no_duplicates = function (t)
+    local hash = {}
+    local res = {}
+    for _,v in ipairs(t) do
+        if (not hash[v]) then
+            res[#res+1] = v 
+            hash[v] = true
+        end
+    end
+    return #res == #t
+end
+
+update_file_if_different = function (src, dest)
+  local file = io.open(src, "rb")
+  local src_content = file:read("*all")
+  io.close(file)
+
+  file = io.open(dest, "rb")
+  if(file == nil) then
+    dest_content = nil
+  else
+    dest_content = file:read("*all")
+    io.close(file)
+  end
+  
+  if not (src_content == dest_content) then
+    file = io.open(dest, "w")
+    io.output(file)
+    io.write(src_content)
+    file.close() 
+  end
+end
+
+extract_script ("|>BASE_NAME<|.c", "settings_inc.lua")
+require("settings_inc")
+
+--[[ 
+  create meta-configuration (inc) file to be included by embedded code
+  ]]
+local file = io.open("settings.tmp", "w")
+io.output(file)
+
+-- clock settings
+io.write("// Clock configurations\n")
+io.write("#define SYSCLK_HZ " .. sysClkHz .. "L\n")
+io.write("#define PLL_DIV " .. pllDiv .. "\n")
+io.write("#define CLK_SRC 0\n")
+cpuRate = 100.0/ sysClkHz * 10000000;
+io.write("#define PLX_CPU_RATE " .. cpuRate .. "L\n")
+
+-- io object allocation
+io.write("// HAL configurations\n")
+if not has_no_duplicates(doutUsed) then my_error("Dout resources not unique.") end
+io.write("#define NUM_DOUT " .. #doutUsed .. "\n")
+for i,v in ipairs(doutUsed) do
+  io.write("#define DOUT_" .. v .. "  ".. i-1 .. "\n")
+end
+
+if not has_no_duplicates(dinUsed) then my_error("Din resources not unique.") end
+io.write("#define NUM_DIN " .. #dinUsed .. "\n")
+for i,v in ipairs(dinUsed) do
+  io.write("#define DIN_" .. v .. "  ".. i-1 .. "\n")
+end
+
+if not has_no_duplicates(adcUsed) then my_error("ADC resources not unique.") end
+io.write("#define NUM_ADC " .. #adcUsed .. "\n")
+
+if not has_no_duplicates(pwmUsed) then my_error("PWM resources not unique.") end
+io.write("#define NUM_PWM " .. #pwmUsed .. "\n")
+for i,v in ipairs(pwmUsed) do
+  io.write("#define PWM_" .. v .. "  ".. i-1 .. "\n")
+end
+
+
+-- dispatcher configuration
+io.write("// Dispatcher configurations\n")
+io.write("#define TIMEBASE_CLOCK_AUTO 0\n")io.write("#define TIMEBASE_CLOCK_CPUTIMER -1\n")io.write("#define TIMEBASE_CLOCK_PWM -2\n")
+
+io.write("#define TIMEBASE_TRIGGER_AUTO 0\n")
+io.write("#define TIMEBASE_TRIGGER_ADC -1\n")
+
+if timeBaseClk == 2 then 
+    io.write("#define TIMEBASE_CLOCK TIMEBASE_CLOCK_CPUTIMER\n")
+    io.write("#define TIMEBASE_CLOCK_RESOURCE " .. timeBaseClkResource .."\n")
+    
+    --[[
+    should check to see if achievable given clock rate
+    ]]
+    
+    if timeBaseTrigger == 1 then
+      io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_AUTO\n")
+    elseif timeBaseTrigger == 2 then
+      conf = pwmConfig[timeBaseTriggerResource]
+      if not conf then
+        my_error("ADC resource selected as time base trigger has not been configured.")
+      end 
+      io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_ADC\n")
+    end
+
+elseif timeBaseClk == 3 then 
+    conf = pwmConfig[timeBaseClkResource]
+    if not conf then
+        my_error("PWM resource selected as time base clock has not been configured.")
+    end
+    io.write("#define TIMEBASE_CLOCK TIMEBASE_CLOCK_PWM\n")
+    io.write("#define TIMEBASE_CLOCK_RESOURCE " .. timeBaseClkResource .."\n")
+    
+    -- check to see if sample time is achievable with period configured
+    -- assumes up/down counting
+    prd = conf["prd"]
+    pwmClkHz = sysClkHz/4/prd    socprd = math.min(math.floor(1/Ts/pwmClkHz), 3)
+    
+    if not (pwmClkHz * socprd == 1/Ts) then
+      my_error("PWM resource selected as time base clock cannot provide discretization step size.")
+    end
+    
+    if timeBaseTrigger == 1 then
+      io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_AUTO\n")
+    elseif timeBaseTrigger == 2 then
+      conf = pwmConfig[timeBaseTriggerResource]
+      if not conf then
+        my_error("ADC resource selected as time base trigger has not been configured.")
+      end 
+      io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_ADC\n")
+    end
+else 
+    io.write("#define TIMEBASE_CLOCK TIMEBASE_CLOCK_AUTO\n")
+    io.write("#define TIMEBASE_TRIGGER TIMEBASE_TRIGGER_AUTO\n")
+end
+
+io.close(file)
+
+update_file_if_different("settings.tmp", "settings.inc")

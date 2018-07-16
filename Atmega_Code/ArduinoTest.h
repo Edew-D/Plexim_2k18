@@ -1,7 +1,7 @@
 /*
  * Header file for: ArduinoTest
  * Generated with : PLECS 4.2.0-DEV
- * Generated on   : 9 Jul 2018 14:24:49
+ * Generated on   : 12 Jul 2018 11:03:16
  */
 #ifndef PLECS_HEADER_ArduinoTest_h_
 #define PLECS_HEADER_ArduinoTest_h_
@@ -21,6 +21,14 @@ extern const char * ArduinoTest_errorStatus;
 
 /* Model sample time */
 extern const double ArduinoTest_sampleTime;
+
+
+/*
+ * Model states */
+typedef struct
+{
+} ArduinoTest_ModelStates;
+extern ArduinoTest_ModelStates ArduinoTest_X;
 
 
 /* Entry point functions */

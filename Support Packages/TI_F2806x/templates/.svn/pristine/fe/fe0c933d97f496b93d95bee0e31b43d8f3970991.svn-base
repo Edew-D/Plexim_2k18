@@ -1,0 +1,20 @@
+/*
+ * settings.h
+ *
+ *  Created on: Dec 21, 2016
+ *      Author: beat
+ */
+
+#ifndef SETTINGS_H_
+#define SETTINGS_H_
+
+#include "|>BASE_NAME<|.h"
+
+#define TASK2_HZ |>TASK2_HZ<|
+#define DOUT_PS_ENABLE_GPIO |>DOUT_PS_ENABLE_GPIO<|
+
+#define CONTROL_TS |>BASE_NAME<|_sampleTime
+#define CONTROL_STEP |>BASE_NAME<|_step()
+#define CONTROL_INIT |>BASE_NAME<|_initialize(0.0)
+
+#endif /* SETTINGS_H_ */

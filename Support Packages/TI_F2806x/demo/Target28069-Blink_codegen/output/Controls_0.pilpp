@@ -1,0 +1,60 @@
+
+
+
+
+ 
+
+struct CScriptStruct
+{
+   int numInputTerminals;
+   int numOutputTerminals;
+   int* numInputSignals;
+   int* numOutputSignals;
+   int numContStates;
+   int numDiscStates;
+   int numZCSignals;
+   int numSampleTimes;
+   int numParameters;
+   int isMajorTimeStep;
+   double time;
+   const double ***inputs;
+   double ***outputs;
+   double *contStates;
+   double *contDerivs;
+   double *discStates;
+   double *zCSignals;
+   const int *paramNumDims;
+   const int **paramDims;
+   const int *paramNumElements;
+   const double **paramRealData;
+   const char **paramStringData;
+   const char * const *sampleHits;
+   const double *sampleTimePeriods;
+   const double *sampleTimeOffsets;
+   double *nextSampleHit;
+   const char** errorStatus;
+   const char** warningStatus;
+   const char** rangeErrorMsg;
+   int* rangeErrorLine;
+};
+
+void Controls_0_cScriptStart(const struct CScriptStruct *cScriptStruct)
+{
+}
+
+void Controls_0_cScriptOutput(const struct CScriptStruct *cScriptStruct)
+{
+   (*cScriptStruct->outputs[0][0])=(*cScriptStruct->inputs[0][0]);
+}
+
+void Controls_0_cScriptUpdate(const struct CScriptStruct *cScriptStruct)
+{
+}
+
+void Controls_0_cScriptDerivative(const struct CScriptStruct *cScriptStruct)
+{
+}
+
+void Controls_0_cScriptTerminate(const struct CScriptStruct *cScriptStruct)
+{
+}

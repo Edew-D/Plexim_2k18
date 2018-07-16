@@ -1,0 +1,67 @@
+/*
+   Copyright (c) 2014-2016 by Plexim GmbH
+   All rights reserved.
+
+   A free license is granted to anyone to use this software for any legal
+   non safety-critical purpose, including commercial applications, provided
+   that:
+   1) IT IS NOT USED TO DIRECTLY OR INDIRECTLY COMPETE WITH PLEXIM, and
+   2) THIS COPYRIGHT NOTICE IS PRESERVED in its entirety.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+ */
+
+
+#include "includes.h"
+
+#ifndef HAL_H_
+#define HAL_H_
+
+#include "dio.h"
+#include "ain.h"
+#include "pwm.h"
+#include "dio.h"
+#include "qep.h"
+
+#include "hal_impl.h"
+
+extern void HAL_sinit();
+
+extern void HAL_configure();
+
+extern void HAL_setupDigitalOut(uint16_t aChannel, uint16_t aResourceNumber, bool aInitialValue);
+extern void HAL_setupDigitalIn(uint16_t aChannel, uint16_t aResourceNumber);
+
+extern AIN_AdcParams_t* HAL_getDefaultAdcParams();
+extern void HAL_setupAdc(uint16_t aAdc, const AIN_AdcParams_t *aInParams);
+extern AIN_ChannelParams_t* HAL_getDefaultAinChannelParams();
+extern void HAL_setupAnalogIn(uint16_t aAdc, uint16_t aChannel, uint16_t aResourceNumber,  const AIN_ChannelParams_t *aParams);
+extern void HAL_setupAnalogInF(uint16_t aAdc, uint16_t aChannel, uint16_t aResourceNumber, const AIN_ChannelParams_t *aParams, float scale, float offset);
+
+extern PWM_Params_t* HAL_getDefaultPwmParams(uint16_t aPeriodCounts, uint16_t aDeadtimeCounts);
+extern void HAL_setupPwmOut(uint16_t aChannel, uint16_t aResourceNumber, const PWM_Params_t *aPwmParams);
+extern void HAL_setupQep(uint16_t aChannel, uint16_t aResourceNumber, uint16_t aPinSet);
+
+extern bool HAL_getLowestPwmResourceConfigured(uint16_t *aResourceNumber);
+extern bool HAL_getHighestSocConfigured(uint16_t adc, uint16_t *aSoc);
+
+extern uint16_t HAL_getAnalogIn(uint16_t aAdc, uint16_t aChannel);
+extern float HAL_getAnalogInF(uint16_t aAdc, uint16_t aChannel);
+extern bool HAL_getDigitalIn(uint16_t aChannel);
+extern void HAL_setDigitalOut(uint16_t aChannel, bool aVal);
+extern void HAL_setPwmOut(uint16_t aChannel, uint16_t aVal);
+extern void HAL_setPwmOutF(uint16_t aChannel, float aDuty);
+extern uint32_t HAL_getPwmPeriod(uint16_t aChannel);
+extern uint32_t HAL_getPwmCounter(uint16_t aChannel);
+extern bool HAL_getPwmCountDirection(uint16_t aChannel);
+extern uint32_t HAL_getQepCounter(uint16_t aChannel);
+extern bool HAL_getAndClearQepIndexFlag(uint16_t aChannel);
+extern uint32_t HAL_getQepIndexLatchCounter(uint16_t aChannel);
+
+#endif /* HAL_H_ */

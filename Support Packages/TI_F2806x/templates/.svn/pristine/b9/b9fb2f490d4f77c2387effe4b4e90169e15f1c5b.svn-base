@@ -1,0 +1,53 @@
+/*
+   Copyright (c) 2014-2016 by Plexim GmbH
+   All rights reserved.
+
+   A free license is granted to anyone to use this software for any legal
+   non safety-critical purpose, including commercial applications, provided
+   that:
+   1) IT IS NOT USED TO DIRECTLY OR INDIRECTLY COMPETE WITH PLEXIM, and
+   2) THIS COPYRIGHT NOTICE IS PRESERVED in its entirety.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+ */
+
+#ifndef _INCLUDES_H_
+#define _INCLUDES_H_
+
+#define SYSCLK_HZ (90000000l)
+#define LSPCLK_HZ (SYSCLK_HZ / 4l)
+
+#define ASSERT(x) do {\
+   if(!(x)){\
+      asm("        ESTOP0");\
+      for(;;);\
+   }\
+} while(0)
+
+#define PLL_DIV 18
+
+// Delay macro
+#define PLX_CPU_RATE    11.111L    // for a 90MHz CPU clock speed (SYSCLKOUT)
+#define PLX_DELAY_US(A)  DSP28x_usDelay( \
+        ((((long double) A * \
+           1000.0L) / \
+          (long double)PLX_CPU_RATE) - 9.0L) / 5.0L)
+
+// Baudrate for serial link
+#define BAUD_RATE 115200l
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#include "F2806x_Device.h"
+#include "F2806x_SysCtrl.h"
+#include "F2806x_EPwm_defines.h"
+
+#endif

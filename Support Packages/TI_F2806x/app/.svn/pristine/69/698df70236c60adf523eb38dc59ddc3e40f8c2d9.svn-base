@@ -1,0 +1,217 @@
+/*
+   Copyright (c) 2014-2016 by Plexim GmbH
+   All rights reserved.
+
+   A free license is granted to anyone to use this software for any legal
+   non safety-critical purpose, including commercial applications, provided
+   that:
+   1) IT IS NOT USED TO DIRECTLY OR INDIRECTLY COMPETE WITH PLEXIM, and
+   2) THIS COPYRIGHT NOTICE IS PRESERVED in its entirety.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+ */
+
+#include "includes.h"
+#include "settings.inc"
+
+// Pil includes
+#include "pil.h"
+#include "pil_ctrl.h"
+
+#include "main.h"
+#include "sci.h"
+#include "pu.h"
+#include "calib.h"
+#include "dispatcher.h"
+#include "dio.h"
+#include "pwm.h"
+#include "gatedriver.h"
+#include "power.h"
+
+#include "hal.h"
+
+extern volatile unsigned int IFR;
+extern volatile unsigned int IER;
+
+// function prototypes
+extern void DeviceInit(Uint16 clock_source, Uint16 pllDiv);
+extern void MemCopy(Uint16 *SourceAddr, Uint16 *SourceEndAddr, Uint16 *DestAddr);
+extern void InitFlash();
+
+extern void DSP28x_usDelay(unsigned long aCount); // don't use directly!
+
+// linker addresses, needed to copy code from flash to ram
+extern Uint16 RamfuncsLoadStart, RamfuncsLoadEnd, RamfuncsRunStart;
+
+DIO_Obj_t DoutDrvEnableObj;
+GDRV_Obj_t GdrvObj;
+GDRV_Handle_t GdrvHandle;
+
+void Task1()
+{
+	CONTROL_STEP;
+}
+
+void Task2()
+{
+	PWR_fsm();
+}
+
+void main(void)
+{
+	// low level hardware configuration
+	DeviceInit(CLK_SRC, PLL_DIV);
+	MemCopy(&RamfuncsLoadStart, &RamfuncsLoadEnd, &RamfuncsRunStart);
+	InitFlash();
+
+	// disable all interrupts
+	DINT;
+	IER = 0x0000;
+	IFR = 0x0000;
+
+	EALLOW;
+	SysCtrlRegs.PCLKCR0.bit.TBCLKSYNC = 0;      // Stop all the TB clocks
+	EDIS;
+
+	// configure serial line
+	SCIInit(ONE_STOPBIT+ NO_PARITY + EIGHT_BITS, BAUD_RATE, LSPCLK_HZ);
+	SCIWriteString("\n\rRS-232 Initialized.\n\r");
+
+	// initialize PIL framework
+	PIL_init();
+	PIL_setLinkParams(PIL_GUID_PTR, (PIL_CommCallbackPtr_t)SCIPoll);
+	PIL_setCtrlCallback((PIL_CtrlCallbackPtr_t)PilCallback);
+
+	PilInitOverrideProbes();
+
+	// static configurations
+	uint32_t controlHz = (uint32_t)(1.0/CONTROL_TS);
+	uint32_t task2Hz = TASK2_HZ;
+
+	// parameters
+	InitCalib();
+
+	// gate-driver
+	GdrvHandle = GDRV_init(&GdrvObj,sizeof(GdrvObj));
+	DIO_Handle_t dioHandle = DIO_init(&DoutDrvEnableObj,sizeof(DoutDrvEnableObj));
+	DIO_configureOut(dioHandle, DOUT_PS_ENABLE_GPIO, true);
+	GDRV_assignPin(GdrvHandle, GDRV_Pin_EnableOut, dioHandle);
+	GDRV_powerup(GdrvHandle);
+
+	// powerstage
+	PWR_sinit();
+	PWR_configure(GdrvHandle, task2Hz);
+
+	// HAL for controls
+	HAL_sinit();
+	HAL_configure();
+
+	// controls
+	CONTROL_INIT;
+
+	// dispatcher
+	DISPR_sinit();
+	DISPR_configure(SYSCLK_HZ);
+
+#if defined(TIMEBASE_CLOCK_CPUTIMER) && (TIMEBASE_CLOCK == TIMEBASE_CLOCK_CPUTIMER)
+	// note: this requires matching TRIGSEL configuration
+	ASSERT(TIMEBASE_CLOCK_RESOURCE == 1); // only CPUTimer1 supported
+#if (TIMEBASE_TRIGGER == TIMEBASE_TRIGGER_ADC)
+	DISPR_setTriggerByAdcViaTimer(AIN_ADC, TIMEBASE_TRIGGER_RESOURCE);
+#else // automatic configuration
+    uint16_t disprSoc;
+    if(HAL_getHighestSocConfigured(0, &disprSoc))
+    {
+        DISPR_setTriggerByAdcViaTimer(AIN_ADC, disprSoc);
+    }
+    else
+    {
+        DISPR_setTriggerByTimer();
+    }
+#endif
+
+#elif defined(TIMEBASE_CLOCK_PWM) && (TIMEBASE_CLOCK == TIMEBASE_CLOCK_PWM)
+
+#if (TIMEBASE_TRIGGER == TIMEBASE_TRIGGER_ADC)
+    DISPR_setTriggerByAdcViaPwm(AIN_ADC, TIMEBASE_TRIGGER_RESOURCE, (PWM_Unit_t)TIMEBASE_CLOCK_RESOURCE); // cast not very clean, consider getter
+#else // automatic configuration
+    uint16_t disprSoc;
+    if(HAL_getHighestSocConfigured(0, &disprSoc))
+    {
+        DISPR_setTriggerByAdcViaPwm(AIN_ADC, disprSoc, (PWM_Unit_t)TIMEBASE_CLOCK_RESOURCE); // cast not very clean, consider getter
+    }
+    else
+    {
+        DISPR_setTriggerByPwm((PWM_Unit_t)TIMEBASE_CLOCK_RESOURCE); // cast not very clean, consider getter
+    }
+#endif
+
+#else // fully automatic configuration
+	uint16_t disprSoc;
+	if(HAL_getHighestSocConfigured(0, &disprSoc))
+	{
+		// ADC is used
+		uint16_t disprPwmResource;
+		if(!HAL_getLowestPwmResourceConfigured(&disprPwmResource))
+		{
+			// no pwm, use CpuTimer for trigger
+			DISPR_setTriggerByAdcViaTimer(AIN_ADC, disprSoc);
+		}
+		else
+		{
+			DISPR_setTriggerByAdcViaPwm(AIN_ADC, disprSoc, (PWM_Unit_t)disprPwmResource); // cast not very clean, consider getter
+		}
+	}
+	else
+	{
+		// No ADC channels used
+		uint16_t disprPwmResource;
+		if(!HAL_getLowestPwmResourceConfigured(&disprPwmResource))
+		{
+			// no pwm, use CpuTimer for trigger
+			DISPR_setTriggerByTimer();
+		}
+		else
+		{
+			DISPR_setTriggerByPwm((PWM_Unit_t)disprPwmResource); // cast not very clean, consider getter
+		}
+	}
+#endif
+
+	DISPR_setPowerupDelayMs(10);
+
+	// enable interrupts
+	EINT;   // global
+	ERTM;   // real-time
+
+	// go!
+	DISPR_start(&Task1, controlHz, &Task2, task2Hz);
+	EALLOW;
+	CpuTimer0Regs.TCR.bit.TSS = 0; // start cpu timer for timing diagnostics
+	SysCtrlRegs.PCLKCR0.bit.TBCLKSYNC = 1; // start all the timers synced
+	EDIS;
+
+	// get ready for normal operation
+	PIL_requestNormalMode();
+
+	// power-up delay
+	while(DISPR_powerupDelayIsActive())
+	{
+		// wait to, e.g., allow gatedrive charge-pump to stabilize
+		continue;
+	}
+
+	// main-loop
+	for(;;) {
+		PIL_backgroundCall();
+		PWR_background();
+		DISPR_background();
+		PLX_DELAY_US(500); // some delay to pace transmission of scope data
+	}
+}

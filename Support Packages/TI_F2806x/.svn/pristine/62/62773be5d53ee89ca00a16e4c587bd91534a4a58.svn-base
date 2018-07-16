@@ -1,0 +1,527 @@
+Plecs {
+  Name          "TI2806x_Lib"
+  Version       "4.0"
+  CircuitModel  "DiscStateSpace"
+  StartTime     "0.0"
+  StopTime      "1.0"
+  Solver        "FixedStepDiscrete"
+  MaxStep       "1e-3"
+  InitStep      "-1"
+  FixedStep     "-1"
+  Refine        "1"
+  ZCStepSize    "1e-9"
+  RelTol        "1e-3"
+  AbsTol        "-1"
+  TurnOnThreshold "0"
+  SyncFixedStepTasks "2"
+  UseSingleCommonBaseRate "2"
+  LossVariableLimitExceededMsg "3"
+  NegativeSwitchLossMsg "3"
+  DivisionByZeroMsg "3"
+  StiffnessDetectionMsg "2"
+  MaxConsecutiveZCs "1000"
+  AssertionAction "1"
+  InitializationCommands ""
+  InitialState  "1"
+  SystemState   ""
+  CodeGenParameterInlining "2"
+  CodeGenInliningExceptions "AAAACwAAAAAA"
+  CodeGenFloatingPointFormat "1"
+  CodeGenIntegerWordSize "32"
+  CodeGenAbsTimeUsageMsg "3"
+  CodeGenBaseName ""
+  CodeGenOutputDir ""
+  CodeGenExtraOpts ""
+  CodeGenTarget "Generic"
+  CodeGenTargetSettings ""
+  ExtendedMatrixPrecision "1"
+  MatrixSignificanceCheck "2"
+  ExternalModeSettings ""
+  Terminal {
+    Type          Input
+    Index         "1"
+  }
+  Terminal {
+    Type          Input
+    Index         "2"
+  }
+  Terminal {
+    Type          Output
+    Index         "1"
+  }
+  Terminal {
+    Type          Output
+    Index         "2"
+  }
+  Terminal {
+    Type          Input
+    Index         "3"
+  }
+  Terminal {
+    Type          Output
+    Index         "3"
+  }
+  Terminal {
+    Type          Input
+    Index         "4"
+  }
+  Terminal {
+    Type          Output
+    Index         "4"
+  }
+  Schematic {
+    Location      [464, 72; 718, 286]
+    ZoomFactor    1
+    SliderPosition [0, 0]
+    ShowBrowser   off
+    BrowserWidth  100
+    Component {
+      Type          TargetCode
+      Name          "Digital In1"
+      Show          on
+      Position      [50, 35]
+      Direction     up
+      Flipped       off
+      Frame         [-25, -20; 25, 20]
+      LabelPosition [0, 23]
+      LabelAlign    up
+      TargetPortIndices "3"
+      CodeFcn       "Include(\"hal.h\");\n\nfor (int i = 0; i < NumOutputSigna"
+"ls(0); ++i)\n{\n   int channel = MaskRealData(MASK_VAR_channel, i);\n   int g"
+"pio = MaskRealData(MASK_VAR_gpio, i);   \n\n   Require(\"Digital input\", cha"
+"nnel);      \n   Print(InitCode, \"HAL_setupDigitalIn(%i, %i);\\n\", channel,"
+" gpio);   \n   Print(OutputSignal(0, i), \"HAL_getDigitalIn(%i)\", channel);"
+"\n}\n"
+      MaskType      "Digital In"
+      MaskDescription "Reads a digital input.\n\nThe output signal is 1 if the"
+" input voltage is higher than 2 Volts and 0 if it is lower than 0.8 Volts. \n"
+"For other input voltages the output signal is undefined."
+      MaskHelp      "di_rtbox.html"
+      MaskDisplay   "text(['Digital' char(10) 'In'])"
+      MaskIconFrame on
+      MaskIconOpaque off
+      MaskIconRotates on
+      MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || any("
+"floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital output ch"
+"annel(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+"\nif ~isreal(gpio) || ~isvector(gpio) ...\n   || any(floor(gpio) ~= gpio) || "
+"any(gpio < 0),\n  error('\"Digital output GPIO resources(s)\" must be a scala"
+"r or vector of positive or zero integers.')\nend"
+      Parameter {
+        Variable      "channel"
+        Prompt        "Digital input channel(s)"
+        Type          FreeText
+        Value         "0"
+        Show          on
+        Tunable       off
+        TabName       ""
+      }
+      Parameter {
+        Variable      "gpio"
+        Prompt        "Digital input GPIO resource(s)"
+        Type          FreeText
+        Value         "13"
+        Show          on
+        Tunable       off
+        TabName       ""
+      }
+      Terminal {
+        Type          Output
+        Position      [29, 0]
+        Direction     right
+      }
+      Schematic {
+        Location      [349, 136; 1091, 251]
+        ZoomFactor    1
+        SliderPosition [0, 0]
+        ShowBrowser   off
+        BrowserWidth  100
+        Component {
+          Type          TargetInput
+          Name          "1"
+          Show          on
+          Position      [120, 75]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Component {
+          Type          Output
+          Name          "Out1"
+          Show          off
+          Position      [260, 75]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Index"
+            Value         "1"
+            Show          on
+          }
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "1"
+          SrcTerminal   1
+          DstComponent  "Out1"
+          DstTerminal   1
+        }
+      }
+    }
+    Component {
+      Type          TargetCode
+      Name          "Digital Out1"
+      Show          on
+      Position      [160, 35]
+      Direction     up
+      Flipped       off
+      Frame         [-25, -20; 25, 20]
+      LabelPosition [0, 23]
+      LabelAlign    up
+      TargetPortIndices "3"
+      CodeFcn       "Include(\"hal.h\");\n\nfor (int i = 0; i < NumInputSignal"
+"s(0); ++i)\n{\n   int channel = MaskRealData(MASK_VAR_channel, i);\n   int gp"
+"io = MaskRealData(MASK_VAR_gpio, i);   \n   \n   Require(\"Digital output\", "
+"channel);  \n   Print(InitCode, \"HAL_setupDigitalOut(%i, %i, false);\\n\", c"
+"hannel, gpio);       \n   Print(OutputCode, \"HAL_setDigitalOut(%i, %s);\\n\""
+", channel, InputSignal(0, i));\n}\n"
+      MaskType      "Digital Out"
+      MaskDisplay   "text(['Digital' char(10) 'Out'])"
+      MaskIconFrame on
+      MaskIconOpaque off
+      MaskIconRotates on
+      MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || any("
+"floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital output ch"
+"annel(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+"\nif ~isreal(gpio) || ~isvector(gpio) ...\n   || any(floor(gpio) ~= gpio) || "
+"any(gpio < 0),\n  error('\"Digital output GPIO resources(s)\" must be a scala"
+"r or vector of positive or zero integers.')\nend\n"
+      Parameter {
+        Variable      "channel"
+        Prompt        "Digital output channel(s)"
+        Type          FreeText
+        Value         "0"
+        Show          on
+        Tunable       off
+        TabName       ""
+      }
+      Parameter {
+        Variable      "gpio"
+        Prompt        "Digital output GPIO resource(s)"
+        Type          FreeText
+        Value         "34"
+        Show          on
+        Tunable       off
+        TabName       ""
+      }
+      Terminal {
+        Type          Input
+        Position      [-25, 0]
+        Direction     left
+      }
+      Schematic {
+        Location      [922, 267; 1810, 382]
+        ZoomFactor    1
+        SliderPosition [0, 0]
+        ShowBrowser   off
+        BrowserWidth  100
+        Component {
+          Type          TargetOutput
+          Name          "1"
+          Show          on
+          Position      [260, 75]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Component {
+          Type          Input
+          Name          "In1"
+          Show          off
+          Position      [120, 75]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Index"
+            Value         "1"
+            Show          on
+          }
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "In1"
+          SrcTerminal   1
+          DstComponent  "1"
+          DstTerminal   1
+        }
+      }
+    }
+    Component {
+      Type          TargetCode
+      Name          "Analog In1"
+      Show          on
+      Position      [50, 135]
+      Direction     up
+      Flipped       off
+      Frame         [-25, -20; 25, 20]
+      LabelPosition [0, 23]
+      LabelAlign    up
+      TargetPortIndices "4"
+      CodeFcn       "Include(\"hal.h\");\n\nfor (int i = 0; i < NumOutputSigna"
+"ls(0); ++i)\n{\n   int channel = MaskRealData(MASK_VAR_channel, i);\n   int a"
+"dc = MaskRealData(MASK_VAR_adc, i);  \n\tint ACQPS = MaskRealData(MASK_VAR_AC"
+"QPS, i);     \n   double scale = MaskRealData(MASK_VAR_scale, i);\n   double "
+"offset = MaskRealData(MASK_VAR_offset, i);\n   \n   Require(\"Analog input\","
+" channel);\n   Print(InitCode, \"HAL_setupAnalogInF(%i, %i, %i, %.9ef, %.9ef)"
+";\\n\", channel, adc, ACQPS, scale, offset);\n   Print(OutputSignal(0, i), \""
+"HAL_getAnalogInF(%i)\", channel);\n}\n"
+      MaskType      "Analog In"
+      MaskDescription "Output the measured voltage at an analog input channel."
+"\n\nThe output signal is calculated as input*Scale+Offset, where input is the"
+" input voltage in Volts."
+      MaskHelp      "ai_rtbox.html"
+      MaskDisplay   "text(['Analog' char(10) 'In'])"
+      MaskIconFrame on
+      MaskIconOpaque off
+      MaskIconRotates on
+      MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || any("
+"floor(channel) ~= channel) || any(channel < 0),\n  error('\"Analog input chan"
+"nel(s)\" must be a scalar or vector of positive or zero integers.')\nend\n\ni"
+"f ~isreal(adc) || ~isvector(adc) ...\n   || any(floor(adc) ~= adc) || any(adc"
+" < 0),\n  error('\"ADC resource(s)\" must be a scalar or vector of positive o"
+"r zero integers.')\nend\n\nif ~isreal(ACQPS) || ~isvector(ACQPS) ...\n   || a"
+"ny(floor(ACQPS) ~= ACQPS) || any(ACQPS < 0),\n  error('\"Sampling times(s)\" "
+"must be a scalar or vector of positive or zero integers.')\nend\n\nif ~isreal"
+"(scale) || ~isvector(scale),\n  error('\"Scale\" must be a real scalar or vec"
+"tor.')\nend\nif ~isreal(offset) || ~isvector(offset),\n  error('\"Offset\" mu"
+"st be a real scalar or vector.')\nend\n\nif numel(scale) == 1,\n  scale = rep"
+"mat(scale, size(channel));\nelseif numel(scale) ~= numel(channel),\n  error('"
+"\"Scale\" must be scalar or a vector of the same length as the number of chan"
+"nels.');\nend\n\nif numel(offset) == 1,\n  offset = repmat(offset, size(chann"
+"el));\nelseif numel(offset) ~= numel(channel),\n  error('\"Offset\" must be s"
+"calar or a vector of the same length as the number of channels.');\nend\n"
+      Parameter {
+        Variable      "channel"
+        Prompt        "Analog input channel(s)"
+        Type          FreeText
+        Value         "0"
+        Show          on
+        Tunable       off
+        TabName       ""
+      }
+      Parameter {
+        Variable      "adc"
+        Prompt        "ADC resources(s)"
+        Type          FreeText
+        Value         "0"
+        Show          on
+        Tunable       off
+        TabName       ""
+      }
+      Parameter {
+        Variable      "ACQPS"
+        Prompt        "Sampling time(s) (ACQPS)"
+        Type          FreeText
+        Value         "6"
+        Show          off
+        Tunable       off
+        TabName       ""
+      }
+      Parameter {
+        Variable      "scale"
+        Prompt        "Scale"
+        Type          FreeText
+        Value         "1"
+        Show          off
+        Tunable       off
+        TabName       ""
+      }
+      Parameter {
+        Variable      "offset"
+        Prompt        "Offset"
+        Type          FreeText
+        Value         "0"
+        Show          off
+        Tunable       off
+        TabName       ""
+      }
+      Terminal {
+        Type          Output
+        Position      [29, 0]
+        Direction     right
+      }
+      Schematic {
+        Location      [746, 601; 1528, 716]
+        ZoomFactor    1
+        SliderPosition [0, 0]
+        ShowBrowser   off
+        BrowserWidth  100
+        Component {
+          Type          TargetInput
+          Name          "1"
+          Show          on
+          Position      [120, 75]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Component {
+          Type          Output
+          Name          "Out1"
+          Show          off
+          Position      [260, 75]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Index"
+            Value         "1"
+            Show          on
+          }
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "1"
+          SrcTerminal   1
+          DstComponent  "Out1"
+          DstTerminal   1
+        }
+      }
+    }
+    Component {
+      Type          TargetCode
+      Name          "PWM Out1"
+      Show          on
+      Position      [160, 130]
+      Direction     up
+      Flipped       off
+      Frame         [-25, -20; 25, 20]
+      LabelPosition [0, 23]
+      LabelAlign    up
+      TargetPortIndices "4"
+      CodeFcn       "Include(\"hal.h\");\nInclude(\"power.h\");\n\nfor (int i "
+"= 0; i < NumInputSignals(0); ++i)\n{\n   int channel = MaskRealData(MASK_VAR_"
+"channel, i);\n   int pwm = MaskRealData(MASK_VAR_pwm, i);  \n   float dt = Ma"
+"skRealData(MASK_VAR_dt, i);\n  \n   Require(\"PWM output\", channel);\n   Pri"
+"nt(InitCode, \"HAL_setupPwmOut(%i, %i, %f);\\n\", channel, pwm, dt);       \n"
+"   Print(OutputCode, \"HAL_setPwmOutF(%i, %s);\\n\", channel, InputSignal(0, "
+"i));\n}\nPrint(OutputCode, \"PWR_enableSwitching();\\n\");\n"
+      MaskType      "PWM Out"
+      MaskDescription "Generate a configurable PWM signal on a digital output."
+      MaskHelp      "pwmout_rtbox.html"
+      MaskDisplay   "text(['PWM' char(10) 'Out'])"
+      MaskIconFrame on
+      MaskIconOpaque off
+      MaskIconRotates on
+      MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || any("
+"floor(channel) ~= channel) || any(channel < 0),\n  error('\"PWM channel(s)\" "
+"must be a scalar or vector of positive or zero integers.')\nend\n\nif ~isreal"
+"(pwm) || ~isvector(pwm) ...\n   || any(floor(pwm) ~= pwm) || any(pwm < 0),\n "
+" error('\"PWM resource(s)\" must be a scalar or vector of positive or zero in"
+"tegers.')\nend"
+      Parameter {
+        Variable      "channel"
+        Prompt        "PWM channel(s)"
+        Type          FreeText
+        Value         "0"
+        Show          on
+        Tunable       off
+        TabName       ""
+      }
+      Parameter {
+        Variable      "pwm"
+        Prompt        "PWM resources(s)"
+        Type          FreeText
+        Value         "1"
+        Show          on
+        Tunable       off
+        TabName       ""
+      }
+      Parameter {
+        Variable      "dt"
+        Prompt        "Deadtime ratio(s)"
+        Type          FreeText
+        Value         "0"
+        Show          off
+        Tunable       off
+        TabName       ""
+      }
+      Terminal {
+        Type          Input
+        Position      [-25, 0]
+        Direction     left
+      }
+      Schematic {
+        Location      [1012, 181; 1844, 296]
+        ZoomFactor    1
+        SliderPosition [0, 0]
+        ShowBrowser   off
+        BrowserWidth  100
+        Component {
+          Type          TargetOutput
+          Name          "1"
+          Show          on
+          Position      [260, 80]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Component {
+          Type          Input
+          Name          "In1"
+          Show          off
+          Position      [60, 80]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Index"
+            Value         "1"
+            Show          on
+          }
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "In1"
+          SrcTerminal   1
+          DstComponent  "1"
+          DstTerminal   1
+        }
+      }
+    }
+  }
+}
+DemoSignature "6pDLenjAwir3JPbY/l7PbsUXNxu7wHA+CC1RGjv02bA="

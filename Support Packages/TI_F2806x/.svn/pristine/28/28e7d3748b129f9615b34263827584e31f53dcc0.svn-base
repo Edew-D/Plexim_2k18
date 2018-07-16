@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TargetSupportPackage
+  xmlns="http://www.plexim.com/xml/codegentarget/"
+  version="1.0">
+<TargetFamily>TI F2806x</TargetFamily>
+
+ <BlockLibrary file="TI2806x_Lib">TI2806x Target</BlockLibrary>
+
+ <Target>
+  <Name>TI28069</Name>
+  <Version>0.1</Version>
+  <Parameters>
+   <LineEdit prompt="System clock frequency (SYSCLK)" variable="sysClkHz" default="90000000" eval="true" />
+   <CheckBox prompt="Use internal oscillator" variable="useIntOsc" default="1" />
+   <LineEdit prompt="External clock frequency" variable="extClkHz" default="20000000" eval="true" />
+   <ComboBox prompt="Time base clock" variable="timeBaseClk" default="1">
+      <Item>Auto</Item>
+      <Item>CpuTimer</Item>
+      <Item>ePWM</Item>
+   </ComboBox>
+   <LineEdit prompt="Time base clock resource" variable="timeBaseClkResource" default="1" eval="true" />
+   <ComboBox prompt="Time base trigger" variable="timeBaseTrigger" default="1">
+      <Item>Auto</Item>
+      <Item>ADC</Item>
+   </ComboBox>
+   <LineEdit prompt="Time base trigger resource" variable="timeBaseTriggerResource" default="1" eval="true" />
+   <LineEdit prompt="Infrastructure task Frequency" variable="task2Hz" default="100" eval="true" />
+   <LineEdit prompt="Powerstage enable GPIO" variable="dOutPsEnableGPIO" default="27" eval="true" />
+  </Parameters>
+  <CodeFunction lang="Lua"><![CDATA[
+_G.package.path = Target.Variables.TARGET_ROOT .. "/lua/?.lua"
+return require "Coder"
+]]>
+  </CodeFunction>
+  <BuildSteps>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/includes.h</Source>
+      <Destination>includes.h</Destination>
+     </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/main.c</Source>
+      <Destination>main.c</Destination>
+     </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/calib.h</Source>
+      <Destination>calib.h</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/calib.c</Source>
+      <Destination>calib.c</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pu.h</Source>
+      <Destination>pu.h</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pu.c</Source>
+      <Destination>pu.c</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pil_ctrl.h</Source>
+      <Destination>pil_ctrl.h</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pil_ctrl.c</Source>
+      <Destination>pil_ctrl.c</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pil_symbols_c.c</Source>
+      <Destination>pil_symbols_c.c</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/pil_symbols_p.c</Source>
+      <Destination>pil_symbols_p.c</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/F28069.cmd</Source>
+      <Destination>F28069.cmd</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/F2806x_Headers_nonBIOS.cmd</Source>
+      <Destination>F2806x_Headers_nonBIOS.cmd</Destination>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/main.h</Source>
+      <Destination>main.h</Destination>
+    </CopyFile>
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/settings.h</Source>
+      <Destination>settings_cg.h</Destination>
+      <Replace>
+        <Before><![CDATA[|>BASE_NAME<|]]></Before>
+        <After>$(BASE_NAME)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>TASK2_HZ<|]]></Before>
+        <After>$(task2Hz)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>DOUT_PS_ENABLE_GPIO<|]]></Before>
+        <After>$(dOutPsEnableGPIO)</After>
+      </Replace>
+    </CopyFile>
+        
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/main.lkf</Source>
+      <Destination>$(BASE_NAME).lkf</Destination>
+      <Replace>
+        <Before><![CDATA[|>TARGET_ROOT<|]]></Before>
+        <After>$(TARGET_ROOT)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>CG_PATH<|]]></Before>
+        <After>$(TARGET_ROOT)/bin/$(HOST_OS)/c2000</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>BASE_NAME<|]]></Before>
+        <After>$(BASE_NAME)</After>
+      </Replace>
+    </CopyFile>
+
+    <CopyFile>
+      <Source>$(TARGET_ROOT)/templates/main.mk</Source>
+      <Destination>$(BASE_NAME).mk</Destination>
+      <Replace>
+        <Before><![CDATA[|>TARGET_ROOT<|]]></Before>
+        <After>$(TARGET_ROOT)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>PPT_PATH<|]]></Before>
+        <After>$(TARGET_ROOT)/bin/$(HOST_OS)/pil</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>CG_PATH<|]]></Before>
+        <After>$(TARGET_ROOT)/bin/$(HOST_OS)/c2000</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>BASE_NAME<|]]></Before>
+        <After>$(BASE_NAME)</After>
+      </Replace>
+      <Replace>
+        <Before><![CDATA[|>SOURCE_FILES<|]]></Before>
+        <After>$(SOURCE_FILES)</After>
+      </Replace>
+    </CopyFile>
+
+    <Make>
+     <Timeout></Timeout>
+     <Makefile>$(BASE_NAME).mk</Makefile>
+    </Make>
+  </BuildSteps>
+ </Target>
+</TargetSupportPackage>

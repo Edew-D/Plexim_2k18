@@ -1,0 +1,130 @@
+/*
+   Copyright (c) 2014-2016 by Plexim GmbH
+   All rights reserved.
+
+   A free license is granted to anyone to use this software for any legal
+   non safety-critical purpose, including commercial applications, provided
+   that:
+   1) IT IS NOT USED TO DIRECTLY OR INDIRECTLY COMPETE WITH PLEXIM, and
+   2) THIS COPYRIGHT NOTICE IS PRESERVED in its entirety.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+ */
+
+#ifndef HAL_IMPL_H_
+#define HAL_IMPL_H_
+
+#define HAL_NUM_DIN_CHANNELS 8
+#define HAL_NUM_DOUT_CHANNELS 8
+#define HAL_NUM_PWM_CHANNELS 6
+#define HAL_NUM_QEP_CHANNELS 1
+#define HAL_NUM_ADCS 1
+#define HAL_NUM_CHANNELS_PER_ADC AIN_NUM_CHANNELS
+
+#define HAL_VOLTS_PER_ADC_BIT (3.3/4096.0)
+
+typedef struct HAL_SOBJ
+{
+#ifndef PIL_PREP_TOOL
+	DIO_Handle_t inPortHandles[HAL_NUM_DIN_CHANNELS];
+	DIO_Handle_t outPortHandles[HAL_NUM_DOUT_CHANNELS];
+	PWM_Handle_t pwmHandles[HAL_NUM_PWM_CHANNELS];
+	QEP_Handle_t qepHandles[HAL_NUM_QEP_CHANNELS];
+	AIN_Handle_t aInHandle[HAL_NUM_ADCS];
+
+	DIO_Obj_t inPortObjs[HAL_NUM_DIN_CHANNELS];
+	DIO_Obj_t outPortObjs[HAL_NUM_DOUT_CHANNELS];
+	PWM_Obj_t pwmObjs[HAL_NUM_PWM_CHANNELS];
+	QEP_Obj_t qepObjs[HAL_NUM_QEP_CHANNELS];
+	AIN_Obj_t aInObjs[HAL_NUM_ADCS];
+#endif
+	uint32_t sysClkHz;
+	uint16_t lowestPwmResourceConfigured;
+	int16_t highestSocConfigured[HAL_NUM_ADCS];
+	bool aInChannelIsConfigured[HAL_NUM_ADCS][HAL_NUM_CHANNELS_PER_ADC];
+	float aInScale[HAL_NUM_ADCS][HAL_NUM_CHANNELS_PER_ADC];
+	float aInOffset[HAL_NUM_ADCS][HAL_NUM_CHANNELS_PER_ADC];
+	AIN_AdcParams_t aInParamsMemory;
+	AIN_ChannelParams_t aInChannelParamsMemory;
+	PWM_Params_t pwmParamsMemory;
+} HAL_SObj_t;
+
+extern HAL_SObj_t HAL_SObj;
+
+inline uint16_t HAL_getAnalogIn(uint16_t aAdc, uint16_t aChannel)
+{
+	return AIN_getIn(HAL_SObj.aInHandle[aAdc], aChannel);
+}
+
+inline float HAL_getAnalogInF(uint16_t aAdc, uint16_t aChannel)
+{
+	float adcV = (float)AIN_getIn(HAL_SObj.aInHandle[aAdc], aChannel)*HAL_VOLTS_PER_ADC_BIT;
+	return (adcV - HAL_SObj.aInOffset[aAdc][aChannel]) * HAL_SObj.aInScale[aAdc][aChannel];
+}
+
+inline bool HAL_getDigitalIn(uint16_t aChannel)
+{
+	return DIO_get(HAL_SObj.inPortHandles[aChannel]);
+}
+
+inline void HAL_setDigitalOut(uint16_t aChannel, bool aVal)
+{
+	DIO_set(HAL_SObj.outPortHandles[aChannel], aVal);
+}
+
+inline uint32_t HAL_getPwmPeriod(uint16_t aChannel)
+{
+	return PWM_getPeriod(HAL_SObj.pwmHandles[aChannel]);
+}
+
+inline uint32_t HAL_getPwmCounter(uint16_t aChannel)
+{
+	return PWM_getCounter(HAL_SObj.pwmHandles[aChannel]);
+}
+
+inline bool HAL_getPwmCountDirection(uint16_t aChannel)
+{
+	return PWM_getCountDirection(HAL_SObj.pwmHandles[aChannel]);
+}
+
+inline void HAL_setPwmOut(uint16_t aChannel, uint16_t aVal)
+{
+	PWM_setCompare(HAL_SObj.pwmHandles[aChannel], aVal);
+}
+
+inline void HAL_setPwmOutF(uint16_t aChannel, float aDuty)
+{
+	if(aDuty < 0)
+	{
+		aDuty = 0;
+	}
+	else if (aDuty > 1.0)
+	{
+		aDuty = 1.0;
+	}
+	uint16_t duty = (uint16_t)((float)HAL_getPwmPeriod(aChannel) * (1.0-aDuty));
+	HAL_setPwmOut(aChannel, duty);
+}
+
+inline uint32_t HAL_getQepCounter(uint16_t aChannel)
+{
+	return QEP_getPosCnt(HAL_SObj.qepHandles[aChannel]);
+}
+
+inline bool HAL_getAndClearQepIndexFlag(uint16_t aChannel)
+{
+	return QEP_getAndClearIndexFlag(HAL_SObj.qepHandles[aChannel]);
+}
+
+inline uint32_t HAL_getQepIndexLatchCounter(uint16_t aChannel)
+{
+	return QEP_getPosILatchCnt(HAL_SObj.qepHandles[aChannel]);
+}
+
+#endif /* HAL_IMPL_H_ */
