@@ -1,7 +1,7 @@
 /*
  * Implementation file for: ArduinoTest/Blink
  * Generated with         : PLECS 4.2.0-DEV
- * Generated on           : 16 Jul 2018 14:02:59
+ * Generated on           : 17 Jul 2018 14:31:27
  */
 #include "Blink.h"
 #ifndef PLECS_HEADER_Blink_h_
@@ -36,20 +36,20 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "setup.h"
+#include "portConfig.h"
 #define PLECSRunTimeError(msg) Blink_errorStatus = msg
 static const uint32_t Blink_taskPeriod[1]= {
    /* [1, 0] */
-   10
+   1000000
 };
 static uint32_t Blink_taskTick[1];
 static char Blink_taskHit[1];
 Blink_BlockOutputs Blink_B;
 Blink_ModelStates Blink_X _ALIGN;
 const char * Blink_errorStatus;
-const double Blink_sampleTime = 0.100000000000000006;
+const double Blink_sampleTime = 9.99999999999999955e-7;
 const char * const Blink_checksum =
-   "aa829e079738d94dc5a849f82c7a449fe8696190";
+   "469cc56ceaac28fb777e711c8d74ced9b02c9e25";
 void Blink_initialize(double time)
 {
    uint32_t Blink_tickLo;

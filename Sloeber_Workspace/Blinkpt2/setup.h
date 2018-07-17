@@ -4,20 +4,24 @@
 // - extern variable definitions
 // In the appropriate section
 
-#ifndef _Blinkpt2_H_
-#define _Blinkpt2_H_
-#include "Arduino.h"
-#include "Blink.h"
-#include "settings.h"
-#include "portConfig.h"
+#ifndef _setup_H_
+#define _setup_H_
 
 //add your includes for the project Blinkpt2 here
+#include "Arduino.h"
+#include "settings.h"
 
-
-//end of add your includes here
-
+//other definitions
+#define MINIMUM_SAMPLE 1.25e-07
+#define MAXIMUM_SAMPLE 4.194368
 
 //add your function definitions for the project Blinkpt2 here
+bool configDout(int channel, byte pin);
+bool configDin(int channel, byte pin);
+int getDin(int channel);
+void setDout(int channel, int state);
+void config_interrupt(void);
+void set_prescale(void);
 
 
 

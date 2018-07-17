@@ -1,7 +1,8 @@
 local Coder = { }
-local maths = require("Math")
-local prescale = maths.prescale()
-local count = maths.count()
+--local Blocks = { }
+local arduino = require("arduino")
+---local prescale = maths.prescale()
+--local count = maths.count()
 
 copy_file = function (src, dest, subs)
   local file = io.open(src, "rb")
@@ -38,8 +39,7 @@ end
 
 
 local Registry = {
-  NumDigitalBlocks = 0,
-  --NumDigitalInBlocks = 0
+  NumDigitalBlocks = 0
 }
 
 function Coder.RegisterDigitalBlock()
@@ -48,11 +48,9 @@ function Coder.RegisterDigitalBlock()
   return ret
 end
 
---function Coder.RegisterDigitalInBlock()
---  local ret = Registry.NumDigitalInBlocks
---  Registry.NumDigitalInBlocks = ret+1
---  return ret
---end
+--tostring(digiBlocks)
+--Coder.RegisterDigitalBlock = RegisterDigitalBlock
+
 
 function Coder.Initialize()
   local Resources = ResourceList:new()
@@ -77,6 +75,7 @@ function Coder.Initialize()
   }
 end
 
+
 function Coder.Finalize()
   local Include = {}
   local Declarations = {}
@@ -84,18 +83,14 @@ function Coder.Finalize()
   local PostInitCode = {}
   local TerminateCode = {}
 
+  local digiBlocks = tostring(Coder.RegisterDigitalBlock())
+  local assert = settings(digiBlocks)
+  if assert ~= false then return assert end
 
   local dict = {}
   table.insert(dict, {before = "|>BASE_NAME<|", after = Target.Variables.BASE_NAME})
   table.insert(dict, {before = "|>INSTALL_DIR<|", after = Target.Variables.installDir})
   copy_file(Target.Variables.TARGET_ROOT .. "/templates/install.mk", Target.Variables.BUILD_ROOT .. "/" .. Target.Variables.BASE_NAME .. ".mk", dict)
-
-  local settings = io.open(Target.Variables.TARGET_ROOT .. "/templates/settings.h", "w")
-  settings:write("#define SAMPLE_TIME " .. Target.Variables.SAMPLE_TIME)
-  settings:write("\n#define prescaler " .. prescale)
-  settings:write("\n#define count " .. count)
-  io.close(settings)
-  copy_file(Target.Variables.TARGET_ROOT .. "/templates/settings.h", Target.Variables.installDir .. "/settings.h")
 
 
   return {

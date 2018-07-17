@@ -9,16 +9,16 @@
 //#include <assert.h>
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
-
 #ifndef PORTCONFIG_H_
 #define PORTCONFIG_H_
+#include "setup.h"
 
 typedef struct {
-  volatile uint8_t *portAddr; //portAddr must be a pointer because PORTD cannot be assigned to a normal variable, so we use its address
+  volatile uint8_t *portAddr; //portAddr must be a pointer because PORT* is a pointer and cannot be assigned to a normal variable, so we use its address
   volatile uint8_t portMask;
 } dRecord; //Create structure called dRecord that stores the pin's port(portAddr) and which indexes are on or off(portMask)
 
-dRecord digiPin[16];
+dRecord digiPin[3];
 
 bool configDout(int channel, byte pin) { //configures a digital pin as output
 
