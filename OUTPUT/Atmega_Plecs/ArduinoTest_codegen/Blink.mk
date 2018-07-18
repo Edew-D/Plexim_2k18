@@ -18,7 +18,7 @@
 
 include gensrcs.mk
 
-INSTALL_DIR=C:\Users\wede\Documents\GitHub\Plexim_2k18\Sloeber_Workspace\Blink_Again
+INSTALL_DIR=C:\Users\wede\Documents\GitHub\Plexim_2k18\Sloeber_Workspace\Blinkpt2
 MAKEFILE="Blink.mk"
 HFILE = "Blink.h"
 

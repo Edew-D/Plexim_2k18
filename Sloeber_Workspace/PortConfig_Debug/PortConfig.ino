@@ -1,7 +1,8 @@
 #include "Arduino.h"
 #include "portConfig.h"
-#include <avr/io.h>
-#include <avr/interrupt.h>
+#include "analog_Config.h"
+//#include <avr/io.h>
+//#include <avr/interrupt.h>
 #define SAMPLE_TIME 0.2
 #define prescaler 64
 #define count 49999.0
@@ -46,10 +47,16 @@ void set_prescale(){
 	}
 }
 int main(void) {
-  init();
+  //init();
   config_interrupt();
   set_prescale();
   sei();
+  Serial.begin(9600);
+
+  configDout(0, 9);
+  configDin(1, 13);
+  configDout(2, 6);
+
 
 
   for (;;) {
@@ -62,6 +69,7 @@ int main(void) {
 ISR(TIMER1_COMPA_vect) {       //ISR
     Serial.println("interrupt");
 
+	set_analog(0, 254);
     setDout(0, getDin(1));
 
 	/*if(PINB |= (1 << PINB2)){

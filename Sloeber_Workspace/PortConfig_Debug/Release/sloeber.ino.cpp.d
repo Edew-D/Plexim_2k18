@@ -10,7 +10,7 @@ sloeber.ino.cpp.o: ..\sloeber.ino.cpp \
  C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/USBAPI.h \
  C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/Arduino.h \
  C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\variants\standard/pins_arduino.h \
- ..\portConfig.h ..\PortConfig.ino
+ ..\portConfig.h ..\PortConfig.ino ..\analog_Config.h
 
 C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/Arduino.h:
 
@@ -37,3 +37,5 @@ C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\variants\standard/
 ..\portConfig.h:
 
 ..\PortConfig.ino:
+
+..\analog_Config.h:

@@ -11,7 +11,7 @@
 //#include <avr/interrupt.h>
 #ifndef PORTCONFIG_H_
 #define PORTCONFIG_H_
-//#include "setup.h"
+#include "setup.h"
 
 typedef struct {
   volatile uint8_t *portAddr; //portAddr must be a pointer because PORT* is a pointer and cannot be assigned to a normal variable, so we use its address
@@ -106,7 +106,6 @@ void setDout(int channel, int state) { //sets a digital pin as high or low based
 
 
 }
-
 
 /*
 void __assert(const char *__func, const char *__file, int __lineno, const char *__sexp) {

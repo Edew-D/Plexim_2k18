@@ -1,6 +1,6 @@
-#define SAMPLE_TIME 1e-06
+#define SAMPLE_TIME 0.001
 #define prescaler 1
-#define count 15
+#define count 15999
 #define digitalPins 3
 #define MINIMUM_SAMPLE 1.25e-07
 #define MAXIMUM_SAMPLE 4.194368

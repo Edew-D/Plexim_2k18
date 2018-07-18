@@ -1,0 +1,471 @@
+Plecs {
+  Name          "ArduinoTest"
+  Version       "4.2"
+  CircuitModel  "ContStateSpace"
+  StartTime     "0.0"
+  StopTime      "1.0"
+  Timeout       ""
+  Solver        "dopri"
+  MaxStep       "1e-3"
+  InitStep      "-1"
+  FixedStep     "1e-3"
+  Refine        "1"
+  ZCStepSize    "1e-9"
+  RelTol        "1e-3"
+  AbsTol        "-1"
+  TurnOnThreshold "0"
+  SyncFixedStepTasks "2"
+  UseSingleCommonBaseRate "2"
+  LossVariableLimitExceededMsg "3"
+  NegativeSwitchLossMsg "3"
+  DivisionByZeroMsg "3"
+  StiffnessDetectionMsg "2"
+  MaxConsecutiveZCs "1000"
+  AlgebraicLoopWithStateMachineMsg "3"
+  AssertionAction "1"
+  InitializationCommands ""
+  InitialState  "1"
+  SystemState   ""
+  CodeGenParameterInlining "2"
+  CodeGenInliningExceptions "AAAACwAAAAAA"
+  CodeGenFloatingPointFormat "2"
+  CodeGenIntegerWordSize "32"
+  CodeGenAbsTimeUsageMsg "3"
+  CodeGenBaseName ""
+  CodeGenOutputDir ""
+  CodeGenExtraOpts ""
+  CodeGenTarget "ATmega328"
+  CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAEAAAAUA"
+"GkAbgBzAHQAYQBsAGwARABpAHIAAACKAEMAOgBcAFUAcwBlAHIAcwBcAHcAZQBkAGUAXABEAG8AYw"
+"B1AG0AZQBuAHQAcwBcAEcAaQB0AEgAdQBiAFwAUABsAGUAeABpAG0AXwAyAGsAMQA4AFwAUwBsAG8"
+"AZQBiAGUAcgBfAFcAbwByAGsAcwBwAGEAYwBlAFwAQgBsAGkAbgBrAHAAdAAy"
+  ExtendedMatrixPrecision "1"
+  MatrixSignificanceCheck "2"
+  EnableStateSpaceSplitting "2"
+  DisplayStateSpaceSplitting "1"
+  DiscretizationMethod "2"
+  ExternalModeSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAYAAAAYAF"
+"QAcgBpAGcAZwBlAHIAVgBhAGwAdQBlAAAAAgAwAAAAGABUAHIAaQBnAGcAZQByAEQAZQBsAGEAeQA"
+"AAAIAMAAAABYAUwBlAG4AcwBpAHQAaQB2AGkAdAB5AAAAAgAwAAAAFgBSAGUAZgByAGUAcwBoAFIA"
+"YQB0AGUAAAAEADIAMAAAABQATgB1AG0AUwBhAG0AcABsAGUAcwAAAAgAOAAxADkAMgAAABQARABlA"
+"GMAaQBtAGEAdABpAG8AbgAAAAIAMQ=="
+  AlgebraicLoopMethod "1"
+  AlgebraicLoopTolerance "1e-6"
+  Schematic {
+    Location      [156, 208; 837, 499]
+    ZoomFactor    1
+    SliderPosition [0, 0]
+    ShowBrowser   off
+    BrowserWidth  100
+    Component {
+      Type          Subsystem
+      Name          "Blink"
+      Show          on
+      Position      [195, 120]
+      Direction     up
+      Flipped       off
+      Frame         [-60, -30; 60, 30]
+      LabelPosition [0, 33]
+      LabelAlign    up
+      TreatAsAtomicUnit on
+      SampleTime    "-1"
+      CodeGenEnable on
+      CodeGenSampleTime "1e-3"
+      CodeGenTarget "ATmega328"
+      CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAEAA"
+"AAUAGkAbgBzAHQAYQBsAGwARABpAHIAAACKAEMAOgBcAFUAcwBlAHIAcwBcAHcAZQBkAGUAXABEAG"
+"8AYwB1AG0AZQBuAHQAcwBcAEcAaQB0AEgAdQBiAFwAUABsAGUAeABpAG0AXwAyAGsAMQA4AFwAUwB"
+"sAG8AZQBiAGUAcgBfAFcAbwByAGsAcwBwAGEAYwBlAFwAQgBsAGkAbgBrAHAAdAAy"
+      ExternalModeSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAYAAA"
+"AYAFQAcgBpAGcAZwBlAHIAVgBhAGwAdQBlAAAAAgAwAAAAGABUAHIAaQBnAGcAZQByAEQAZQBsAGE"
+"AeQAAAAIAMAAAABYAUwBlAG4AcwBpAHQAaQB2AGkAdAB5AAAAAgAwAAAAFgBSAGUAZgByAGUAcwBo"
+"AFIAYQB0AGUAAAAEADIAMAAAABQATgB1AG0AUwBhAG0AcABsAGUAcwAAAAgAOAAxADkAMgAAABQAR"
+"ABlAGMAaQBtAGEAdABpAG8AbgAAAAIAMQ=="
+      MaskDisplayLang "2"
+      MaskIconFrame on
+      MaskIconOpaque off
+      MaskIconRotates on
+      Terminal {
+        Type          Output
+        Position      [64, -5]
+        Direction     right
+        Index         "1"
+      }
+      Terminal {
+        Type          Output
+        Position      [64, -20]
+        Direction     right
+        Index         "2"
+      }
+      Terminal {
+        Type          Input
+        Position      [-60, -10]
+        Direction     left
+        Index         "1"
+      }
+      Schematic {
+        Location      [81, 137; 744, 519]
+        ZoomFactor    1
+        SliderPosition [0, 0]
+        ShowBrowser   off
+        BrowserWidth  100
+        Component {
+          Type          TargetCode
+          Name          "Digital Out2"
+          Show          on
+          Position      [410, 165]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "1"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
+"Code = {}\n\nfor i = 1, #Block.InputSignal[1] do\n  local instance = Target.C"
+"oder.RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n\n  tab"
+"le.insert(Require, string.format(\"GPIO:%i\", channel))    \n  table.insert(I"
+"nitCode, string.format(\"configDout(%i, %i);\", instance, channel))\n  table."
+"insert(OutputCode, string.format(\"setDout(%i, %s);\", instance, Block.InputS"
+"ignal[1][i]))\nend\n\nreturn {\n  Include = \"portConfig.h\",\n  InitCode = I"
+"nitCode,\n  OutputCode = OutputCode,\n  Require = Require\n}"
+          MaskType      "Digital Out"
+          MaskDescription "Set a digital output.\n\nThe output is set low if t"
+"he input signal is zero, it is set high for all other values."
+          MaskHelp      "do_rtbox.html"
+          MaskDisplay   "text(['Digital' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || "
+"any(floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital outpu"
+"t pin(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "channel"
+            Prompt        "Digital output pin(s)"
+            Type          FreeText
+            Value         "6"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [390, 80; 1314, 224]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          Delay
+          Name          "Delay1"
+          Show          off
+          Position      [75, 200]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "N"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "X0"
+            Value         "0"
+            Show          off
+          }
+          Parameter {
+            Variable      "Ts"
+            Value         "1"
+            Show          on
+          }
+        }
+        Component {
+          Type          LogicalOperator
+          Name          "Logical\nOperator1"
+          Show          off
+          Position      [160, 200]
+          Direction     up
+          Flipped       off
+          Parameter {
+            Variable      "Operator"
+            Value         "6"
+            Show          on
+          }
+          Parameter {
+            Variable      "Inputs"
+            Value         "1"
+            Show          off
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "Digital Out3"
+          Show          on
+          Position      [415, 80]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "2"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
+"Code = {}\n\nfor i = 1, #Block.InputSignal[1] do\n  local instance = Target.C"
+"oder.RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n\n  tab"
+"le.insert(Require, string.format(\"GPIO:%i\", channel))    \n  table.insert(I"
+"nitCode, string.format(\"configDout(%i, %i);\", instance, channel))\n  table."
+"insert(OutputCode, string.format(\"setDout(%i, %s);\", instance, Block.InputS"
+"ignal[1][i]))\nend\n\nreturn {\n  Include = \"portConfig.h\",\n  InitCode = I"
+"nitCode,\n  OutputCode = OutputCode,\n  Require = Require\n}"
+          MaskType      "Digital Out"
+          MaskDescription "Set a digital output.\n\nThe output is set low if t"
+"he input signal is zero, it is set high for all other values."
+          MaskHelp      "do_rtbox.html"
+          MaskDisplay   "text(['Digital' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || "
+"any(floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital outpu"
+"t pin(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "channel"
+            Prompt        "Digital output pin(s)"
+            Type          FreeText
+            Value         "9"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [684, 31; 1365, 665]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "Digital In2"
+          Show          on
+          Position      [85, 80]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "3"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
+"Signal = {}\n\nfor i = 1, Block.NumOutputSignals[1] do\n  local instance = Ta"
+"rget.Coder.RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n"
+"\n  table.insert(Require, string.format(\"GPIO:%i\", channel))  \n  table.ins"
+"ert(InitCode, string.format(\"configDin(%i, %i);\", instance, channel))\n  ta"
+"ble.insert(OutputSignal, string.format(\"getDin(%i)\", instance))   \nend\n\n"
+"return {\n  Include = \"portConfig.h\",\n  InitCode = InitCode,\n  OutputSign"
+"al = { OutputSignal },\n  Require = Require\n}\n"
+          MaskType      "Digital In"
+          MaskDescription "Reads a digital input.\n\nThe output signal is 1 if"
+" the input voltage is higher than 2 Volts and 0 if it is lower than 0.8 Volts"
+". \nFor other input voltages the output signal is undefined."
+          MaskHelp      "di_rtbox.html"
+          MaskDisplay   "text(['Digital' char(10) 'In'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || "
+"any(floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital input"
+" pin(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "channel"
+            Prompt        "Digital input channel(s)"
+            Type          FreeText
+            Value         "13"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Output
+            Position      [29, 0]
+            Direction     right
+          }
+          Schematic {
+            Location      [187, 201; 889, 544]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetInput
+              Name          "1"
+              Show          on
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Output
+              Name          "Out1"
+              Show          off
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "DataType"
+                Value         "10"
+                Show          off
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "1"
+              SrcTerminal   1
+              DstComponent  "Out1"
+              DstTerminal   1
+            }
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Delay1"
+          SrcTerminal   2
+          DstComponent  "Logical\nOperator1"
+          DstTerminal   2
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Digital In2"
+          SrcTerminal   1
+          DstComponent  "Digital Out3"
+          DstTerminal   1
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Logical\nOperator1"
+          SrcTerminal   1
+          Points        [180, 165]
+          Branch {
+            Points        [35, 165; 35, 200]
+            DstComponent  "Delay1"
+            DstTerminal   1
+          }
+          Branch {
+            DstComponent  "Digital Out2"
+            DstTerminal   1
+          }
+        }
+      }
+    }
+    Connection {
+      Type          Signal
+      Points        [239, 115; 245, 115; 245, 110; 260, 110]
+    }
+  }
+}
