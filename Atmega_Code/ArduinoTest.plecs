@@ -103,8 +103,14 @@ Plecs {
         Direction     left
         Index         "1"
       }
+      Terminal {
+        Type          Output
+        Position      [64, 5]
+        Direction     right
+        Index         "3"
+      }
       Schematic {
-        Location      [81, 137; 744, 519]
+        Location      [684, 31; 1365, 686]
         ZoomFactor    1
         SliderPosition [0, 0]
         ShowBrowser   off
@@ -113,7 +119,7 @@ Plecs {
           Type          TargetCode
           Name          "Digital Out2"
           Show          on
-          Position      [410, 165]
+          Position      [545, 165]
           Direction     up
           Flipped       off
           Frame         [-25, -20; 25, 20]
@@ -145,7 +151,7 @@ Plecs {
             Variable      "channel"
             Prompt        "Digital output pin(s)"
             Type          FreeText
-            Value         "6"
+            Value         "7"
             Show          on
             Tunable       off
             TabName       ""
@@ -156,7 +162,7 @@ Plecs {
             Direction     left
           }
           Schematic {
-            Location      [390, 80; 1314, 224]
+            Location      [297, 85; 805, 589]
             ZoomFactor    1
             SliderPosition [0, 0]
             ShowBrowser   off
@@ -289,7 +295,7 @@ Plecs {
             Direction     left
           }
           Schematic {
-            Location      [684, 31; 1365, 665]
+            Location      [684, 31; 1365, 641]
             ZoomFactor    1
             SliderPosition [0, 0]
             ShowBrowser   off
@@ -432,6 +438,169 @@ Plecs {
             }
           }
         }
+        Component {
+          Type          TargetCode
+          Name          "PWM Out (ePWM0)"
+          Show          on
+          Position      [525, 300]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "4"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local get_from_array_or_scalar = function(field, inde"
+"x, majordim)\n\tif #field == 1 then\n   \treturn field[1]\n  \telseif #field "
+"== majordim then\n  \t \treturn field[index]\n  \telse\n    \treturn nil\t\n "
+" \tend  \n\nend\n\nlocal Require = {}\nlocal InitCode = {}\nlocal OutputCode "
+"= {}\n\nlocal dim = #Block.InputSignal[1]\nfor i = 1, dim do\n  local pwm = B"
+"lock.Mask.pwm[i]\n  table.insert(Require, string.format(\"PWM_Pin:%i\", pwm))"
+"    \n  \n  --[[local dt = get_from_array_or_scalar(Block.Mask.dt, i, dim)\n "
+" if dt == nil then\n  \t return \"Invalid width of parameter 'dt'.\"\n  end  "
+"  ]]\n    \n  --local pwmParams = {period = prd, dt = dt}\n  \n  local instan"
+"ce  = Target.Coder.RegisterPwmOutBlock(pwm)\n  if instance == \"Error\" then "
+"return \"Error: PWM Pin Must be 3, 5, 6, or 11\" end\n  table.insert(Require,"
+" string.format(\"GPIO:%i\", pwm))    \n  \n  --table.insert(InitCode, string."
+"format(\"{\"))  \n  --table.insert(InitCode, string.format(\"  PWM_Params_t *"
+"params = HAL_getDefaultPwmParams(%i, %i);\", prd, dt))\n  table.insert(InitCo"
+"de, string.format(\"  analog_init(%i);\"), Block.Mask.freq[i])\n  table.inser"
+"t(InitCode, string.format(\"  configDout(%i, %i);\", instance, pwm))  \n  --t"
+"able.insert(InitCode, string.format(\"}\"))\n     \n  table.insert(OutputCode"
+", string.format(\"set_analog(%i, %s);\", instance, Block.InputSignal[1][i]))"
+"\n  --table.insert(OutputCode, string.format(\"set_analog(%i, %s);\", instanc"
+"e, 90))\nend\n\nreturn {\n  Include = \"analog_Config.h\",\n  InitCode = Init"
+"Code,\n  OutputCode = OutputCode,\n  Require = Require\n}\n\n"
+          MaskType      "PWM Out"
+          MaskDescription "Generate a configurable PWM signal on a digital out"
+"put."
+          MaskHelp      "pwmout_rtbox.html"
+          MaskDisplay   "text(['PWM Out' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(pwm) || ~isvector(pwm) ...\n   || any(floo"
+"r(pwm) ~= pwm) || any(pwm < 0),\n  error('\"PWM resource(s)\" must be a scala"
+"r or vector of positive or zero integers.')\nend"
+          MaskDialogCallback "local config = Dialog:get('pwm')\nDialog:set('fr"
+"eq1', 'Visible', config == '5')\nDialog:set('freq1', 'Visible', config == '6'"
+")\nDialog:set('freq', 'Visible', config == '11')\nDialog:set('freq', 'Visible"
+"', config == '3')\nDialog:set('freqN', 'Visible', config == '5')\nDialog:set("
+"'freqN', 'Visible', config == '6')\nDialog:set('freqN', 'Visible', config == "
+"'11')\nDialog:set('freqN', 'Visible', config == '3'"
+          Parameter {
+            Variable      "freqN"
+            Prompt        "Frequency"
+            Type          FreeText
+            Value         ""
+            Show          off
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "freq"
+            Prompt        "Frequency(Hertz)"
+            Type          FixedText
+            PossibleValues {"7812.5Hz", "1953.125Hz\t", "976.5625Hz", "488.281"
+"25Hz", "244.140625Hz", "61.03515625Hz"}
+            Value         ""
+            Show          off
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "freq1"
+            Prompt        "Frequency Hertz"
+            Type          FixedText
+            PossibleValues {"7812.5Hz", "976.5625Hz", "244.140625Hz", "61.0351"
+"5625Hz"}
+            Value         "1"
+            Show          off
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "pwm"
+            Prompt        "PWM Pin(s)"
+            Type          FreeText
+            Value         "4"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [1, 31; 682, 525]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [260, 80]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(pwm)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [60, 80]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(pwm)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          Constant
+          Name          "Constant"
+          Show          on
+          Position      [180, 300]
+          Direction     right
+          Flipped       off
+          Frame         [-10, -10; 10, 10]
+          LabelPosition [0, 13]
+          LabelAlign    up
+          Parameter {
+            Variable      "Value"
+            Value         "92"
+            Show          on
+          }
+          Parameter {
+            Variable      "DataType"
+            Value         "10"
+            Show          off
+          }
+        }
         Connection {
           Type          Signal
           SrcComponent  "Delay1"
@@ -460,6 +629,13 @@ Plecs {
             DstComponent  "Digital Out2"
             DstTerminal   1
           }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Constant"
+          SrcTerminal   1
+          DstComponent  "PWM Out (ePWM0)"
+          DstTerminal   1
         }
       }
     }

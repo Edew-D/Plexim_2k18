@@ -3,9 +3,10 @@
 #include "analog_Config.h"
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
-#define SAMPLE_TIME 0.2
-#define prescaler 64
-#define count 49999.0
+#define SAMPLE_TIME 0.001
+#define prescaler 1
+#define count 15999
+int dim = 1;
 
 void config_interrupt(){
 	cli(); //stop interrupts
@@ -47,7 +48,7 @@ void set_prescale(){
 	}
 }
 int main(void) {
-  //init();
+  init();
   config_interrupt();
   set_prescale();
   sei();
@@ -55,7 +56,9 @@ int main(void) {
 
   configDout(0, 9);
   configDin(1, 13);
-  configDout(2, 6);
+  configDout(2, 5);
+
+
 
 
 
@@ -68,8 +71,13 @@ int main(void) {
 
 ISR(TIMER1_COMPA_vect) {       //ISR
     Serial.println("interrupt");
+    //Serial.println(dim);
+    //if (dim == 255){
+    //	dim = 0;
+    //}
+	set_analog(2, 191);
+	dim += 1;
 
-	set_analog(0, 254);
     setDout(0, getDin(1));
 
 	/*if(PINB |= (1 << PINB2)){

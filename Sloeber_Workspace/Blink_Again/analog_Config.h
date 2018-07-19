@@ -1,294 +1,247 @@
-/*
-  wiring_analog.c - analog input and output
-  Part of Arduino - http://www.arduino.cc/
-
-  Copyright (c) 2005-2006 David A. Mellis
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General
-  Public License along with this library; if not, write to the
-  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-  Boston, MA  02111-1307  USA
-
-  Modified 28 September 2010 by Mark Sproul
-*/
-
-#include "wiring_private.h"
-#include "pins_arduino.h"
-
-uint8_t analog_reference = DEFAULT;
-
-void analogReference(uint8_t mode)
-{
-	// can't actually set the register here because the default setting
-	// will connect AVCC and the AREF pin, which would cause a short if
-	// there's something connected to AREF.
-	analog_reference = mode;
-}
-
-int analogRead(uint8_t pin)
-{
-	uint8_t low, high;
-
-#if defined(analogPinToChannel)
-#if defined(__AVR_ATmega32U4__)
-	if (pin >= 18) pin -= 18; // allow for channel or pin numbers
-#endif
-	pin = analogPinToChannel(pin);
-#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-	if (pin >= 54) pin -= 54; // allow for channel or pin numbers
-#elif defined(__AVR_ATmega32U4__)
-	if (pin >= 18) pin -= 18; // allow for channel or pin numbers
-#elif defined(__AVR_ATmega1284__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega644__) || defined(__AVR_ATmega644A__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__)
-	if (pin >= 24) pin -= 24; // allow for channel or pin numbers
-#else
-	if (pin >= 14) pin -= 14; // allow for channel or pin numbers
-#endif
-
-#if defined(ADCSRB) && defined(MUX5)
-	// the MUX5 bit of ADCSRB selects whether we're reading from channels
-	// 0 to 7 (MUX5 low) or 8 to 15 (MUX5 high).
-	ADCSRB = (ADCSRB & ~(1 << MUX5)) | (((pin >> 3) & 0x01) << MUX5);
-#endif
-
-	// set the analog reference (high two bits of ADMUX) and select the
-	// channel (low 4 bits).  this also sets ADLAR (left-adjust result)
-	// to 0 (the default).
-#if defined(ADMUX)
-#if defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
-	ADMUX = (analog_reference << 4) | (pin & 0x07);
-#else
-	ADMUX = (analog_reference << 6) | (pin & 0x07);
-#endif
-#endif
-
-	// without a delay, we seem to read from the wrong channel
-	//delay(1);
-
-#if defined(ADCSRA) && defined(ADCL)
-	// start the conversion
-	sbi(ADCSRA, ADSC);
-
-	// ADSC is cleared when the conversion finishes
-	while (bit_is_set(ADCSRA, ADSC));
-
-	// we have to read ADCL first; doing so locks both ADCL
-	// and ADCH until ADCH is read.  reading ADCL second would
-	// cause the results of each conversion to be discarded,
-	// as ADCL and ADCH would be locked when it completed.
-	low  = ADCL;
-	high = ADCH;
-#else
-	// we dont have an ADC, return 0
-	low  = 0;
-	high = 0;
-#endif
-
-	// combine the two bytes
-	return (high << 8) | low;
-}
-
 // Right now, PWM output only works on the pins with
 // hardware support.  These are defined in the appropriate
 // pins_*.c file.  For the rest of the pins, we default
 // to digital output.
-void analogWrite(uint8_t pin, int val)
-{
-	// We need to make sure the PWM output is enabled for those pins
-	// that support it, as we turn it off when digitally reading or
-	// writing with them.  Also, make sure the pin is in output mode
-	// for consistenty with Wiring, which doesn't require a pinMode
-	// call for the analog output pins.
-	pinMode(pin, OUTPUT);
-	if (val == 0)
-	{
-		digitalWrite(pin, LOW);
-	}
-	else if (val == 255)
-	{
-		digitalWrite(pin, HIGH);
-	}
-	else
-	{
-		switch(digitalPinToTimer(pin))
-		{
-			// XXX fix needed for atmega8
-			#if defined(TCCR0) && defined(COM00) && !defined(__AVR_ATmega8__)
-			case TIMER0A:
-				// connect pwm to pin on timer 0
-				sbi(TCCR0, COM00);
-				OCR0 = val; // set pwm duty
-				break;
-			#endif
+#include "Arduino.h"
+#include "portConfig.h"
+//#include "wiring_private.h"
+//#include "pins_arduino.h"
+#define ON 1
+#define OFF 0
 
-			#if defined(TCCR0A) && defined(COM0A1)
-			case TIMER0A:
-				// connect pwm to pin on timer 0, channel A
-				sbi(TCCR0A, COM0A1);
-				OCR0A = val; // set pwm duty
-				break;
-			#endif
+#define NOT_ON_TIMER_s 0
+#define TIMER2B_s 3
+#define TIMER0B_s 5
+#define TIMER0A_s 6
+#define TIMER1A_s 9
+#define TIMER1B_s 10
+#define TIMER2A_s 11
 
-			#if defined(TCCR0A) && defined(COM0B1)
-			case TIMER0B:
-				// connect pwm to pin on timer 0, channel B
-				sbi(TCCR0A, COM0B1);
-				OCR0B = val; // set pwm duty
-				break;
-			#endif
+#define COM0A1_s  18
+#define COM0B1_s  19
+#define COM1A1_s  20
+#define COM1B1_s  21
+#define COM2A1_s  22
+#define COM2B1_s  23
 
-			#if defined(TCCR1A) && defined(COM1A1)
-			case TIMER1A:
-				// connect pwm to pin on timer 1, channel A
-				sbi(TCCR1A, COM1A1);
-				OCR1A = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR1A) && defined(COM1B1)
-			case TIMER1B:
-				// connect pwm to pin on timer 1, channel B
-				sbi(TCCR1A, COM1B1);
-				OCR1B = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR1A) && defined(COM1C1)
-			case TIMER1C:
-				// connect pwm to pin on timer 1, channel B
-				sbi(TCCR1A, COM1C1);
-				OCR1C = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR2) && defined(COM21)
-			case TIMER2:
-				// connect pwm to pin on timer 2
-				sbi(TCCR2, COM21);
-				OCR2 = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR2A) && defined(COM2A1)
-			case TIMER2A:
-				// connect pwm to pin on timer 2, channel A
-				sbi(TCCR2A, COM2A1);
-				OCR2A = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR2A) && defined(COM2B1)
-			case TIMER2B:
-				// connect pwm to pin on timer 2, channel B
-				sbi(TCCR2A, COM2B1);
-				OCR2B = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR3A) && defined(COM3A1)
-			case TIMER3A:
-				// connect pwm to pin on timer 3, channel A
-				sbi(TCCR3A, COM3A1);
-				OCR3A = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR3A) && defined(COM3B1)
-			case TIMER3B:
-				// connect pwm to pin on timer 3, channel B
-				sbi(TCCR3A, COM3B1);
-				OCR3B = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR3A) && defined(COM3C1)
-			case TIMER3C:
-				// connect pwm to pin on timer 3, channel C
-				sbi(TCCR3A, COM3C1);
-				OCR3C = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR4A)
-			case TIMER4A:
-				//connect pwm to pin on timer 4, channel A
-				sbi(TCCR4A, COM4A1);
-				#if defined(COM4A0)		// only used on 32U4
-				cbi(TCCR4A, COM4A0);
-				#endif
-				OCR4A = val;	// set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR4A) && defined(COM4B1)
-			case TIMER4B:
-				// connect pwm to pin on timer 4, channel B
-				sbi(TCCR4A, COM4B1);
-				OCR4B = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR4A) && defined(COM4C1)
-			case TIMER4C:
-				// connect pwm to pin on timer 4, channel C
-				sbi(TCCR4A, COM4C1);
-				OCR4C = val; // set pwm duty
-				break;
-			#endif
-
-			#if defined(TCCR4C) && defined(COM4D1)
-			case TIMER4D:
-				// connect pwm to pin on timer 4, channel D
-				sbi(TCCR4C, COM4D1);
-				#if defined(COM4D0)		// only used on 32U4
-				cbi(TCCR4C, COM4D0);
-				#endif
-				OCR4D = val;	// set pwm duty
-				break;
-			#endif
+#define no_prescaler 62500
+#define prescaler_8 7812.5
+#define prescaler_32 1953.125
+#define prescaler_64 976.5625
+#define prescaler_128 488.28125
+#define prescaler_256 244.140625
+#define prescaler_1024 61.03515625
 
 
-			#if defined(TCCR5A) && defined(COM5A1)
-			case TIMER5A:
-				// connect pwm to pin on timer 5, channel A
-				sbi(TCCR5A, COM5A1);
-				OCR5A = val; // set pwm duty
-				break;
-			#endif
 
-			#if defined(TCCR5A) && defined(COM5B1)
-			case TIMER5B:
-				// connect pwm to pin on timer 5, channel B
-				sbi(TCCR5A, COM5B1);
-				OCR5B = val; // set pwm duty
-				break;
-			#endif
+/*
+const int TCCR0A = 15;
+const int TCCR1A = 16;
+const int TCCR2A = 17
+const int COM0A1_s = 18;
+const int COM0B1_s = 19;
+const int COM1A1_s = 20;
+const int COM1B1_s = 21;
+const int COM2A1_s = 22;
+const int COM2B1_s = 23;*/
 
-			#if defined(TCCR5A) && defined(COM5C1)
-			case TIMER5C:
-				// connect pwm to pin on timer 5, channel C
-				sbi(TCCR5A, COM5C1);
-				OCR5C = val; // set pwm duty
-				break;
-			#endif
+void analog_init(int channel, double frequency){
+    dRecord *pinaddr;
+    pinaddr = &digiPin[channel];
+    int pin = pinaddr->pin_num;
+    volatile uint8_t *Timerc;
 
-			case NOT_ON_TIMER:
-			default:
-				if (val < 128) {
-					digitalWrite(pin, LOW);
-				} else {
-					digitalWrite(pin, HIGH);
-				}
+    switch(pin){
+    case 3:
+    	TCCR2A |= (1 << COM2A1) | (1 << WGM21) | (1 << WGM20);
+    	Timerc = &TCCR2A;
+    	break;
+    case 5:
+    	TCCR0A |= (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
+    	Timerc = &TCCR0A;
+    	break;
+    case 6:
+    	TCCR0A |= (1 << COM0A1) | (1 << WGM01) | (1 << WGM00);
+    	Timerc = &TCCR0A;
+    	break;
+    case 11:
+    	TCCR2A |= (1 << COM2B1) | (1 << WGM21) | (1 << WGM20);
+    	Timerc = &TCCR2A;
+    	break;
+    }
+
+    if (Timerc == TCCR2A){
+		switch(frequency){
+
+		case no_prescaler:
+		break;
+		case prescaler_8:
+			break;
+		case prescaler_32:
+			break;
+		case prescaler_64:
+			break;
+		case prescaler_128:
+			break;
+		case prescaler_256:
+			break;
+		case prescaler_1024:
+			break;
 		}
+    }
+	else if (Timerc == TCCR0A){
+
+		switch(frequency){
+
+		case no_prescaler:
+			TCCR0B |= (1 << CS00);
+		break;
+		case prescaler_8:
+			TCCR0B |= (1 << CS01);
+			break;
+		case prescaler_32:
+			TCCR0B |= (1 << CS01) | (1 << CS00);
+			break;
+		case prescaler_64:
+			break;
+		case prescaler_128:
+			break;
+		case prescaler_256:
+			break;
+		case prescaler_1024:
+			break;
+		}
+		}
+
+	}
+
+
+
+const int dt_timer(int pin){
+	const int registry[] = {
+	        NOT_ON_TIMER, /* 0 - port D */
+	        NOT_ON_TIMER,
+	        NOT_ON_TIMER,
+	        TIMER2B_s,
+	        NOT_ON_TIMER,
+	        TIMER0B_s,
+	        TIMER0A_s,
+	        NOT_ON_TIMER,
+	        NOT_ON_TIMER, /* 8 - port B */
+	        NOT_ON_TIMER, //NO TIMER 1 /TIMER1A_s
+	        NOT_ON_TIMER, //NO TIMER 1 /TIMER1B_s
+	        TIMER2A_s,
+	        NOT_ON_TIMER,
+	        NOT_ON_TIMER,
+	        NOT_ON_TIMER,
+	        NOT_ON_TIMER, /* 14 - port C */
+	        NOT_ON_TIMER,
+	        NOT_ON_TIMER,
+	        NOT_ON_TIMER,
+	        NOT_ON_TIMER,
+	};
+	//Serial.println("Pin is: ");
+	//Serial.println(registry[pin]);
+	return registry[pin];
+
+
+}
+
+void set_Abit(int bit){
+	switch(bit){
+	case COM0A1_s:
+		TCCR0A |= (1 << COM0A1);
+		//Serial.println("Set Bit: Success!");
+		break;
+	case COM0B1_s:
+		TCCR0A |= (1 << COM0B1);
+		break;
+	case COM1A1_s:
+		TCCR1A |= (1 << COM1A1);
+		break;
+	case COM1B1_s:
+		TCCR1A |= (1 << COM1B1);
+		break;
+	case COM2A1_s:
+		TCCR2A |= (1 << COM2A1);
+		break;
+	case COM2B1_s:
+		TCCR2A |= (1 << COM2B1);
+		break;
 	}
 }
 
+void set_analog(int channel, int val){
+	    //Serial.println("in set analog");
+	    dRecord *pinaddr;
+	    pinaddr = &digiPin[channel];
+	    int pin = pinaddr->pin_num;
+
+        // We need to make sure the PWM output is enabled for those pins
+        // that support it, as we turn it off when digitally reading or
+        // writing with them.  Also, make sure the pin is in output mode
+        // for consistenty with Wiring, which doesn't require a pinMode
+        // call for the analog output pins.
+
+        //configDout(channel, ); //Do this in Plecs
+        if (val == 0)
+        {
+                setDout(channel, OFF);
+        }
+        else if (val == 255)
+        {
+                setDout(channel, ON);
+        }
+        else
+        {
+                switch(dt_timer(pin))
+                {
+                        case TIMER0A_s:
+                        	    //Serial.println("Switch: Success!");
+                                // connect pwm to pin on timer 0, channel A
+                                set_Abit(COM0A1_s);
+                                OCR0A = val; // set pwm duty
+                                //Serial.println("Set_Val: Success!");
+                                break;
+
+                        case TIMER0B_s:
+                                // connect pwm to pin on timer 0, channel B
+                                set_Abit(COM0B1_s);
+                                OCR0B = val; // set pwm duty
+                                break;
+
+                        case TIMER1A_s:
+                                // connect pwm to pin on timer 1, channel A
+                                set_Abit(COM1A1_s);
+                                OCR1A = val; // set pwm duty
+                                break;
+
+                        case TIMER1B_s:
+                                // connect pwm to pin on timer 1, channel B
+                                set_Abit(COM1B1_s);
+                                OCR1B = val; // set pwm duty
+                                break;
+
+                        case TIMER2A_s:
+                                // connect pwm to pin on timer 2, channel A
+                                set_Abit(COM2A1_s);
+                                OCR2A = val; // set pwm duty
+                                break;
+
+                        case TIMER2B_s:
+                                // connect pwm to pin on timer 2, channel B
+                                set_Abit(COM2B1_s);
+                                OCR2B = val; // set pwm duty
+                                break;
+
+
+                        case NOT_ON_TIMER:
+                        default:
+                                if (val < 128) {
+                                        setDout(channel, OFF);
+                                } else {
+                                        setDout(channel, ON);
+                                }
+                }
+        }
+}

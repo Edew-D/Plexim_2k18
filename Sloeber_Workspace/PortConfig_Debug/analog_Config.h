@@ -69,7 +69,7 @@ void set_Abit(int bit){
 	switch(bit){
 	case COM0A1_s:
 		TCCR0A |= (1 << COM0A1);
-		Serial.println("Set Bit: Sucess!");
+		Serial.println("Set Bit: Success!");
 		break;
 	case COM0B1_s:
 		TCCR0A |= (1 << COM0B1);
@@ -91,8 +91,10 @@ void set_Abit(int bit){
 
 void set_analog(int channel, int val){
 	    Serial.println("in set analog");
+	    dRecord *pinaddr;
+	    pinaddr = &digiPin[channel];
 
-	    int pin = 6;
+	    int pin = pinaddr->pin_num;
 
         // We need to make sure the PWM output is enabled for those pins
         // that support it, as we turn it off when digitally reading or

@@ -3,6 +3,14 @@ local Coder = { }
 local arduino = require("arduino")
 ---local prescale = maths.prescale()
 --local count = maths.count()
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+    return false
+end
 
 copy_file = function (src, dest, subs)
   local file = io.open(src, "rb")
@@ -48,6 +56,16 @@ function Coder.RegisterDigitalBlock()
   return ret
 end
 
+function Coder.RegisterPwmOutBlock(pwm)
+  local pwm_pins = {3, 5, 6, 11}
+  local ret1
+  if has_value(pwm_pins, pwm) then
+    ret1 = Coder.RegisterDigitalBlock()
+  else return "Error"
+  end
+  return ret1
+end
+
 --tostring(digiBlocks)
 --Coder.RegisterDigitalBlock = RegisterDigitalBlock
 
@@ -63,6 +81,14 @@ function Coder.Initialize()
   local dummy = print -- dummy access to global environment ("attempt to call a table value" workaround)
 
   Resources:add("GPIO", 0, 199)
+  Resources:add("PWM_Pin", 3, 6)
+  Resources:add("PWM_Pin", 11, 11)
+  --[[Registry.PwmGpio[3] = 3
+  Registry.PwmGpio[5] = 5
+  Registry.PwmGpio[6] = 6
+  --Registry.PwmGpio[4] = 9  Timer 1 Can't use yet
+  --Registry.PwmGpio[5] = 10 Timer1 Can't use yet
+  Registry.PwmGpio[11] = 11]]
 
 
   return {
