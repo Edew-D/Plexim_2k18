@@ -1,13 +1,10 @@
-// Right now, PWM output only works on the pins with
-// hardware support.  These are defined in the appropriate
-// pins_*.c file.  For the rest of the pins, we default
-// to digital output.
 #include "Arduino.h"
 #include "portConfig.h"
-//#include "wiring_private.h"
-//#include "pins_arduino.h"
+
 #define ON 1
 #define OFF 0
+
+volatile uint8_t *Timerc;
 
 #define NOT_ON_TIMER_s 0
 #define TIMER2B_s 3
@@ -24,32 +21,56 @@
 #define COM2A1_s  22
 #define COM2B1_s  23
 
-#define no_prescaler 62500
-#define prescaler_8 7812.5
-#define prescaler_32 1953.125
-#define prescaler_64 976.5625
-#define prescaler_128 488.28125
-#define prescaler_256 244.140625
-#define prescaler_1024 61.03515625
+#define no_prescaler 1
+#define prescaler_8 2
+#define prescaler_32 3
+#define prescaler_64 4
+#define prescaler_128 5
+#define prescaler_256 6
+#define prescaler_1024 7
+
+double map(double x, double in_min, double in_max, double out_min, double out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+void set_Abit(int bit){
+	switch(bit){
+
+	case COM0A1_s:
+		TCCR0A |= (1 << COM0A1);
+		Timerc = &TCCR1A;
+		break;
+	case COM0B1_s:
+		TCCR0A |= (1 << COM0B1);
+		Timerc = &TCCR1A;
+		break;
+	case COM1A1_s:
+		TCCR1A |= (1 << COM1A1);
+		Timerc = &TCCR1A;
+		break;
+	case COM1B1_s:
+		TCCR1A |= (1 << COM1B1);
+		Timerc = &TCCR1A;
+		break;
+	case COM2A1_s:
+		TCCR2A |= (1 << COM2A1);
+		Timerc = &TCCR2A;
+		break;
+	case COM2B1_s:
+		TCCR2A |= (1 << COM2B1);
+		Timerc = &TCCR2A;
+		break;
+	}
+}
 
 
-
-/*
-const int TCCR0A = 15;
-const int TCCR1A = 16;
-const int TCCR2A = 17
-const int COM0A1_s = 18;
-const int COM0B1_s = 19;
-const int COM1A1_s = 20;
-const int COM1B1_s = 21;
-const int COM2A1_s = 22;
-const int COM2B1_s = 23;*/
-
-void analog_init(int channel, double frequency){
+void analog_init(int channel, int analog_prescale){
     dRecord *pinaddr;
     pinaddr = &digiPin[channel];
     int pin = pinaddr->pin_num;
-    volatile uint8_t *Timerc;
+
+    //if (timer_0) analog_prescale+=2;
 
     switch(pin){
     case 3:
@@ -70,28 +91,36 @@ void analog_init(int channel, double frequency){
     	break;
     }
 
-    if (Timerc == TCCR2A){
-		switch(frequency){
+    if (Timerc == &TCCR2A){
+
+		switch(analog_prescale){
 
 		case no_prescaler:
+			TCCR2B |= (1 << CS20);
 		break;
 		case prescaler_8:
+			TCCR2B |= (1 << CS21);
 			break;
 		case prescaler_32:
+			TCCR2B |= (1 << CS20) | (1 << CS21);
 			break;
 		case prescaler_64:
+			TCCR2B |= (1 << CS22);
 			break;
 		case prescaler_128:
+			TCCR2B |= (1 << CS20) | (1 << CS22);
 			break;
 		case prescaler_256:
+			TCCR2B |= (1 << CS20) | (1 << CS22);
 			break;
 		case prescaler_1024:
+			TCCR2B |= (1 << CS20) | (1 << CS21) | (1 << CS22);
 			break;
 		}
     }
-	else if (Timerc == TCCR0A){
+	else if (Timerc == &TCCR0A){
 
-		switch(frequency){
+		switch(analog_prescale){
 
 		case no_prescaler:
 			TCCR0B |= (1 << CS00);
@@ -99,16 +128,14 @@ void analog_init(int channel, double frequency){
 		case prescaler_8:
 			TCCR0B |= (1 << CS01);
 			break;
-		case prescaler_32:
+		case prescaler_64:
 			TCCR0B |= (1 << CS01) | (1 << CS00);
 			break;
-		case prescaler_64:
-			break;
-		case prescaler_128:
-			break;
 		case prescaler_256:
+			TCCR0B |= (1 << CS02);
 			break;
 		case prescaler_1024:
+			TCCR0B |= (1 << CS02) | (1 << CS00);
 			break;
 		}
 		}
@@ -117,7 +144,7 @@ void analog_init(int channel, double frequency){
 
 
 
-const int dt_timer(int pin){
+int dt_timer(int pin){
 	const int registry[] = {
 	        NOT_ON_TIMER, /* 0 - port D */
 	        NOT_ON_TIMER,
@@ -140,50 +167,19 @@ const int dt_timer(int pin){
 	        NOT_ON_TIMER,
 	        NOT_ON_TIMER,
 	};
-	//Serial.println("Pin is: ");
-	//Serial.println(registry[pin]);
 	return registry[pin];
 
 
 }
 
-void set_Abit(int bit){
-	switch(bit){
-	case COM0A1_s:
-		TCCR0A |= (1 << COM0A1);
-		//Serial.println("Set Bit: Success!");
-		break;
-	case COM0B1_s:
-		TCCR0A |= (1 << COM0B1);
-		break;
-	case COM1A1_s:
-		TCCR1A |= (1 << COM1A1);
-		break;
-	case COM1B1_s:
-		TCCR1A |= (1 << COM1B1);
-		break;
-	case COM2A1_s:
-		TCCR2A |= (1 << COM2A1);
-		break;
-	case COM2B1_s:
-		TCCR2A |= (1 << COM2B1);
-		break;
-	}
-}
 
 void set_analog(int channel, int val){
-	    //Serial.println("in set analog");
+		val = map(val, 0.0, 1.0, 0, 255);
+
 	    dRecord *pinaddr;
 	    pinaddr = &digiPin[channel];
 	    int pin = pinaddr->pin_num;
 
-        // We need to make sure the PWM output is enabled for those pins
-        // that support it, as we turn it off when digitally reading or
-        // writing with them.  Also, make sure the pin is in output mode
-        // for consistenty with Wiring, which doesn't require a pinMode
-        // call for the analog output pins.
-
-        //configDout(channel, ); //Do this in Plecs
         if (val == 0)
         {
                 setDout(channel, OFF);
@@ -197,41 +193,33 @@ void set_analog(int channel, int val){
                 switch(dt_timer(pin))
                 {
                         case TIMER0A_s:
-                        	    //Serial.println("Switch: Success!");
-                                // connect pwm to pin on timer 0, channel A
                                 set_Abit(COM0A1_s);
-                                OCR0A = val; // set pwm duty
-                                //Serial.println("Set_Val: Success!");
+                                OCR0A = val;
                                 break;
 
                         case TIMER0B_s:
-                                // connect pwm to pin on timer 0, channel B
                                 set_Abit(COM0B1_s);
-                                OCR0B = val; // set pwm duty
+                                OCR0B = val;
                                 break;
 
                         case TIMER1A_s:
-                                // connect pwm to pin on timer 1, channel A
                                 set_Abit(COM1A1_s);
-                                OCR1A = val; // set pwm duty
+                                OCR1A = val;
                                 break;
 
                         case TIMER1B_s:
-                                // connect pwm to pin on timer 1, channel B
                                 set_Abit(COM1B1_s);
-                                OCR1B = val; // set pwm duty
+                                OCR1B = val;
                                 break;
 
                         case TIMER2A_s:
-                                // connect pwm to pin on timer 2, channel A
                                 set_Abit(COM2A1_s);
-                                OCR2A = val; // set pwm duty
+                                OCR2A = val;
                                 break;
 
                         case TIMER2B_s:
-                                // connect pwm to pin on timer 2, channel B
                                 set_Abit(COM2B1_s);
-                                OCR2B = val; // set pwm duty
+                                OCR2B = val;
                                 break;
 
 

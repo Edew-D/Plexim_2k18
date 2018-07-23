@@ -66,9 +66,6 @@ function Coder.RegisterPwmOutBlock(pwm)
   return ret1
 end
 
---tostring(digiBlocks)
---Coder.RegisterDigitalBlock = RegisterDigitalBlock
-
 
 function Coder.Initialize()
   local Resources = ResourceList:new()

@@ -1,18 +1,16 @@
 local atmega = {}
 SAMPLE_TIME = Target.Variables.SAMPLE_TIME
 Clock_Speed = 16000000 --clock speed of atmega328p, may differ for other boards
-multiplier = 1000000
-base = 16.0
 prescaler = "NIL"
 COMPA = 65536 --COMPA = 65536 maximum value of output compare register OCR1A
 MINIMUM_SAMPLE = 1.25e-07
 MAXIMUM_SAMPLE = 4.194368
 
-freq1= base/1*multiplier
-freq8= base/8*multiplier
-freq64= base/64*multiplier
-freq256= base/256*multiplier
-freq1024= base/1024*multiplier
+freq1= Clock_Speed/1
+freq8= Clock_Speed/8
+freq64= Clock_Speed/64
+freq256= Clock_Speed/256
+freq1024= Clock_Speed/1024
 
 period1 = 1.0/freq1
 period8 = 1.0/freq8

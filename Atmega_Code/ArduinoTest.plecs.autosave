@@ -498,7 +498,7 @@ Plecs {
             Prompt        "Timer 0 Prescaler"
             Type          FixedText
             PossibleValues {"1", "8", "64", "256", "1024"}
-            Value         "3"
+            Value         "1"
             Show          on
             Tunable       off
             TabName       ""
@@ -619,7 +619,7 @@ Plecs {
           LabelAlign    up
           Parameter {
             Variable      "InitialValue"
-            Value         "2"
+            Value         "0.0"
             Show          on
           }
         }
@@ -671,13 +671,13 @@ Plecs {
           LabelAlign    left
           Parameter {
             Variable      "Value"
-            Value         "1"
-            Show          off
+            Value         "0.1"
+            Show          on
           }
           Parameter {
             Variable      "DataType"
             Value         "10"
-            Show          off
+            Show          on
           }
         }
         Component {

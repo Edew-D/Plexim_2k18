@@ -1,7 +1,7 @@
 /*
  * Header file for: ArduinoTest/Blink
  * Generated with : PLECS 4.2.0-DEV
- * Generated on   : 19 Jul 2018 10:33:11
+ * Generated on   : 23 Jul 2018 06:51:53
  */
 #ifndef PLECS_HEADER_Blink_h_
 #define PLECS_HEADER_Blink_h_
@@ -28,6 +28,7 @@ extern const double Blink_sampleTime;
 typedef struct
 {
    bool Delay1;                     /* Blink/Delay1 */
+   double Delay3;                   /* Blink/Delay3 */
 } Blink_ModelStates;
 extern Blink_ModelStates Blink_X;
 
@@ -37,6 +38,8 @@ typedef struct
 {
    bool Delay1;                     /* Blink/Delay1 */
    bool LogicalOperator1;           /* Blink/Logical Operator1 */
+   double Delay3;                   /* Blink/Delay3 */
+   double Min_Max1;                 /* Blink/Min/Max1 */
 } Blink_BlockOutputs;
 extern Blink_BlockOutputs Blink_B;
 
