@@ -110,9 +110,9 @@ Plecs {
         Index         "3"
       }
       Schematic {
-        Location      [676, 98; 1357, 750]
+        Location      [761, 31; 1365, 686]
         ZoomFactor    1
-        SliderPosition [0, 85]
+        SliderPosition [56, 31]
         ShowBrowser   off
         BrowserWidth  100
         Component {
@@ -443,7 +443,7 @@ Plecs {
           Type          TargetCode
           Name          "PWM Out (ePWM0)"
           Show          on
-          Position      [525, 300]
+          Position      [585, 380]
           Direction     up
           Flipped       off
           Frame         [-25, -20; 25, 20]
@@ -453,43 +453,75 @@ Plecs {
           SampleTime    "0"
           CodeFcnLang   "2"
           CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
-"Code = {}\n\n\nlocal function pin_set(pin, prescale, timer_0)\n\ttable.insert"
-"(Require, string.format(\"PWM_Pin:%i\", pin))\n\tlocal instance = Target.Code"
-"r.RegisterPwmOutBlock(pin)\n\tif instance == \"Error\" then return \"Error: P"
-"WM Pin Must be 3, 5, 6, or 11\" end\n  \ttable.insert(Require, string.format("
-"\"GPIO:%i\", pin))\n  \ttable.insert(InitCode, string.format(\"configDout(%i,"
-" %i);\", instance, pin))\n  \ttable.insert(InitCode, string.format(\"analog_i"
-"nit(%i, %i);\", instance, prescale))\n  \ttable.insert(OutputCode, string.for"
-"mat(\"set_analog(%i, %s);\", instance, Block.InputSignal[1][1]))\nend\n\n\nlo"
-"cal function pin_init(timer, pin0, pin2, prescale0, prescale2)\n\tlocal table"
-"0 = {5, 6}\n\tlocal table2 = {3, 5}\n\t\n\tif timer == 1 then\n\t\tlocal pin "
-"= pin0\n\t\tif pin ~= 3 then\n\t\t\tpin_set(table0[pin], prescale0)\n\t\telse"
-"\n\t\t\tpin_set(5)\n\t\t\tpin_set(6)\n\t\tend\n\t\t\n\telse\n\t\tlocal pin = "
-"pin2\n\t\tif pin ~= 3 then\n\t\t\tpin_set(table2[pin], prescale2)\n\t\telse\n"
-"\t\t\tpin_set(3)\n\t\t\tpin_set(11)\n\t\tend\n\tend\nend\n\npin_init(Block.Ma"
-"sk.tim[1], Block.Mask.pin0[1], Block.Mask.pin2[1], Block.Mask.pre0[1], Block."
-"Mask.pre2[1])\n\nreturn {\n  Include = \"analog_Config.h\",\n  InitCode = Ini"
-"tCode,\n  OutputCode = OutputCode,\n  Require = Require\n}\n\n"
+"Code = {}\n\nprint(Block.Mask.out[1][1])\nprint(Block.Mask.invert[1][1])\n-- "
+"Error Handling:\nif Block.Mask.out[1] == Block.Mask.invert[1] or Block.Mask.o"
+"ut2[1] == Block.Mask.invert[1] then \nreturn \"Error: Output Pin and Inverted"
+" Signal Pin cannot be the same\" \nend\n\nlocal function pin_set(pin, prescal"
+"e)\n\ttable.insert(Require, string.format(\"PWM_Pin:%i\", pin))\n\tlocal inst"
+"ance = Target.Coder.RegisterPwmOutBlock(pin)\n\tif instance == \"Error\" then"
+" return \"Error: PWM Pin Must be 3, 5, 6, or 11\" end\n  \ttable.insert(Requi"
+"re, string.format(\"GPIO:%i\", pin))\n  \ttable.insert(InitCode, string.forma"
+"t(\"configDout(%i, %i);\", instance, pin))\n  \ttable.insert(InitCode, string"
+".format(\"analog_init(%i, %i, %i);\", instance, prescale, inv))\n  \ttable.in"
+"sert(OutputCode, string.format(\"set_analog(%i, %s);\", instance, Block.Input"
+"Signal[1][1]))\nend\n\n\nlocal function pin_init(timer, pin0, pin2, prescale0"
+", prescale2)\n\tlocal table0 = {5, 6}\n\tlocal table2 = {3, 5}\n\tlocal inv ="
+" false\n\t\n\tif timer == 1 then\n\t\tlocal pin = pin0\n\t\tif pin ~= 3 then"
+"\n\t\t\tpin_set(table0[pin], prescale0, inv)\n\t\telse\n\t\t\tpin_set(5, pres"
+"cale0, inv)\n\t\t\tpin_set(6, prescale0, inv)\n\t\tend\n\t\t\n\telse\n\t\tloc"
+"al pin = pin2\n\t\tif pin ~= 3 then\n\t\t\tpin_set(table2[pin], prescale2, in"
+"v)\n\t\telse\n\t\t\tpin_set(3, prescale2, inv)\n\t\t\tpin_set(11, prescale2, "
+"inv)\n\t\tend\n\tend\nend\n\n\nlocal function invert_init(timer, out0, out2, "
+"invert_pin, prescale0, prescale2)\n\tlocal table0 = {5, 6}\n\tlocal table2 = "
+"{3, 11}\n\tlocal table_invert = {3, 5, 6, 11}\n\tlocal inv = true\n\t\n\tif t"
+"imer == 1 then\n\t\tlocal pin = out0\n\t\tif pin ~= 3 then\n\t\t\tpin_set(tab"
+"le0[pin], prescale0, inv)\n\t\t\t--table.insert(InitCode, string.format(\"inv"
+"ert_signal(%i, %i);\", instance, invert))\n\t\telse\n\t\t\tpin_set(5, prescal"
+"e0, inv)\n\t\t\tpin_set(6, prescale0, inv)\n\t\tend\n\t\t\n\telse\n\t\tlocal "
+"pin = out2\n\t\tif pin ~= 3 then\n\t\t\tpin_set(table2[pin], prescale2, inv)"
+"\n\t\telse\n\t\t\tpin_set(3, prescale2, inv)\n\t\t\tpin_set(11, prescale2, in"
+"v)\n\t\tend\n\tend\nend\n\nif Block.Mask.tmode[1] == 1 then\n\tpin_init(Block"
+".Mask.tim[1], Block.Mask.pin0[1], Block.Mask.pin2[1], Block.Mask.pre0[1], Blo"
+"ck.Mask.pre2[1])\nelse if Block.Mask.tmode[1] == 2 then\n\tinvert_init(Block."
+"Mask.tim[1], Block.Mask.out0[1], Block.Mask.out2[1], Block.Mask.invert[1], Bl"
+"ock.Mask.pre0[1], Block.Mask.pre2[1])\n\n\nreturn {\n  Include = \"analog_Con"
+"fig.h\",\n  InitCode = InitCode,\n  OutputCode = OutputCode,\n  Require = Req"
+"uire\n}\n\n"
           MaskType      "PWM Out"
           MaskDescription "Generate a configurable PWM signal on a digital out"
-"put."
+"put.\n\nFast PWM Mode generates a high frequency waveform on the selected pin"
+".\n\nInverting Mode outputs an inverted signal to the pin complementary to th"
+"at which is selected. (5<--> 6) or (3<-->11)"
           MaskHelp      "pwmout_rtbox.html"
           MaskDisplay   "text(['PWM Out' char(10) 'Out'])"
           MaskIconFrame on
           MaskIconOpaque off
           MaskIconRotates on
-          MaskInit      "numpins =1"
-          MaskDialogCallback "local Timer = Dialog:get('tim')\nDialog:set('pre"
-"0', 'Visible', Timer == '1')\nDialog:set('pre2', 'Visible', Timer == '2')\nDi"
-"alog:set('pin0', 'Visible', Timer == '1')\nDialog:set('pin2', 'Visible', Time"
-"r == '2')\n"
+          MaskInit      "numpins = 1"
+          MaskDialogCallback "local Timer = Dialog:get('tim')\nlocal Mode = Di"
+"alog:get('tmode')\nDialog:set('pre0', 'Visible', Timer == '1')\nDialog:set('p"
+"re2', 'Visible', Timer == '2')\nDialog:set('pin0', 'Visible', Timer == '1' an"
+"d Mode == '1')\nDialog:set('pin2', 'Visible', Timer == '2' and Mode == '1')\n"
+"Dialog:set('out', 'Visible', Mode == '2' and Timer == '1')\nDialog:set('out2'"
+", 'Visible', Mode == '2' and Timer == '2')\nDialog:set('ISig', 'Visible', Mod"
+"e == '2')\n"
           Parameter {
             Variable      "tim"
             Prompt        "Timer"
             Type          FixedText
             PossibleValues {"Timer 0", "Timer 2"}
             Value         "1"
-            Show          on
+            Show          off
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "tmode"
+            Prompt        "Timer Mode"
+            Type          FixedText
+            PossibleValues {"Fast PWM", "Inverting"}
+            Value         "2"
+            Show          off
             Tunable       off
             TabName       ""
           }
@@ -499,7 +531,7 @@ Plecs {
             Type          FixedText
             PossibleValues {"1", "8", "64", "256", "1024"}
             Value         "3"
-            Show          on
+            Show          off
             Tunable       off
             TabName       ""
           }
@@ -508,28 +540,58 @@ Plecs {
             Prompt        "Timer 2 Prescaler"
             Type          FixedText
             PossibleValues {"1", "8", "32", "64", "128", "256", "1024"}
-            Value         "4"
-            Show          on
+            Value         "1"
+            Show          off
             Tunable       off
             TabName       ""
           }
           Parameter {
             Variable      "pin0"
-            Prompt        "Timer 0 Pin"
+            Prompt        "Timer 0 PWM Pin"
             Type          FixedText
-            PossibleValues {"5", "6", "Both"}
-            Value         "2"
-            Show          on
+            PossibleValues {"5", "6", "5 and 6"}
+            Value         "1"
+            Show          off
             Tunable       off
             TabName       ""
           }
           Parameter {
             Variable      "pin2"
-            Prompt        "Timer 2  Pin"
+            Prompt        "Timer 2  PWM Pin"
             Type          FixedText
-            PossibleValues {"3", "11", "Both"}
+            PossibleValues {"3", "11", "3 and 11"}
             Value         "1"
-            Show          on
+            Show          off
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "out"
+            Prompt        "Timer 0 Output Pin"
+            Type          FixedText
+            PossibleValues {"5", "6"}
+            Value         "1"
+            Show          off
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "out2"
+            Prompt        "Timer 2 Output Pin"
+            Type          FixedText
+            PossibleValues {"3", "11"}
+            Value         "1"
+            Show          off
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "invert"
+            Prompt        "Invert Signal Output Pin"
+            Type          FixedText
+            PossibleValues {"3", "5", "6", "11"}
+            Value         "2"
+            Show          off
             Tunable       off
             TabName       ""
           }
@@ -539,7 +601,7 @@ Plecs {
             Direction     left
           }
           Schematic {
-            Location      [1, 31; 682, 665]
+            Location      [1, 31; 759, 665]
             ZoomFactor    1
             SliderPosition [0, 0]
             ShowBrowser   off
@@ -603,7 +665,7 @@ Plecs {
           }
           Parameter {
             Variable      "Ts"
-            Value         "0.8"
+            Value         "0.05"
             Show          on
           }
         }
@@ -619,26 +681,8 @@ Plecs {
           LabelAlign    up
           Parameter {
             Variable      "InitialValue"
-            Value         "2"
+            Value         "0.0"
             Show          on
-          }
-        }
-        Component {
-          Type          MinMax
-          Name          "Min/Max"
-          Show          on
-          Position      [285, 235]
-          Direction     up
-          Flipped       off
-          Parameter {
-            Variable      "Operation"
-            Value         "1"
-            Show          off
-          }
-          Parameter {
-            Variable      "Inputs"
-            Value         "2"
-            Show          off
           }
         }
         Component {
@@ -671,13 +715,13 @@ Plecs {
           LabelAlign    left
           Parameter {
             Variable      "Value"
-            Value         "1"
-            Show          off
+            Value         "0.01"
+            Show          on
           }
           Parameter {
             Variable      "DataType"
             Value         "10"
-            Show          off
+            Show          on
           }
         }
         Component {
@@ -717,6 +761,165 @@ Plecs {
             Variable      "DataType"
             Value         "10"
             Show          off
+          }
+        }
+        Component {
+          Type          Delay
+          Name          "Delay4"
+          Show          off
+          Position      [345, 585]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "N"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "X0"
+            Value         "0"
+            Show          off
+          }
+          Parameter {
+            Variable      "Ts"
+            Value         "0.05"
+            Show          on
+          }
+        }
+        Component {
+          Type          Sum
+          Name          "Sum1"
+          Show          off
+          Position      [205, 585]
+          Direction     up
+          Flipped       off
+          Parameter {
+            Variable      "IconShape"
+            Value         "2"
+            Show          off
+          }
+          Parameter {
+            Variable      "Inputs"
+            Value         "|++"
+            Show          off
+          }
+        }
+        Component {
+          Type          Constant
+          Name          "Constant2"
+          Show          on
+          Position      [210, 635]
+          Direction     up
+          Flipped       off
+          Frame         [-10, -10; 10, 10]
+          LabelPosition [13, 0]
+          LabelAlign    left
+          Parameter {
+            Variable      "Value"
+            Value         "0.01"
+            Show          on
+          }
+          Parameter {
+            Variable      "DataType"
+            Value         "10"
+            Show          on
+          }
+        }
+        Component {
+          Type          MinMax
+          Name          "Min/Max2"
+          Show          on
+          Position      [435, 515]
+          Direction     up
+          Flipped       off
+          Parameter {
+            Variable      "Operation"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "Inputs"
+            Value         "2"
+            Show          off
+          }
+        }
+        Component {
+          Type          Constant
+          Name          "Constant3"
+          Show          on
+          Position      [385, 530]
+          Direction     right
+          Flipped       off
+          Frame         [-10, -10; 10, 10]
+          LabelPosition [0, 13]
+          LabelAlign    up
+          Parameter {
+            Variable      "Value"
+            Value         "255"
+            Show          on
+          }
+          Parameter {
+            Variable      "DataType"
+            Value         "10"
+            Show          off
+          }
+        }
+        Component {
+          Type          InitialCondition
+          Name          "IC1"
+          Show          on
+          Position      [80, 585]
+          Direction     right
+          Flipped       off
+          Frame         [-15, -15; 15, 15]
+          LabelPosition [0, 18]
+          LabelAlign    up
+          Parameter {
+            Variable      "InitialValue"
+            Value         "0.0"
+            Show          on
+          }
+        }
+        Component {
+          Type          Constant
+          Name          "Constant4"
+          Show          on
+          Position      [485, 300]
+          Direction     right
+          Flipped       off
+          Frame         [-10, -10; 10, 10]
+          LabelPosition [0, 13]
+          LabelAlign    up
+          Parameter {
+            Variable      "Value"
+            Value         "0.5"
+            Show          on
+          }
+          Parameter {
+            Variable      "DataType"
+            Value         "10"
+            Show          on
+          }
+        }
+        Component {
+          Type          Constant
+          Name          "Constant5"
+          Show          on
+          Position      [490, 450]
+          Direction     right
+          Flipped       off
+          Frame         [-10, -10; 10, 10]
+          LabelPosition [0, 13]
+          LabelAlign    up
+          Parameter {
+            Variable      "Value"
+            Value         "0.5"
+            Show          on
+          }
+          Parameter {
+            Variable      "DataType"
+            Value         "10"
+            Show          on
           }
         }
         Connection {
@@ -795,11 +998,62 @@ Plecs {
         }
         Connection {
           Type          Signal
-          SrcComponent  "Min/Max1"
+          SrcComponent  "Sum1"
           SrcTerminal   1
-          Points        [460, 305; 460, 300]
+          DstComponent  "Delay4"
+          DstTerminal   1
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Constant2"
+          SrcTerminal   1
+          Points        [210, 615; 205, 615]
+          DstComponent  "Sum1"
+          DstTerminal   3
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Delay4"
+          SrcTerminal   2
+          Points        [365, 510]
+          Branch {
+            Points        [55, 510; 55, 585]
+            DstComponent  "IC1"
+            DstTerminal   1
+          }
+          Branch {
+            DstComponent  "Min/Max2"
+            DstTerminal   2
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Constant3"
+          SrcTerminal   1
+          Points        [405, 530]
+          DstComponent  "Min/Max2"
+          DstTerminal   3
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "IC1"
+          SrcTerminal   2
+          DstComponent  "Sum1"
+          DstTerminal   2
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Constant4"
+          SrcTerminal   1
+          Points        [525, 300; 525, 380]
           DstComponent  "PWM Out (ePWM0)"
           DstTerminal   1
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Constant5"
+          SrcTerminal   1
+          Points        [530, 450; 530, 535; 565, 535]
         }
       }
     }

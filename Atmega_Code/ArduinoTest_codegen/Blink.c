@@ -1,7 +1,7 @@
 /*
  * Implementation file for: ArduinoTest/Blink
  * Generated with         : PLECS 4.2.0-DEV
- * Generated on           : 23 Jul 2018 06:51:53
+ * Generated on           : 23 Jul 2018 13:12:41
  */
 #include "Blink.h"
 #ifndef PLECS_HEADER_Blink_h_
@@ -39,29 +39,18 @@
 #include "portConfig.h"
 #include "analog_Config.h"
 #define PLECSRunTimeError(msg) Blink_errorStatus = msg
-static double plecsmin(double a, double b)
-{
-   if (a < b)
-   {
-      return a;
-   }
-   return b;
-}
-static const uint32_t Blink_taskPeriod[2]= {
+static const uint32_t Blink_taskPeriod[1]= {
    /* [0.5, 0] */
-   500,
-   /* [0.8, 0] */
-   800
+   500
 };
-static uint32_t Blink_taskTick[2];
-static char Blink_taskHit[2];
-static char Blink_first;
+static uint32_t Blink_taskTick[1];
+static char Blink_taskHit[1];
 Blink_BlockOutputs Blink_B;
 Blink_ModelStates Blink_X _ALIGN;
 const char * Blink_errorStatus;
 const double Blink_sampleTime = 0.00100000000000000002;
 const char * const Blink_checksum =
-   "ab97e22d750115c8e42dae41e464659c1b75dcb4";
+   "6e5272ca32f890c15fe370373f3eb6d5846a8918";
 void Blink_initialize(double time)
 {
    uint32_t Blink_tickLo;
@@ -79,14 +68,13 @@ void Blink_initialize(double time)
    }
    /* Initialize sub-task tick counters */
    Blink_taskTick[0] = 0;           /* [0.5, 0] */
-   Blink_taskTick[1] = 0;           /* [0.8, 0] */
 
 
    /* Offset sub-task tick counters */
    {
       uint32_t i, n, N, delta;
       N = abs(Blink_tickHi);
-      for (i = 0; i < 2; ++i)
+      for (i = 0; i < 1; ++i)
       {
          delta = -Blink_taskPeriod[i];
          delta %= Blink_taskPeriod[i];
@@ -117,13 +105,11 @@ void Blink_initialize(double time)
    /* Initialization for Digital Out : 'Blink/Digital Out3' */
    configDout(2, 9);
 
-   /* Initialization for Delay : 'Blink/Delay3' */
-   Blink_X.Delay3 = 0.;
-
    /* Initialization for PWM Out : 'Blink/PWM Out (ePWM0)' */
-   configDout(3, 6);
-   analog_init(3, 1);
-   Blink_first = 1;
+   configDout(3, 3);
+   analog_init(3, 6, 1);
+   configDout(4, 11);
+   analog_init(4, 6, 0);
 }
 
 void Blink_step()
@@ -134,7 +120,7 @@ void Blink_step()
    }
    {
       uint32_t i;
-      for (i = 0; i < 2; ++i)
+      for (i = 0; i < 1; ++i)
       {
          Blink_taskHit[i] = (Blink_taskTick[i] == 0);
       }
@@ -152,18 +138,9 @@ void Blink_step()
    setDout(0, Blink_B.LogicalOperator1);
    /* Digital Out : 'Blink/Digital Out3' */
    setDout(2, getDin(1));
-   if (Blink_taskHit[1])
-   {
-      /* Delay : 'Blink/Delay3' */
-      Blink_B.Delay3 = Blink_X.Delay3;
-
-      /* Minimum / Maximum : 'Blink/Min\/Max1' */
-      Blink_B.Min_Max1 = plecsmin(Blink_B.Delay3,255.);
-   }
-
    /* PWM Out : 'Blink/PWM Out (ePWM0)' */
-   set_analog(3, Blink_B.Min_Max1);
-   Blink_first = 0;
+   set_analog(3, 0.5, 1);
+   set_analog(4, 0.5, 0);
    if (Blink_errorStatus)
    {
       return;
@@ -173,22 +150,11 @@ void Blink_step()
       /* Update for Delay : 'Blink/Delay1' */
       Blink_X.Delay1 = Blink_B.LogicalOperator1;
    }
-   if (Blink_taskHit[1])
-   {
-      /* Update for Delay : 'Blink/Delay3'
-       * incorporates
-       *  Sum : 'Blink/Sum'
-       *  Initial Condition : 'Blink/IC'
-       *  Constant : 'Blink/Constant'
-       */
-      Blink_X.Delay3 = (Blink_first ? 0. : Blink_B.Delay3) +
-                       0.100000000000000006;
-   }
 
    /* Increment sub-task tick counters */
    {
       uint32_t i;
-      for (i = 0; i < 2; ++i)
+      for (i = 0; i < 1; ++i)
       {
          Blink_taskTick[i]++;
          if (Blink_taskTick[i] >= Blink_taskPeriod[i])

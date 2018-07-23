@@ -5,6 +5,10 @@
 #define OFF 0
 
 volatile uint8_t *Timerc;
+volatile uint8_t *Invert;
+int val;
+
+
 
 #define NOT_ON_TIMER_s 0
 #define TIMER2B_s 3
@@ -34,64 +38,58 @@ double map(double x, double in_min, double in_max, double out_min, double out_ma
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void set_Abit(int bit){
-	switch(bit){
+void invert_signal(int pin_to_invert){
 
-	case COM0A1_s:
-		TCCR0A |= (1 << COM0A1);
-		Timerc = &TCCR1A;
+	switch(pin_to_invert){
+	case 3:
+		TCCR2A |= (1 << COM2B0);
 		break;
-	case COM0B1_s:
-		TCCR0A |= (1 << COM0B1);
-		Timerc = &TCCR1A;
+	case 5:
+		TCCR0A |= (1 << COM0B0);
 		break;
-	case COM1A1_s:
-		TCCR1A |= (1 << COM1A1);
-		Timerc = &TCCR1A;
+	case 6:
+		TCCR0A |= (1 << COM0A0);
 		break;
-	case COM1B1_s:
-		TCCR1A |= (1 << COM1B1);
-		Timerc = &TCCR1A;
+	case 11:
+		TCCR2A |= (1 << COM2A0);
 		break;
-	case COM2A1_s:
-		TCCR2A |= (1 << COM2A1);
-		Timerc = &TCCR2A;
-		break;
-	case COM2B1_s:
-		TCCR2A |= (1 << COM2B1);
-		Timerc = &TCCR2A;
-		break;
-	}
+
+}
 }
 
 
-void analog_init(int channel, int analog_prescale){
+
+void analog_init(int channel, int analog_prescale, bool inv){
     dRecord *pinaddr;
     pinaddr = &digiPin[channel];
     int pin = pinaddr->pin_num;
 
-    //if (timer_0) analog_prescale+=2;
+    if (inv) invert_signal(pin);
 
-    switch(pin){
+    switch(pin){ //Setting to fast pwm Mode
     case 3:
-    	TCCR2A |= (1 << COM2A1) | (1 << WGM21) | (1 << WGM20);
+    	TCCR2A |= (1 << COM2B1) | (1 << WGM21) | (1 << WGM20);
+    	Invert = &OCR2B;
     	Timerc = &TCCR2A;
     	break;
     case 5:
     	TCCR0A |= (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
+    	Invert = &OCR0B;
     	Timerc = &TCCR0A;
     	break;
     case 6:
     	TCCR0A |= (1 << COM0A1) | (1 << WGM01) | (1 << WGM00);
+    	Invert = &OCR0A;
     	Timerc = &TCCR0A;
     	break;
     case 11:
-    	TCCR2A |= (1 << COM2B1) | (1 << WGM21) | (1 << WGM20);
+    	TCCR2A |= (1 << COM2A1) | (1 << WGM21) | (1 << WGM20);
+    	Invert = &OCR2A;
     	Timerc = &TCCR2A;
     	break;
     }
 
-    if (Timerc == &TCCR2A){
+    if (Timerc == &TCCR2A){ //Set prescale
 
 		switch(analog_prescale){
 
@@ -118,6 +116,7 @@ void analog_init(int channel, int analog_prescale){
 			break;
 		}
     }
+
 	else if (Timerc == &TCCR0A){
 
 		switch(analog_prescale){
@@ -138,43 +137,18 @@ void analog_init(int channel, int analog_prescale){
 			TCCR0B |= (1 << CS02) | (1 << CS00);
 			break;
 		}
-		}
-
 	}
-
-
-
-int dt_timer(int pin){
-	const int registry[] = {
-	        NOT_ON_TIMER, /* 0 - port D */
-	        NOT_ON_TIMER,
-	        NOT_ON_TIMER,
-	        TIMER2B_s,
-	        NOT_ON_TIMER,
-	        TIMER0B_s,
-	        TIMER0A_s,
-	        NOT_ON_TIMER,
-	        NOT_ON_TIMER, /* 8 - port B */
-	        NOT_ON_TIMER, //NO TIMER 1 /TIMER1A_s
-	        NOT_ON_TIMER, //NO TIMER 1 /TIMER1B_s
-	        TIMER2A_s,
-	        NOT_ON_TIMER,
-	        NOT_ON_TIMER,
-	        NOT_ON_TIMER,
-	        NOT_ON_TIMER, /* 14 - port C */
-	        NOT_ON_TIMER,
-	        NOT_ON_TIMER,
-	        NOT_ON_TIMER,
-	        NOT_ON_TIMER,
-	};
-	return registry[pin];
-
 
 }
 
 
-void set_analog(int channel, int val){
-		val = map(val, 0.0, 1.0, 0, 255);
+
+
+void set_analog(int channel, float pwm, bool inv){
+
+		val = map(pwm, 0.0, 1.0, 0, 255);
+
+		if (inv) *Invert = val;
 
 	    dRecord *pinaddr;
 	    pinaddr = &digiPin[channel];
@@ -190,35 +164,30 @@ void set_analog(int channel, int val){
         }
         else
         {
-                switch(dt_timer(pin))
+
+                switch(pin)
                 {
                         case TIMER0A_s:
-                                set_Abit(COM0A1_s);
                                 OCR0A = val;
                                 break;
 
                         case TIMER0B_s:
-                                set_Abit(COM0B1_s);
                                 OCR0B = val;
                                 break;
 
                         case TIMER1A_s:
-                                set_Abit(COM1A1_s);
                                 OCR1A = val;
                                 break;
 
                         case TIMER1B_s:
-                                set_Abit(COM1B1_s);
                                 OCR1B = val;
                                 break;
 
                         case TIMER2A_s:
-                                set_Abit(COM2A1_s);
                                 OCR2A = val;
                                 break;
 
                         case TIMER2B_s:
-                                set_Abit(COM2B1_s);
                                 OCR2B = val;
                                 break;
 
@@ -233,3 +202,4 @@ void set_analog(int channel, int val){
                 }
         }
 }
+
