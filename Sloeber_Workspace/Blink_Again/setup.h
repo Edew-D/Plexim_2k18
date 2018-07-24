@@ -6,8 +6,7 @@
 #include "settings.h"
 
 //other definitions
-#define MINIMUM_SAMPLE 1.25e-07
-#define MAXIMUM_SAMPLE 4.194368
+
 
 //add your function definitions for the project Blinkpt2 here
 bool configDout(int channel, byte pin);

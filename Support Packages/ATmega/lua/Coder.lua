@@ -1,6 +1,6 @@
 local Coder = { }
---local Blocks = { }
 local arduino = require("arduino")
+
 ---local prescale = maths.prescale()
 --local count = maths.count()
 local function has_value (tab, val)
@@ -47,13 +47,29 @@ end
 
 
 local Registry = {
-  NumDigitalBlocks = 0
+  NumDigitalBlocks = 0,
+  timers = {0, 1, 2}
 }
 
 function Coder.RegisterDigitalBlock()
   local ret = Registry.NumDigitalBlocks
   Registry.NumDigitalBlocks = ret+1
   return ret
+end
+
+function Coder.RegisterTimer(timer)
+
+  local ret2 = Registry.timers
+  if has_value(ret2, timer - 1) then
+    table.remove(ret2, timer)
+    Registry.timers = ret2
+  else return "Error"
+  end
+
+  if has_value(ret2, 1 ) then return RegisterTimer(2)
+  elseif has_value(ret2, 0) then return RegisterTimer(1)
+  elseif has_value(ret2, 2) then return RegisterTimer(3)
+  end
 end
 
 function Coder.RegisterPwmOutBlock(pwm)
@@ -78,8 +94,10 @@ function Coder.Initialize()
   local dummy = print -- dummy access to global environment ("attempt to call a table value" workaround)
 
   Resources:add("GPIO", 0, 199)
-  Resources:add("PWM_Pin", 3, 6)
-  Resources:add("PWM_Pin", 11, 11)
+  Resources:add("PWM_Pin", 3, 3)
+  Resources:add("PWM_Pin", 5, 6)
+  Resources:add("PWM_Pin", 9, 11)
+  Resources:add("Timer", 0, 2)
   --[[Registry.PwmGpio[3] = 3
   Registry.PwmGpio[5] = 5
   Registry.PwmGpio[6] = 6

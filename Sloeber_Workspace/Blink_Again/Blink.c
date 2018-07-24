@@ -1,7 +1,7 @@
 /*
  * Implementation file for: ArduinoTest/Blink
  * Generated with         : PLECS 4.2.0-DEV
- * Generated on           : 23 Jul 2018 13:12:41
+ * Generated on           : 24 Jul 2018 14:34:02
  */
 #include "Blink.h"
 #ifndef PLECS_HEADER_Blink_h_
@@ -50,7 +50,7 @@ Blink_ModelStates Blink_X _ALIGN;
 const char * Blink_errorStatus;
 const double Blink_sampleTime = 0.00100000000000000002;
 const char * const Blink_checksum =
-   "6e5272ca32f890c15fe370373f3eb6d5846a8918";
+   "dd9f52378bbe325b987c1a4bd807acf8bebc8e70";
 void Blink_initialize(double time)
 {
    uint32_t Blink_tickLo;
@@ -106,10 +106,10 @@ void Blink_initialize(double time)
    configDout(2, 9);
 
    /* Initialization for PWM Out : 'Blink/PWM Out (ePWM0)' */
-   configDout(3, 3);
-   analog_init(3, 6, 1);
-   configDout(4, 11);
-   analog_init(4, 6, 0);
+   configDout(3, 5);
+   analogOut_init(3, 3, 0);
+   configDout(4, 6);
+   analogOut_init(4, 3, 1);
 }
 
 void Blink_step()
@@ -139,8 +139,8 @@ void Blink_step()
    /* Digital Out : 'Blink/Digital Out3' */
    setDout(2, getDin(1));
    /* PWM Out : 'Blink/PWM Out (ePWM0)' */
-   set_analog(3, 0.5, 1);
-   set_analog(4, 0.5, 0);
+   set_analogOut(3, 0.5, 0);
+   set_analogOut(4, 0.5, 1);
    if (Blink_errorStatus)
    {
       return;

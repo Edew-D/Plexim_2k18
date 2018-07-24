@@ -11,6 +11,7 @@
   <Version>0.1</Version>
   <Parameters>
      <LineEdit prompt="Install directory" variable="installDir" default="" eval="false" />
+	 <LineEdit prompt="System clock" variable="sysclock" default="16000000" eval="false" />
   </Parameters>
 
   <CodeFunction lang="Lua"><![CDATA[

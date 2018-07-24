@@ -5,17 +5,24 @@
 #define OFF 0
 
 volatile uint8_t *Timerc;
+
+#ifndef Timer1_Select    //incorrect selected, needs fixing
 volatile uint8_t *Invert;
+#endif
+
+#ifdef Timer1_Select
+volatile uint16_t *Invert;
+#endif
+
 int val;
 
 
-
 #define NOT_ON_TIMER_s 0
-#define TIMER2B_s 3
 #define TIMER0B_s 5
 #define TIMER0A_s 6
 #define TIMER1A_s 9
 #define TIMER1B_s 10
+#define TIMER2B_s 3
 #define TIMER2A_s 11
 
 #define COM0A1_s  18
@@ -33,7 +40,8 @@ int val;
 #define prescaler_256 6
 #define prescaler_1024 7
 
-double map(double x, double in_min, double in_max, double out_min, double out_max)
+
+double map(double x, double in_min, double in_max, double out_min, double out_max) //arduino function
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
@@ -44,22 +52,26 @@ void invert_signal(int pin_to_invert){
 	case 3:
 		TCCR2A |= (1 << COM2B0);
 		break;
+	case 11:
+		TCCR2A |= (1 << COM2A0);
+		break;
 	case 5:
 		TCCR0A |= (1 << COM0B0);
 		break;
 	case 6:
 		TCCR0A |= (1 << COM0A0);
 		break;
-	case 11:
-		TCCR2A |= (1 << COM2A0);
+	case 9:
+		TCCR1A |= (1 << COM1B0);
 		break;
-
+	case 10:
+		TCCR1A |= (1 << COM1A0);
+		break;
 }
 }
 
 
-
-void analog_init(int channel, int analog_prescale, bool inv){
+void analogOut_init(int channel, int analog_prescale, bool inv){
     dRecord *pinaddr;
     pinaddr = &digiPin[channel];
     int pin = pinaddr->pin_num;
@@ -72,6 +84,11 @@ void analog_init(int channel, int analog_prescale, bool inv){
     	Invert = &OCR2B;
     	Timerc = &TCCR2A;
     	break;
+    case 11:
+    	TCCR2A |= (1 << COM2A1) | (1 << WGM21) | (1 << WGM20);
+    	Invert = &OCR2A;
+    	Timerc = &TCCR2A;
+    	break;
     case 5:
     	TCCR0A |= (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
     	Invert = &OCR0B;
@@ -82,10 +99,15 @@ void analog_init(int channel, int analog_prescale, bool inv){
     	Invert = &OCR0A;
     	Timerc = &TCCR0A;
     	break;
-    case 11:
-    	TCCR2A |= (1 << COM2A1) | (1 << WGM21) | (1 << WGM20);
-    	Invert = &OCR2A;
-    	Timerc = &TCCR2A;
+    case 9:
+    	TCCR1A |= (1 << COM1B1) | (1 << WGM11) | (1 << WGM10);
+    	Invert = &OCR1B;
+    	Timerc = &TCCR1A;
+    	break;
+    case 10:
+    	TCCR1A |= (1 << COM1A1) | (1 << WGM11) | (1 << WGM10);
+    	Invert = &OCR1A;
+    	Timerc = &TCCR1A;
     	break;
     }
 
@@ -138,13 +160,35 @@ void analog_init(int channel, int analog_prescale, bool inv){
 			break;
 		}
 	}
+	else if (Timerc == &TCCR0A){
+
+		switch(analog_prescale){
+
+		case no_prescaler:
+			TCCR0B |= (1 << CS10);
+		break;
+		case prescaler_8:
+			TCCR0B |= (1 << CS11);
+			break;
+		case prescaler_64:
+			TCCR0B |= (1 << CS11) | (1 << CS10);
+			break;
+		case prescaler_256:
+			TCCR0B |= (1 << CS12);
+			break;
+		case prescaler_1024:
+			TCCR0B |= (1 << CS12) | (1 << CS10);
+			break;
+		}
+
+	}
 
 }
 
 
 
 
-void set_analog(int channel, float pwm, bool inv){
+void set_analogOut(int channel, float pwm, bool inv){
 
 		val = map(pwm, 0.0, 1.0, 0, 255);
 
@@ -203,3 +247,8 @@ void set_analog(int channel, float pwm, bool inv){
         }
 }
 
+void analogIn_init(){
+
+
+
+}
