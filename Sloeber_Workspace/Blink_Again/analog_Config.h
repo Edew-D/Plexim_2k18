@@ -1,21 +1,17 @@
 #include "Arduino.h"
 #include "portConfig.h"
+//#include <avr/io.h>
 
 #define ON 1
 #define OFF 0
 
-volatile uint8_t *Timerc;
-
-#ifndef Timer1_Select    //incorrect selected, needs fixing
-volatile uint8_t *Invert;
-#endif
-
-#ifdef Timer1_Select
-volatile uint16_t *Invert;
-#endif
+volatile uint8_t *Timerc; //points to selected timer's TCCRxA
+volatile uint16_t  *Invert16; //holds address to inverted pin's OCRxn
+volatile uint8_t *Invert;     //^^
+int pwmPins[6] = {3, 5, 6, 9, 10, 11};
 
 int val;
-
+long val16;
 
 #define NOT_ON_TIMER_s 0
 #define TIMER0B_s 5
@@ -41,12 +37,22 @@ int val;
 #define prescaler_1024 7
 
 
-double map(double x, double in_min, double in_max, double out_min, double out_max) //arduino function
+
+long map(float x, float in_min, float in_max, long out_min, long out_max) //arduino function maps range of numbers to another range, modified by me to use data types specific to the timers
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void invert_signal(int pin_to_invert){
+bool missing_value(int val, int arr[], int size){ //checks for certain if value is in array
+    int i;
+    for (i=0; i < size; i++) {
+        if (arr[i] == val)
+            return false;
+    }
+    return true;
+}
+
+void invert_signal(int pin_to_invert){ //sets bits required to start timer in inverted mode
 
 	switch(pin_to_invert){
 	case 3:
@@ -71,8 +77,8 @@ void invert_signal(int pin_to_invert){
 }
 
 
-void analogOut_init(int channel, int analog_prescale, bool inv){
-    dRecord *pinaddr;
+void analogOut_init(int channel, int analog_prescale, bool inv){ //sets bits for fast pwm Mode and prescaler, also
+    dRecord *pinaddr;											 //calls function to start timer in inverted mode if inv = true
     pinaddr = &digiPin[channel];
     int pin = pinaddr->pin_num;
 
@@ -100,13 +106,17 @@ void analogOut_init(int channel, int analog_prescale, bool inv){
     	Timerc = &TCCR0A;
     	break;
     case 9:
-    	TCCR1A |= (1 << COM1B1) | (1 << WGM11) | (1 << WGM10);
-    	Invert = &OCR1B;
+    	ICR1 = 0xFFFF; //set TOP to 16 bit
+    	TCCR1A |= (1 << COM1B1)| (1 << WGM10);
+    	TCCR1B |= (1 << WGM12);
+    	Invert16 = &OCR1B;
     	Timerc = &TCCR1A;
     	break;
     case 10:
-    	TCCR1A |= (1 << COM1A1) | (1 << WGM11) | (1 << WGM10);
-    	Invert = &OCR1A;
+    	ICR1 = 0xFFFF; //set TOP to 16 bit
+    	TCCR1A |= (1 << COM1A1) | (1 << WGM10);
+    	TCCR1B |= (1 << WGM12);
+    	Invert16 = &OCR1A;
     	Timerc = &TCCR1A;
     	break;
     }
@@ -149,35 +159,34 @@ void analogOut_init(int channel, int analog_prescale, bool inv){
 		case prescaler_8:
 			TCCR0B |= (1 << CS01);
 			break;
-		case prescaler_64:
+		case 3:
 			TCCR0B |= (1 << CS01) | (1 << CS00);
 			break;
-		case prescaler_256:
+		case 4:
 			TCCR0B |= (1 << CS02);
 			break;
-		case prescaler_1024:
+		case 5:
 			TCCR0B |= (1 << CS02) | (1 << CS00);
 			break;
 		}
 	}
-	else if (Timerc == &TCCR0A){
-
+	else if (Timerc == &TCCR1A){
 		switch(analog_prescale){
 
 		case no_prescaler:
-			TCCR0B |= (1 << CS10);
+			TCCR1B |= (1 << CS10);
 		break;
-		case prescaler_8:
-			TCCR0B |= (1 << CS11);
+		case 2:
+			TCCR1B |= (1 << CS11);
 			break;
-		case prescaler_64:
-			TCCR0B |= (1 << CS11) | (1 << CS10);
+		case 3:
+			TCCR1B |= (1 << CS11) | (1 << CS10);
 			break;
-		case prescaler_256:
-			TCCR0B |= (1 << CS12);
+		case 4:
+			TCCR1B |= (1 << CS12);
 			break;
-		case prescaler_1024:
-			TCCR0B |= (1 << CS12) | (1 << CS10);
+		case 5:
+			TCCR1B |= (1 << CS12) | (1 << CS10);
 			break;
 		}
 
@@ -188,15 +197,19 @@ void analogOut_init(int channel, int analog_prescale, bool inv){
 
 
 
-void set_analogOut(int channel, float pwm, bool inv){
+void set_analogOut(int channel, float pwm, bool inv){ //maps val to OCRxn acceptable range,
 
 		val = map(pwm, 0.0, 1.0, 0, 255);
+		val16 = map(pwm, 0.0, 1.0, 0, 65535);
 
 		if (inv) *Invert = val;
+		if (inv) *Invert16 = val;
 
 	    dRecord *pinaddr;
 	    pinaddr = &digiPin[channel];
 	    int pin = pinaddr->pin_num;
+
+	    if (missing_value(pin, pwmPins, 5)) pin = NOT_ON_TIMER;
 
         if (val == 0)
         {
@@ -220,11 +233,11 @@ void set_analogOut(int channel, float pwm, bool inv){
                                 break;
 
                         case TIMER1A_s:
-                                OCR1A = val;
+                                OCR1A = 125;
                                 break;
 
                         case TIMER1B_s:
-                                OCR1B = val;
+                                OCR1B = 125;
                                 break;
 
                         case TIMER2A_s:

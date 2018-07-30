@@ -41,7 +41,7 @@ copy_file = function (src, dest, subs)
     local file = io.open(dest, "w")
     io.output(file)
     io.write(src_content)
-    file.close()
+    io.input():close()
   end
 end
 
@@ -66,14 +66,14 @@ function Coder.RegisterTimer(timer)
   else return "Error"
   end
 
-  if has_value(ret2, 1 ) then return RegisterTimer(2)
+  if has_value(ret2, 1 ) then return RegisterTimer(2) --checks if timer1 is in use, prioretizes timer 1
   elseif has_value(ret2, 0) then return RegisterTimer(1)
   elseif has_value(ret2, 2) then return RegisterTimer(3)
   end
 end
 
 function Coder.RegisterPwmOutBlock(pwm)
-  local pwm_pins = {3, 5, 6, 11}
+  local pwm_pins = {3, 5, 6, 9, 10, 11}
   local ret1
   if has_value(pwm_pins, pwm) then
     ret1 = Coder.RegisterDigitalBlock()
@@ -97,7 +97,7 @@ function Coder.Initialize()
   Resources:add("PWM_Pin", 3, 3)
   Resources:add("PWM_Pin", 5, 6)
   Resources:add("PWM_Pin", 9, 11)
-  Resources:add("Timer", 0, 2)
+  --Resources:add("Timer", 0, 2)
   --[[Registry.PwmGpio[3] = 3
   Registry.PwmGpio[5] = 5
   Registry.PwmGpio[6] = 6

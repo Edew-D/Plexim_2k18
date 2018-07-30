@@ -1,0 +1,1177 @@
+Plecs {
+  Name          "ArduinoTest"
+  Version       "4.2"
+  CircuitModel  "ContStateSpace"
+  StartTime     "0.0"
+  StopTime      "1.0"
+  Timeout       ""
+  Solver        "dopri"
+  MaxStep       "1e-3"
+  InitStep      "-1"
+  FixedStep     "1e-3"
+  Refine        "1"
+  ZCStepSize    "1e-9"
+  RelTol        "1e-3"
+  AbsTol        "-1"
+  TurnOnThreshold "0"
+  SyncFixedStepTasks "2"
+  UseSingleCommonBaseRate "2"
+  LossVariableLimitExceededMsg "3"
+  NegativeSwitchLossMsg "3"
+  DivisionByZeroMsg "3"
+  StiffnessDetectionMsg "2"
+  MaxConsecutiveZCs "1000"
+  AlgebraicLoopWithStateMachineMsg "3"
+  AssertionAction "1"
+  InitializationCommands ""
+  InitialState  "1"
+  SystemState   ""
+  CodeGenParameterInlining "2"
+  CodeGenInliningExceptions "AAAACwAAAAAA"
+  CodeGenFloatingPointFormat "2"
+  CodeGenIntegerWordSize "32"
+  CodeGenAbsTimeUsageMsg "3"
+  CodeGenBaseName ""
+  CodeGenOutputDir ""
+  CodeGenExtraOpts ""
+  CodeGenTarget "ATmega328"
+  CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAEAAAAUA"
+"GkAbgBzAHQAYQBsAGwARABpAHIAAACKAEMAOgBcAFUAcwBlAHIAcwBcAHcAZQBkAGUAXABEAG8AYw"
+"B1AG0AZQBuAHQAcwBcAEcAaQB0AEgAdQBiAFwAUABsAGUAeABpAG0AXwAyAGsAMQA4AFwAUwBsAG8"
+"AZQBiAGUAcgBfAFcAbwByAGsAcwBwAGEAYwBlAFwAQgBsAGkAbgBrAHAAdAAy"
+  ExtendedMatrixPrecision "1"
+  MatrixSignificanceCheck "2"
+  EnableStateSpaceSplitting "2"
+  DisplayStateSpaceSplitting "1"
+  DiscretizationMethod "2"
+  ExternalModeSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAYAAAAYAF"
+"QAcgBpAGcAZwBlAHIAVgBhAGwAdQBlAAAAAgAwAAAAGABUAHIAaQBnAGcAZQByAEQAZQBsAGEAeQA"
+"AAAIAMAAAABYAUwBlAG4AcwBpAHQAaQB2AGkAdAB5AAAAAgAwAAAAFgBSAGUAZgByAGUAcwBoAFIA"
+"YQB0AGUAAAAEADIAMAAAABQATgB1AG0AUwBhAG0AcABsAGUAcwAAAAgAOAAxADkAMgAAABQARABlA"
+"GMAaQBtAGEAdABpAG8AbgAAAAIAMQ=="
+  AlgebraicLoopMethod "1"
+  AlgebraicLoopTolerance "1e-6"
+  Schematic {
+    Location      [553, 223; 1234, 514]
+    ZoomFactor    1
+    SliderPosition [0, 0]
+    ShowBrowser   off
+    BrowserWidth  100
+    Component {
+      Type          Subsystem
+      Name          "Blink"
+      Show          on
+      Position      [155, 110]
+      Direction     up
+      Flipped       off
+      Frame         [-60, -30; 60, 30]
+      LabelPosition [0, 33]
+      LabelAlign    up
+      TreatAsAtomicUnit on
+      SampleTime    "-1"
+      CodeGenEnable on
+      CodeGenSampleTime "1e-3"
+      CodeGenTarget "ATmega328"
+      CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAEAA"
+"AAUAGkAbgBzAHQAYQBsAGwARABpAHIAAACQAEMAOgBcAFUAcwBlAHIAcwBcAHcAZQBkAGUAXABEAG"
+"8AYwB1AG0AZQBuAHQAcwBcAEcAaQB0AEgAdQBiAFwAUABsAGUAeABpAG0AXwAyAGsAMQA4AFwAUwB"
+"sAG8AZQBiAGUAcgBfAFcAbwByAGsAcwBwAGEAYwBlAFwAQgBsAGkAbgBrAF8AQQBnAGEAaQBu"
+      ExternalModeSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAYAAA"
+"AYAFQAcgBpAGcAZwBlAHIAVgBhAGwAdQBlAAAAAgAwAAAAGABUAHIAaQBnAGcAZQByAEQAZQBsAGE"
+"AeQAAAAIAMAAAABYAUwBlAG4AcwBpAHQAaQB2AGkAdAB5AAAAAgAwAAAAFgBSAGUAZgByAGUAcwBo"
+"AFIAYQB0AGUAAAAEADIAMAAAABQATgB1AG0AUwBhAG0AcABsAGUAcwAAAAgAOAAxADkAMgAAABQAR"
+"ABlAGMAaQBtAGEAdABpAG8AbgAAAAIAMQ=="
+      MaskDisplayLang "2"
+      MaskIconFrame on
+      MaskIconOpaque off
+      MaskIconRotates on
+      Terminal {
+        Type          Output
+        Position      [64, -5]
+        Direction     right
+        Index         "1"
+      }
+      Terminal {
+        Type          Output
+        Position      [64, -20]
+        Direction     right
+        Index         "2"
+      }
+      Terminal {
+        Type          Input
+        Position      [-60, -10]
+        Direction     left
+        Index         "1"
+      }
+      Terminal {
+        Type          Output
+        Position      [64, 5]
+        Direction     right
+        Index         "3"
+      }
+      Schematic {
+        Location      [674, 81; 1335, 635]
+        ZoomFactor    1
+        SliderPosition [0, 3]
+        ShowBrowser   off
+        BrowserWidth  100
+        Component {
+          Type          TargetCode
+          Name          "Digital Out2"
+          Show          on
+          Position      [545, 165]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "1"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
+"Code = {}\n\nfor i = 1, #Block.InputSignal[1] do\n  local instance = Target.C"
+"oder.RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n  print"
+"(Block.Mask.channel[1])\n\n  table.insert(Require, string.format(\"GPIO:%i\","
+" channel))    \n  table.insert(InitCode, string.format(\"configDout(%i, %i);"
+"\", instance, channel))\n  table.insert(OutputCode, string.format(\"setDout(%"
+"i, %s);\", instance, Block.InputSignal[1][i]))\nend\n\nreturn {\n  Include = "
+"\"portConfig.h\",\n  InitCode = InitCode,\n  OutputCode = OutputCode,\n  Requ"
+"ire = Require\n}"
+          MaskType      "Digital Out"
+          MaskDescription "Set a digital output.\n\nThe output is set low if t"
+"he input signal is zero, it is set high for all other values."
+          MaskHelp      "do_rtbox.html"
+          MaskDisplay   "text(['Digital' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || "
+"any(floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital outpu"
+"t pin(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "channel"
+            Prompt        "Digital output pin(s)"
+            Type          FreeText
+            Value         "7"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [297, 85; 805, 589]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          Delay
+          Name          "Delay1"
+          Show          off
+          Position      [75, 200]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "N"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "X0"
+            Value         "0"
+            Show          off
+          }
+          Parameter {
+            Variable      "Ts"
+            Value         "0.5"
+            Show          on
+          }
+        }
+        Component {
+          Type          LogicalOperator
+          Name          "Logical\nOperator1"
+          Show          off
+          Position      [160, 200]
+          Direction     up
+          Flipped       off
+          Parameter {
+            Variable      "Operator"
+            Value         "2"
+            Show          on
+          }
+          Parameter {
+            Variable      "Inputs"
+            Value         "1"
+            Show          off
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "Digital Out3"
+          Show          on
+          Position      [415, 80]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "2"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
+"Code = {}\n\nfor i = 1, #Block.InputSignal[1] do\n  local instance = Target.C"
+"oder.RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n\n  tab"
+"le.insert(Require, string.format(\"GPIO:%i\", channel))    \n  table.insert(I"
+"nitCode, string.format(\"configDout(%i, %i);\", instance, channel))\n  table."
+"insert(OutputCode, string.format(\"setDout(%i, %s);\", instance, Block.InputS"
+"ignal[1][i]))\nend\n\nreturn {\n  Include = \"portConfig.h\",\n  InitCode = I"
+"nitCode,\n  OutputCode = OutputCode,\n  Require = Require\n}"
+          MaskType      "Digital Out"
+          MaskDescription "Set a digital output.\n\nThe output is set low if t"
+"he input signal is zero, it is set high for all other values."
+          MaskHelp      "do_rtbox.html"
+          MaskDisplay   "text(['Digital' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || "
+"any(floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital outpu"
+"t pin(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "channel"
+            Prompt        "Digital output pin(s)"
+            Type          FreeText
+            Value         "9"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [684, 31; 1365, 641]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "Digital In2"
+          Show          on
+          Position      [85, 80]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "3"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
+"Signal = {}\n\nfor i = 1, Block.NumOutputSignals[1] do\n  local instance = Ta"
+"rget.Coder.RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n"
+"\n  table.insert(Require, string.format(\"GPIO:%i\", channel))  \n  table.ins"
+"ert(InitCode, string.format(\"configDin(%i, %i);\", instance, channel))\n  ta"
+"ble.insert(OutputSignal, string.format(\"getDin(%i)\", instance))   \nend\n\n"
+"return {\n  Include = \"portConfig.h\",\n  InitCode = InitCode,\n  OutputSign"
+"al = { OutputSignal },\n  Require = Require\n}\n"
+          MaskType      "Digital In"
+          MaskDescription "Reads a digital input.\n\nThe output signal is 1 if"
+" the input voltage is higher than 2 Volts and 0 if it is lower than 0.8 Volts"
+". \nFor other input voltages the output signal is undefined."
+          MaskHelp      "di_rtbox.html"
+          MaskDisplay   "text(['Digital' char(10) 'In'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || "
+"any(floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital input"
+" pin(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+          Parameter {
+            Variable      "channel"
+            Prompt        "Digital input channel(s)"
+            Type          FreeText
+            Value         "13"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Output
+            Position      [29, 0]
+            Direction     right
+          }
+          Schematic {
+            Location      [187, 201; 889, 544]
+            ZoomFactor    1
+            SliderPosition [0, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetInput
+              Name          "1"
+              Show          on
+              Position      [120, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Component {
+              Type          Output
+              Name          "Out1"
+              Show          off
+              Position      [260, 75]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "DataType"
+                Value         "10"
+                Show          off
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numel(channel)"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "1"
+              SrcTerminal   1
+              DstComponent  "Out1"
+              DstTerminal   1
+            }
+          }
+        }
+        Component {
+          Type          TargetCode
+          Name          "PWM Out (ePWM0)"
+          Show          on
+          Position      [555, 350]
+          Direction     up
+          Flipped       off
+          Frame         [-25, -20; 25, 20]
+          LabelPosition [0, 23]
+          LabelAlign    up
+          TargetPortIndices "4"
+          SampleTime    "0"
+          CodeFcnLang   "2"
+          CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal Output"
+"Code = {}\n\nlocal function pin_set(pin, prescale, inv)\n\ttable.insert(Requi"
+"re, string.format(\"PWM_Pin:%i\", pin))\n\tlocal instance = Target.Coder.Regi"
+"sterPwmOutBlock(pin)\n\tif instance == \"Error\" then return \"Error: PWM Pin"
+" Must be 3, 5, 6, or 11\" end\n  \ttable.insert(Require, string.format(\"GPIO"
+":%i\", pin))\n  \ttable.insert(InitCode, string.format(\"configDout(%i, %i);"
+"\", instance, pin))\n  \ttable.insert(InitCode, string.format(\"analogOut_ini"
+"t(%i, %i, %i);\", instance, prescale, inv))\n  \ttable.insert(OutputCode, str"
+"ing.format(\"set_analogOut(%i, %s, %i);\", instance, Block.InputSignal[1][1],"
+" inv))\nend\n\n\nlocal function pin_init(timer, pin0, pin1, pin2, prescale0, "
+"prescale1, prescale2)\n\tlocal table0 = {5, 6}\n\tlocal table2 = {3, 5}\n\tlo"
+"cal table1 = {9, 10}\n\t\n\tif timer == 1 then\n\t\tlocal pin = pin0\n\t\tif "
+"pin ~= 3 then\n\t\t\tpin_set(table0[pin], prescale0, false)\n\t\telse\n\t\t\t"
+"pin_set(5, prescale0, false)\n\t\t\tpin_set(6, prescale0, false)\n\t\tend\n\t"
+"\t\n\telseif Timer == 2 then\n\t\tlocal pin = pin1\n\t\tif pin ~= 3 then\n\t"
+"\t\tpin_set(table1[pin], prescale1, false)\n\t\telse\n\t\t\tpin_set(3, presca"
+"le1, false)\n\t\t\tpin_set(11, prescale1, false)\n\t\tend\n\telseif Timer == "
+"3 then\n\t\tlocal pin = pin2\n\t\tif pin ~= 3 then\n\t\t\tpin_set(table2[pin]"
+", prescale2, false)\n\t\telse\n\t\t\tpin_set(3, prescale2, false)\n\t\t\tpin_"
+"set(11, prescale2, false)\n\t\tend\n\tend\nend\n\n\nlocal function invert_ini"
+"t(timer, out0, out1, out2, prescale0, prescale1, prescale2)\n\tlocal table0 ="
+" {5, 6}\n\tlocal table2 = {3, 11}\n\tlocal table1 = {9, 10}\n\t\n\tif timer ="
+"= 1 then\n\t\tlocal pin = out0\n\t\tif pin == 1 then\n\t\t\tpin_set(5, presca"
+"le0, false)\n\t\t\tpin_set(6, prescale0, true);\n\t\telseif pin == 2 then\n\t"
+"\t\tpin_set(6, prescale0, false)\n\t\t\tpin_set(5, prescale0, true);\n\t\tend"
+"\n\t\t\n\tif Timer == 2 then\n\t\tlocal pin = out1\n\t\telseif pin == 1 then"
+"\n\t\t\tpin_set(9, prescale1, false)\n\t\t\tpin_set(10, prescale0, true);\n\t"
+"\telseif pin == 2 then\n\t\t\tpin_set(10, prescale1, false)\n\t\t\tpin_set(9,"
+" prescale0, true);\n\t\tend\n\t\t\n   elseif Timer == 3 then\n\t\tlocal pin ="
+" out2\n\t\tif pin == 1 then\n\t\t\tpin_set(3, prescale2, false)\n\t\t\tpin_se"
+"t(11, prescale0, true);\n\t\telseif pin == 2 then\n\t\t\tpin_set(11, prescale"
+"2, false)\n\t\t\tpin_set(3, prescale0, true);\n\t\tend\n\tend\nend\n\nlocal t"
+"ime_assert = Target.Coder.RegisterTimer(Block.Mask.tim[1])\nif time_assert =="
+" \"Error\" then return \"Error all timer resources cannot be in use simultane"
+"ously\"\nelse\nprint(\"assert\" .. time_assert)\ntable.insert(Require, string"
+".format(\"Timer:%i\", time_assert - 1))\nend\n\nif Block.Mask.tmode[1] == 1 t"
+"hen\n\tpin_init(Block.Mask.tim[1], Block.Mask.pin0[1], Block.Mask.pin1[1], Bl"
+"ock.Mask.pin2[1], Block.Mask.pre0[1], Block.Mask.pre1[1], Block.Mask.pre2[1])"
+"\nelseif Block.Mask.tmode[1] == 2 then\n\tinvert_init(Block.Mask.tim[1], Bloc"
+"k.Mask.out[1], Block.Mask.out1[1], Block.Mask.out2[1], Block.Mask.pre0[1], Bl"
+"ock.Mask.pre1[1], Block.Mask.pre2[1])\nend\n\n\n\nreturn {\n  Include = \"ana"
+"log_Config.h\",\n  InitCode = InitCode,\n  OutputCode = OutputCode,\n  Requir"
+"e = Require\n}\n\n"
+          MaskType      "PWM Out"
+          MaskDescription "Generate a configurable PWM signal on a digital out"
+"put.\n\nFast PWM Mode generates a high frequency waveform on the selected pin"
+".\n\nInverting Mode outputs an inverted signal to the pin complementary to th"
+"at which is selected. (5<--> 6), (3<-->11), or (9<-->10)"
+          MaskHelp      "pwmout_rtbox.html"
+          MaskDisplay   "text(['PWM Out' char(10) 'Out'])"
+          MaskIconFrame on
+          MaskIconOpaque off
+          MaskIconRotates on
+          MaskInit      "t2 = [62500, 7812.5, 1953.125, 976.5625, 488.28125, 2"
+"44.140625, 61.03515625] \nt = [62500, 7812.5, 976.5625, 244.140625, 61.03515]"
+"\nnumpins = 1\n\nif tim == 1\n\tfreq = t(pre0)\nelseif tim == 2\n\tfreq = t(p"
+"re1)\nelseif tim == 3\n\tfreq = t2(pre2)\nend\n\nsubsys_select = tmode\n\nif "
+"tmode == 2 \n\tnumpins += 1 \nend"
+          MaskDialogCallback "local Timer = Dialog:get('tim')\nlocal Mode = Di"
+"alog:get('tmode')\nDialog:set('pre0', 'Visible', Timer == '1')\nDialog:set('p"
+"re1', 'Visible', Timer == '2')\nDialog:set('pre2', 'Visible', Timer == '3')\n"
+"\nDialog:set('pin0', 'Visible', Timer == '1' and Mode == '1')\nDialog:set('pi"
+"n1', 'Visible', Timer == '2' and Mode == '1')\nDialog:set('pin2', 'Visible', "
+"Timer == '3' and Mode == '1')\n\nDialog:set('out', 'Visible', Mode == '2' and"
+" Timer == '1')\nDialog:set('out1', 'Visible', Mode == '2' and Timer == '2')\n"
+"Dialog:set('out2', 'Visible', Mode == '2' and Timer == '3')\n"
+          Parameter {
+            Variable      "tim"
+            Prompt        "Timer"
+            Type          FixedText
+            PossibleValues {"Timer 0", "Timer 1", "Timer 2"}
+            Value         "2"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "tmode"
+            Prompt        "Timer Mode"
+            Type          FixedText
+            PossibleValues {"Fast PWM", "Inverting"}
+            Value         "2"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "pre0"
+            Prompt        "Timer 0 Prescaler"
+            Type          FixedText
+            PossibleValues {"1", "8", "64", "256", "1024"}
+            Value         "3"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "pre1"
+            Prompt        "Timer 1 Prescaler"
+            Type          FixedText
+            PossibleValues {"1", "8", "64", "256", "1024"}
+            Value         "3"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "pre2"
+            Prompt        "Timer 2 Prescaler"
+            Type          FixedText
+            PossibleValues {"1", "8", "32", "64", "128", "256", "1024"}
+            Value         "6"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "pin0"
+            Prompt        "Timer 0 PWM Pin"
+            Type          FixedText
+            PossibleValues {"5", "6", "5 and 6"}
+            Value         "1"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "pin1"
+            Prompt        "Timer 1 PWM Pin"
+            Type          FixedText
+            PossibleValues {"9", "10"}
+            Value         "1"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "pin2"
+            Prompt        "Timer 2  PWM Pin"
+            Type          FixedText
+            PossibleValues {"3", "11", "3 and 11"}
+            Value         "1"
+            Show          off
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "out"
+            Prompt        "Timer 0 Output Pin"
+            Type          FixedText
+            PossibleValues {"5", "6"}
+            Value         "1"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "out1"
+            Prompt        "Timer 1 Output Pin"
+            Type          FixedText
+            PossibleValues {"9", "10"}
+            Value         "2"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Parameter {
+            Variable      "out2"
+            Prompt        "Timer 2 Output Pin"
+            Type          FixedText
+            PossibleValues {"3", "11"}
+            Value         "2"
+            Show          on
+            Tunable       off
+            TabName       ""
+          }
+          Terminal {
+            Type          Input
+            Position      [-25, 0]
+            Direction     left
+          }
+          Schematic {
+            Location      [6, 38; 687, 576]
+            ZoomFactor    1
+            SliderPosition [37, 0]
+            ShowBrowser   off
+            BrowserWidth  100
+            Component {
+              Type          TargetOutput
+              Name          "1"
+              Show          on
+              Position      [565, 250]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "numpins"
+                Show          off
+              }
+            }
+            Component {
+              Type          Input
+              Name          "In1"
+              Show          off
+              Position      [90, 260]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Index"
+                Value         "1"
+                Show          on
+              }
+              Parameter {
+                Variable      "Width"
+                Value         "numpins"
+                Show          off
+              }
+            }
+            Component {
+              Type          Reference
+              SrcComponent  "Components/Control/Modulators/Sawtooth PWM"
+              Name          "Sawtooth PWM"
+              Show          on
+              Position      [210, 260]
+              Direction     up
+              Flipped       off
+              Frame         [-20, -20; 20, 20]
+              LabelPosition [0, 23]
+              LabelAlign    up
+              Parameter {
+                Variable      "config"
+                Value         "2"
+                Show          off
+              }
+              Parameter {
+                Variable      "ramp"
+                Value         "2"
+                Show          off
+              }
+              Parameter {
+                Variable      "fc"
+                Value         "freq"
+                Show          off
+              }
+              Parameter {
+                Variable      "offset"
+                Value         "0"
+                Show          off
+              }
+              Parameter {
+                Variable      "input_limits"
+                Value         "[0.0 1]"
+                Show          off
+              }
+              Parameter {
+                Variable      "output_values"
+                Value         "[0 1]"
+                Show          off
+              }
+              Terminal {
+                Type          Output
+                Position      [24, 0]
+                Direction     right
+              }
+              Terminal {
+                Type          Input
+                Position      [-20, 0]
+                Direction     left
+              }
+            }
+            Component {
+              Type          LogicalOperator
+              Name          "Logical\nOperator"
+              Show          on
+              Position      [310, 285]
+              Direction     up
+              Flipped       off
+              Parameter {
+                Variable      "Operator"
+                Value         "6"
+                Show          off
+              }
+              Parameter {
+                Variable      "Inputs"
+                Value         "2"
+                Show          off
+              }
+            }
+            Component {
+              Type          SignalMux
+              Name          "Mux"
+              Show          off
+              Position      [360, 250]
+              Direction     right
+              Flipped       off
+              Parameter {
+                Variable      "Width"
+                Value         "2"
+                Show          off
+              }
+            }
+            Component {
+              Type          ConfigurableSubsystem
+              Name          "Configurable\nSubsystem"
+              Show          on
+              Position      [410, 250]
+              Direction     up
+              Flipped       off
+              Frame         [-25, -15; 25, 15]
+              LabelPosition [0, 18]
+              LabelAlign    up
+              SampleTime    "-1"
+              CodeGenTarget "Generic"
+              MaskDisplayLang "2"
+              MaskIconFrame on
+              MaskIconOpaque off
+              MaskIconRotates on
+              Terminal {
+                Type          Input
+                Position      [-25, 0]
+                Direction     left
+              }
+              Terminal {
+                Type          Output
+                Position      [29, 0]
+                Direction     right
+              }
+              TerminalNames { "In1", "Out1" }
+              Location      [276, 354; 717, 552]
+              ZoomFactor    1
+              SliderPosition [0, 0]
+              ShowBrowser   off
+              BrowserWidth  100
+              Configurations {
+                Name          "one"
+                Schematic {
+                  Component {
+                    Type          Input
+                    Name          "In1"
+                    Show          on
+                    Position      [140, 80]
+                    Direction     right
+                    Flipped       off
+                    Parameter {
+                      Variable      "Index"
+                      Value         "1"
+                      Show          on
+                    }
+                    Parameter {
+                      Variable      "Width"
+                      Value         "-1"
+                      Show          off
+                    }
+                  }
+                  Component {
+                    Type          Output
+                    Name          "Out1"
+                    Show          on
+                    Position      [305, 75]
+                    Direction     right
+                    Flipped       off
+                    Parameter {
+                      Variable      "Index"
+                      Value         "2"
+                      Show          on
+                    }
+                    Parameter {
+                      Variable      "Width"
+                      Value         "-1"
+                      Show          off
+                    }
+                  }
+                  Component {
+                    Type          SignalDemux
+                    Name          "Demux"
+                    Show          off
+                    Position      [215, 80]
+                    Direction     right
+                    Flipped       on
+                    Parameter {
+                      Variable      "Width"
+                      Value         "2"
+                      Show          off
+                    }
+                  }
+                  Connection {
+                    Type          Signal
+                    SrcComponent  "In1"
+                    SrcTerminal   1
+                    DstComponent  "Demux"
+                    DstTerminal   1
+                  }
+                  Connection {
+                    Type          Signal
+                    SrcComponent  "Demux"
+                    SrcTerminal   2
+                    DstComponent  "Out1"
+                    DstTerminal   1
+                  }
+                }
+                Name          "two"
+                Schematic {
+                  Component {
+                    Type          Input
+                    Name          "In1"
+                    Show          on
+                    Position      [140, 80]
+                    Direction     right
+                    Flipped       off
+                    Parameter {
+                      Variable      "Index"
+                      Value         "1"
+                      Show          on
+                    }
+                    Parameter {
+                      Variable      "Width"
+                      Value         "-1"
+                      Show          off
+                    }
+                  }
+                  Component {
+                    Type          Output
+                    Name          "Out1"
+                    Show          on
+                    Position      [300, 80]
+                    Direction     right
+                    Flipped       off
+                    Parameter {
+                      Variable      "Index"
+                      Value         "2"
+                      Show          on
+                    }
+                    Parameter {
+                      Variable      "Width"
+                      Value         "-1"
+                      Show          off
+                    }
+                  }
+                  Connection {
+                    Type          Signal
+                    SrcComponent  "In1"
+                    SrcTerminal   1
+                    DstComponent  "Out1"
+                    DstTerminal   1
+                  }
+                }
+              }
+              Parameter {
+                Variable      "Configuration"
+                Value         "subsys_select"
+                Show          off
+              }
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "In1"
+              SrcTerminal   1
+              DstComponent  "Sawtooth PWM"
+              DstTerminal   2
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "Mux"
+              SrcTerminal   1
+              DstComponent  "Configurable\nSubsystem"
+              DstTerminal   1
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "Configurable\nSubsystem"
+              SrcTerminal   2
+              DstComponent  "1"
+              DstTerminal   1
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "Logical\nOperator"
+              SrcTerminal   1
+              Points        [335, 285; 335, 255]
+              DstComponent  "Mux"
+              DstTerminal   3
+            }
+            Connection {
+              Type          Signal
+              SrcComponent  "Sawtooth PWM"
+              SrcTerminal   1
+              Points        [270, 260]
+              Branch {
+                Points        [270, 285]
+                DstComponent  "Logical\nOperator"
+                DstTerminal   2
+              }
+              Branch {
+                Points        [270, 245]
+                DstComponent  "Mux"
+                DstTerminal   2
+              }
+            }
+          }
+        }
+        Component {
+          Type          Delay
+          Name          "Delay4"
+          Show          off
+          Position      [330, 340]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "N"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "X0"
+            Value         "0"
+            Show          off
+          }
+          Parameter {
+            Variable      "Ts"
+            Value         "0.05"
+            Show          on
+          }
+        }
+        Component {
+          Type          Sum
+          Name          "Sum1"
+          Show          off
+          Position      [190, 340]
+          Direction     up
+          Flipped       off
+          Parameter {
+            Variable      "IconShape"
+            Value         "2"
+            Show          off
+          }
+          Parameter {
+            Variable      "Inputs"
+            Value         "|++"
+            Show          off
+          }
+        }
+        Component {
+          Type          Constant
+          Name          "Constant2"
+          Show          on
+          Position      [195, 390]
+          Direction     up
+          Flipped       off
+          Frame         [-10, -10; 10, 10]
+          LabelPosition [13, 0]
+          LabelAlign    left
+          Parameter {
+            Variable      "Value"
+            Value         "0.01"
+            Show          on
+          }
+          Parameter {
+            Variable      "DataType"
+            Value         "10"
+            Show          on
+          }
+        }
+        Component {
+          Type          MinMax
+          Name          "Min/Max2"
+          Show          on
+          Position      [420, 270]
+          Direction     up
+          Flipped       off
+          Parameter {
+            Variable      "Operation"
+            Value         "1"
+            Show          off
+          }
+          Parameter {
+            Variable      "Inputs"
+            Value         "2"
+            Show          off
+          }
+        }
+        Component {
+          Type          Constant
+          Name          "Constant3"
+          Show          on
+          Position      [370, 285]
+          Direction     right
+          Flipped       off
+          Frame         [-10, -10; 10, 10]
+          LabelPosition [0, 13]
+          LabelAlign    up
+          Parameter {
+            Variable      "Value"
+            Value         "255"
+            Show          on
+          }
+          Parameter {
+            Variable      "DataType"
+            Value         "10"
+            Show          off
+          }
+        }
+        Component {
+          Type          InitialCondition
+          Name          "IC1"
+          Show          on
+          Position      [90, 340]
+          Direction     right
+          Flipped       off
+          Frame         [-15, -15; 15, 15]
+          LabelPosition [0, 18]
+          LabelAlign    up
+          Parameter {
+            Variable      "InitialValue"
+            Value         "0.0"
+            Show          on
+          }
+        }
+        Component {
+          Type          Constant
+          Name          "Constant4"
+          Show          on
+          Position      [410, 350]
+          Direction     right
+          Flipped       off
+          Frame         [-10, -10; 10, 10]
+          LabelPosition [0, 13]
+          LabelAlign    up
+          Parameter {
+            Variable      "Value"
+            Value         "0.5"
+            Show          on
+          }
+          Parameter {
+            Variable      "DataType"
+            Value         "10"
+            Show          off
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Delay1"
+          SrcTerminal   2
+          DstComponent  "Logical\nOperator1"
+          DstTerminal   2
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Digital In2"
+          SrcTerminal   1
+          DstComponent  "Digital Out3"
+          DstTerminal   1
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Logical\nOperator1"
+          SrcTerminal   1
+          Points        [180, 165]
+          Branch {
+            Points        [35, 165; 35, 200]
+            DstComponent  "Delay1"
+            DstTerminal   1
+          }
+          Branch {
+            DstComponent  "Digital Out2"
+            DstTerminal   1
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Sum1"
+          SrcTerminal   1
+          DstComponent  "Delay4"
+          DstTerminal   1
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Constant2"
+          SrcTerminal   1
+          Points        [195, 370; 190, 370]
+          DstComponent  "Sum1"
+          DstTerminal   3
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Delay4"
+          SrcTerminal   2
+          Points        [350, 265]
+          Branch {
+            Points        [40, 265; 40, 340]
+            DstComponent  "IC1"
+            DstTerminal   1
+          }
+          Branch {
+            DstComponent  "Min/Max2"
+            DstTerminal   2
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Constant3"
+          SrcTerminal   1
+          Points        [390, 285]
+          DstComponent  "Min/Max2"
+          DstTerminal   3
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "IC1"
+          SrcTerminal   2
+          DstComponent  "Sum1"
+          DstTerminal   2
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "Constant4"
+          SrcTerminal   1
+          DstComponent  "PWM Out (ePWM0)"
+          DstTerminal   1
+        }
+      }
+    }
+  }
+}
