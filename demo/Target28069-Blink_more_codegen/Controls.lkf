@@ -20,12 +20,12 @@
 -m ./output/Controls.map
 --stack_size=0x300
 --warn_sections
--i "/Users/beat/Desktop/Work/plecscoder/lua/TI_F2806x/bin/mac/c2000/lib" 
--i "/Users/beat/Desktop/Work/plecscoder/lua/TI_F2806x/pil"
+-i "C:/Users/wede/Documents/GitHub/Plexim_2k18/Support Packages/TI_F2806x/bin/win/c2000/lib" 
+-i "C:/Users/wede/Documents/GitHub/Plexim_2k18/Support Packages/TI_F2806x/pil"
 -l libc.a
 -l pil_c28_fpu32.lib
 --reread_libs
 --rom_model
-"/Users/beat/Desktop/Work/plecscoder/lua/TI_F2806x/app/F2806x_Headers_nonBIOS.cmd"
-"/Users/beat/Desktop/Work/plecscoder/lua/TI_F2806x/app/F28069.cmd"
+"C:/Users/wede/Documents/GitHub/Plexim_2k18/Support Packages/TI_F2806x/app/F2806x_Headers_nonBIOS.cmd"
+"C:/Users/wede/Documents/GitHub/Plexim_2k18/Support Packages/TI_F2806x/app/F28069.cmd"
 -o ./output/Controls.out

@@ -4,8 +4,6 @@ Clock_Speed = Target.Variables.sysclock --clock speed of atmega328p, may differ 
 prescaler = "NIL"
 COMPA = 65536 --COMPA = 65536 maximum value of output compare register OCR1A
 COMPA0 = 256
-MINIMUM_SAMPLE = 1.25e-07
-MAXIMUM_SAMPLE = 4.194368
 
 local timer1 = true
 local Timer_RegisterA = "TCCR1A"
@@ -14,6 +12,9 @@ local Timer_Counter = "TCNT1"
 local Timer_RegisterOCR_A = "OCR1A"
 local Timer_RegisterOCR_B = "OCR1B"
 local Timer_RegisterMask = "TIMSK1"
+Timer_ISR = "TIMER1_COMPA_vect"
+local MINIMUM_SAMPLE = 1.25e-07
+local MAXIMUM_SAMPLE = 4.194368
 
 freq1= Clock_Speed/1
 freq8= Clock_Speed/8
@@ -49,6 +50,9 @@ function RegisterTimer(timer)
     Timer_RegisterOCR_B = "OCR0B"
     Timer_RegisterMask = "TIMSK0"
     Timer_ISR = "TIMER0_COMPA_vect"
+    MINIMUM_SAMPLE = 4.06e-06
+    MAXIMUM_SAMPLE = 1.04864
+
     timer1 = false
     return 1
 
@@ -72,6 +76,9 @@ function RegisterTimer(timer)
     Timer_RegisterOCR_B = "OCR2B"
     Timer_RegisterMask = "TIMSK2"
     Timer_ISR = "TIMER2_COMPA_vect"
+    MINIMUM_SAMPLE = 4.06e-06
+    MAXIMUM_SAMPLE = 1.04864
+
     timer1 = 2
     return 3
   end
@@ -87,7 +94,7 @@ local function has_value (tab, val)
     return false
 end
 
---[[local copy_file = function (src, dest, subs)
+  --[[local copy_file2 = function (src, dest, subs)
   local file = io.open(src, "rb")
   local src_content = file:read("*all")
 	src_content = string.gsub( src_content, "\r", "")
@@ -113,10 +120,10 @@ end
   end
 
   if not (src_content == dest_content) then
-    local x = io.open(dest, "w")
+    local file = io.open(dest, "w")
     io.output(file)
     io.write(src_content)
-    x.close()
+    file.close()
   end
 end]]
 
@@ -232,8 +239,8 @@ function settings(digiBlocks)
   settings:write("\n#define prescaler " .. prescale)
   settings:write("\n#define count_V " .. count)
   settings:write("\n#define digitalPins " .. digiBlocks)
-  settings:write("\n#define MINIMUM_SAMPLE 1.25e-07")
-  settings:write("\n#define MAXIMUM_SAMPLE 4.194368")
+  settings:write("\n#define MINIMUM_SAMPLE " .. MINIMUM_SAMPLE)
+  settings:write("\n#define MAXIMUM_SAMPLE " .. MAXIMUM_SAMPLE)
   settings:write("\n#define System Clock " .. Target.Variables.sysclock)
 
   settings:write("\n\n#define start_time 0")--.. Target.Variables.start_time)

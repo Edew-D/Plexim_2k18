@@ -18,9 +18,9 @@
 
 include gensrcs.mk
 
-INSTALL_DIR="nan"
-MAKEFILE=test2.mk
-HFILE = test2.h
+INSTALL_DIR=C:\Users\wede\Documents\GitHub\Plexim_2k18\Extra
+MAKEFILE="test2.mk"
+HFILE = "test2.h"
 
 ##############################################################
 
@@ -28,7 +28,7 @@ ifeq ($(OS),Windows_NT)
 # Windows
 ClearDir=del /F /Q $(1)\*.*
 MoveFile=move /Y $(subst /,\,$(1)) $(subst /,\,$(2))
-CopyFile=cp /Y $(subst /,\,$(1)) $(subst /,\,$(2))
+CopyFile=copy /Y $(subst /,\,$(1)) $(subst /,\,$(2))
 FixPath=$(subst /,\,$(1))
 
 else
@@ -37,28 +37,25 @@ FixPath = $(1)
 ClearDir=rm -Rf $(1)/*
 MoveFile=mv $(1) $(2)
 CopyFile=cp $(1) $(2)
-endif 
+endif
 
 INSTALL_FILES=\
-  $(INSTALL_DIR)/settings_cg.h \
-  $(INSTALL_DIR)/settings.inc \
   $(INSTALL_DIR)/$(HFILE) \
   $(patsubst %.c, $(INSTALL_DIR)/%.c, $(SOURCE_FILES))
 
 # make all variables available to sub-makes
 export
 
-##########################################################################						
+##########################################################################
 all:
 	"$(MAKE)" -f $(MAKEFILE) $(INSTALL_FILES)
 
 ##########################################################################
 $(INSTALL_DIR)/%.c:		%.c
 						$(call CopyFile, $*.c, $@)
-						
+
 $(INSTALL_DIR)/%.h:		%.h
 						$(call CopyFile, $*.h, $@)
-						
+
 $(INSTALL_DIR)/%.inc:	%.inc
 						$(call CopyFile, $*.inc, $@)
-

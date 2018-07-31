@@ -18,7 +18,7 @@
 
 include gensrcs.mk
 
-INSTALL_DIR=/Users/beat/workspace_v7/dev_28069/cg
+INSTALL_DIR="C:UserswedeDocumentsGitHubPlexim_2k18Extra	est3codegen"
 MAKEFILE=Controls.mk
 HFILE = Controls.h
 

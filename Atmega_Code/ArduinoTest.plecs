@@ -52,7 +52,7 @@ Plecs {
   AlgebraicLoopMethod "1"
   AlgebraicLoopTolerance "1e-6"
   Schematic {
-    Location      [553, 223; 1234, 514]
+    Location      [264, 190; 945, 481]
     ZoomFactor    1
     SliderPosition [0, 0]
     ShowBrowser   off
@@ -74,9 +74,9 @@ Plecs {
       CodeGenTarget "ATmega328"
       CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAIAA"
 "AAQAHMAeQBzAGMAbABvAGMAawAAABAAMQA2ADAAMAAwADAAMAAwAAAAFABpAG4AcwB0AGEAbABsAE"
-"QAaQByAAAAhABDADoALwBVAHMAZQByAHMALwB3AGUAZABlAC8ARABvAGMAdQBtAGUAbgB0AHMALwB"
-"HAGkAdABIAHUAYgAvAFAAbABlAHgAaQBtAF8AMgBrADEAOAAvAEEAdABtAGUAZwBhAF8AQwBvAGQA"
-"ZQAvAG4AZQB3AEMALwBvAHUAdABwAHUAdA=="
+"QAaQByAAAAkABDADoAXABVAHMAZQByAHMAXAB3AGUAZABlAFwARABvAGMAdQBtAGUAbgB0AHMAXAB"
+"HAGkAdABIAHUAYgBcAFAAbABlAHgAaQBtAF8AMgBrADEAOABcAFMAbABvAGUAYgBlAHIAXwBXAG8A"
+"cgBrAHMAcABhAGMAZQBcAEIAbABpAG4AawBfAEEAZwBhAGkAbg=="
       CodeGenOutputDir "C:/Users/wede/Documents/GitHub/Plexim_2k18/Atmega_Code"
 "/newC"
       ExternalModeSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAYAAA"
@@ -119,7 +119,7 @@ Plecs {
         Index         "4"
       }
       Schematic {
-        Location      [347, 79; 1008, 633]
+        Location      [420, 115; 1081, 669]
         ZoomFactor    1
         SliderPosition [0, 0]
         ShowBrowser   off
@@ -475,11 +475,11 @@ Plecs {
           MaskIconFrame on
           MaskIconOpaque off
           MaskIconRotates on
-          MaskInit      "t2 = [62500, 7812.5, 1953.125, 976.565, 488.28125, 24"
-"4.141, 61.035] \nt = [62500, 7812.5, 976.565, 244.141, 61.035]\nnumpins = 1\n"
-"\nif tim == 1\n\tfreq = t(pre0)\nelseif tim == 2\n\tfreq = t(pre1)\nelseif ti"
-"m == 3\n\tfreq = t2(pre2)\nend\n\nsubsys_select = tmode\n\nif tmode == 2 \n\t"
-"numpins += 1 \nend"
+          MaskInit      "div_t2 = [1, 8, 32, 64, 128, 256, 1024]\ndiv = [1, 8,"
+" 64, 256, 1024]\ncycles = 256;\nclock = Coder.Sysclock\n\n\nif tim == 1\n\tfr"
+"eq = clock/div[pre0]/cycles \nelseif tim == 2\n\tfreq = clock/div_t2[pre1]/cy"
+"cles\nelseif tim == 3\n\tfreq = clock/div[pre2]/cycles\nend\n\nsubsys_select "
+"= tmode\n\nif tmode == 2 \n\tnumpins += 1 \nend"
           MaskDialogCallback "local Timer = Dialog:get('tim')\nlocal Mode = Di"
 "alog:get('tmode')\nDialog:set('pre0', 'Visible', Timer == '1')\nDialog:set('p"
 "re1', 'Visible', Timer == '2')\nDialog:set('pre2', 'Visible', Timer == '3')\n"
@@ -493,7 +493,7 @@ Plecs {
             Prompt        "Timer"
             Type          FixedText
             PossibleValues {"Timer 0", "Timer 1", "Timer 2"}
-            Value         "2"
+            Value         "3"
             Show          on
             Tunable       off
             TabName       ""
@@ -525,7 +525,7 @@ Plecs {
             Type          FixedText
             PossibleValues {"Clock/1", "Clock/8", "Clock/64", "Clock/256", "Cl"
 "ock/1024"}
-            Value         "2"
+            Value         "3"
             Show          on
             Tunable       off
             TabName       ""
@@ -547,7 +547,7 @@ Plecs {
             Type          FixedText
             PossibleValues {"5", "6", "5 and 6"}
             Value         "1"
-            Show          on
+            Show          off
             Tunable       off
             TabName       ""
           }
@@ -555,8 +555,8 @@ Plecs {
             Variable      "pin1"
             Prompt        "Timer 1 PWM Pin"
             Type          FixedText
-            PossibleValues {"9", "10"}
-            Value         "2"
+            PossibleValues {"9", "10", "9 and 10"}
+            Value         "3"
             Show          on
             Tunable       off
             TabName       ""
@@ -607,7 +607,7 @@ Plecs {
             Direction     left
           }
           Schematic {
-            Location      [3, 31; 684, 569]
+            Location      [1, 31; 682, 545]
             ZoomFactor    1
             SliderPosition [37, 0]
             ShowBrowser   off
@@ -1106,7 +1106,7 @@ Plecs {
             Prompt        "Timer 0 PWM Pin"
             Type          FixedText
             PossibleValues {"5", "6", "5 and 6"}
-            Value         "1"
+            Value         "2"
             Show          on
             Tunable       off
             TabName       ""
@@ -1116,7 +1116,7 @@ Plecs {
             Prompt        "Timer 1 PWM Pin"
             Type          FixedText
             PossibleValues {"9", "10"}
-            Value         "2"
+            Value         "1"
             Show          on
             Tunable       off
             TabName       ""

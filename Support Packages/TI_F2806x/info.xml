@@ -64,12 +64,7 @@ end
 
  
   <CodeFunction lang="Lua"><![CDATA[
- _G.package.path = Target.Variables.TARGET_ROOT .. "/lua/?.lua"
-print("IM HERE")
-local file = io.open("wedehere.h", "w")
-    io.output(file)
-    io.write("yyayyyy")
-    io.input():close()
+ --_G.package.path = Target.Variables.TARGET_ROOT .. "/lua/?.lua"
 return require "Coder"
 ]]>
   </CodeFunction>

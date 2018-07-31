@@ -1,4 +1,6 @@
 #include "setup.h"
+//#include "portConfig.h"
+//#include "analog_Config.h"
 
 #ifndef Timer1_Select
 volatile uint8_t *TimerRA = &Timer_RegisterA;
@@ -28,59 +30,85 @@ void config_interrupt(){
 	*TimerRB = 0; //Clear register
 	*TimerCount  = 0; // initialize counter value to 0
 
-	*TimerOCR_A = count; //set interrupt compare match value
+	*TimerOCR_A = 249; //set interrupt compare match value
 
-	if (TimerRB == &TCCR1B) *TimerRB |= (1 << 3); // turn on CTC mode
+	if (TimerRB == &TCCR1B) *TimerRB |= (1 << WGM12); // turn on CTC mode
 	else *TimerRB |= (1 << 1);
 
 	*TimerRM |= (1 << 1); // enable timer compare interrupt
 }
 
 void set_prescale(){
-	if (prescaler == 1){
-		// Set CS12, CS11 and CS10 bits for 1 prescaler/no prescale
-		*TimerRB |= (1 << 1) | (1 << 1) | (1 << 0);
+
+	*TimerRB |= (1 << CS20);
+	/*if (TimerRA == &TCCR2A){ //Sets prescalers for Timer2
+		switch(prescaler){
+		case 1:
+			*TimerRB |= (1 << CS20);
+			break;
+		case 8:
+			*TimerRB |= (1 << CS21);
+			break;
+		case 32:
+			*TimerRB |= (1 << CS21) | (1 << CS20);
+			break;
+		case 64:
+			*TimerRB |= (1 << CS22);
+			break;
+		case 128:
+			*TimerRB |= (1 << CS22) | (1 << CS20);
+			break;
+		case 256:
+			*TimerRB |= (1 << CS22) | (1 << CS21);
+			break;
+		case 1024:
+			*TimerRB |= (1 << CS22) | (1 << CS21) | (1 << CS20);
+			break;
+		}
+
 	}
 
-	else if (prescaler == 8){
-		// Set CS12, CS11 and CS10 bits for x8 prescaler
-		*TimerRB |= (1 << 2) | (1 << 1) | (0 << 0);
-	}
 
-	else if (prescaler == 32){
-		// Set CS12, CS11 and CS10 bits for x8 prescaler
-		*TimerRB |= (1 << 1) | (1 << 0);
-	}
+	else{
 
-	else if (prescaler == 64){
-		// Set CS12, CS11 and CS10 bits for x64 prescaler
-		*TimerRB |= (1 << 2) | (1 << 1) | (1 << 0);
-	}
+		switch(prescaler){  //Sets correct prescalers for Timer0 and Timer1
+		case 1:
+			*TimerRB |= (1 << 0);
+			break;
+		case 8:
+			*TimerRB |= (1 << 1);
+			break;
+		case 64:
+			*TimerRB |= (1 << 1) | (1 << 0);
+			break;
+		case 256:
+			*TimerRB |= (1 << 2);
+			break;
+		case 1024:
+			*TimerRB |= (1 << 2) | (1 << 0);
+			break;
+		}
+	}*/
 
-	else if (prescaler == 128){
-		// Set CS12, CS11 and CS10 bits for x8 prescaler
-		*TimerRB |= (1 << 2) | (1 << 1);
-	}
-
-	else if (prescaler == 256){
-		// Set CS12, CS11 and CS10 bits for x256 prescaler
-		*TimerRB |= (1 << 2) | (1 << 1) | (1 << 0);
-	}
-
-	else if (prescaler == 1024){
-		// Set CS12, CS11 and CS10 bits for x1024 prescaler
-		*TimerRB |= (1 << 2) | (1 << 1) | (1 << 0);
-	}
 }
 
 int main(void) {
-  init();
-  config_interrupt(); //config arduino to interrupt on compare match with OCR1A
+  //init();
+
+  config_interrupt(); //config arduino to interrupt on compare match with OCRxA
   set_prescale();
   sei(); //enable global interrupts
 
-  Base_Init;
+  //TCCR1A |= (1 << COM1B1) | (1 << WGM10);
+  //TCCR1B |= (1 << WGM12);
+  //TCCR1B |= (1 << CS10);
 
+  Base_Init;
+  //OCR1A= 125;
+  //OCR1B = 125;
+  //TCCR1A |= (1 << COM1A1) | (1 << WGM10);
+  //TCCR1B |= (1 << WGM12);
+  //TCCR1B |= (1 << CS11) | (1 << CS10);// | (1 << CS12);
   for (;;) {
 
   }

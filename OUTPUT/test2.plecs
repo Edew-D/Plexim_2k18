@@ -30,13 +30,15 @@ Plecs {
   CodeGenInliningExceptions "AAAACwAAAAAA"
   CodeGenFloatingPointFormat "2"
   CodeGenAbsTimeUsageMsg "3"
-  CodeGenBaseName ""
-  CodeGenOutputDir ""
+  CodeGenBaseName "test2"
+  CodeGenOutputDir "C:\\Users\\wede\\Documents\\GitHub\\Plexim_2k18\\Extra\\te"
+"st2codegen"
   CodeGenExtraOpts ""
   CodeGenTarget "ATmega328"
   CodeGenTargetSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAIAAAAQA"
 "HMAeQBzAGMAbABvAGMAawAAABAAMQA2ADAAMAAwADAAMAAwAAAAFABpAG4AcwB0AGEAbABsAEQAaQ"
-"ByAAAAAA=="
+"ByAAAAYABDADoAXABVAHMAZQByAHMAXAB3AGUAZABlAFwARABvAGMAdQBtAGUAbgB0AHMAXABHAGk"
+"AdABIAHUAYgBcAFAAbABlAHgAaQBtAF8AMgBrADEAOABcAEUAeAB0AHIAYQ=="
   ExtendedMatrixPrecision "1"
   MatrixSignificanceCheck "2"
   EnableStateSpaceSplitting "2"
@@ -45,11 +47,108 @@ Plecs {
   ExternalModeSettings ""
   AlgebraicLoopMethod "1"
   AlgebraicLoopTolerance "1e-6"
+  Terminal {
+    Type          Output
+    Index         "1"
+  }
   Schematic {
     Location      [708, 267; 1108, 467]
     ZoomFactor    1
     SliderPosition [0, 0]
     ShowBrowser   off
     BrowserWidth  100
+    Component {
+      Type          TargetCode
+      Name          "Digital Out2"
+      Show          on
+      Position      [360, 70]
+      Direction     up
+      Flipped       off
+      Frame         [-25, -20; 25, 20]
+      LabelPosition [0, 23]
+      LabelAlign    up
+      TargetPortIndices "1"
+      SampleTime    "0"
+      CodeFcnLang   "2"
+      CodeFcn       "local Require = {}\nlocal InitCode = {}\nlocal OutputCode"
+" = {}\n\nfor i = 1, #Block.InputSignal[1] do\n  local instance = Target.Coder"
+".RegisterDigitalBlock()\n  local channel = Block.Mask.channel[i]\n  print(Blo"
+"ck.Mask.channel[1])\n\n  table.insert(Require, string.format(\"GPIO:%i\", cha"
+"nnel))    \n  table.insert(InitCode, string.format(\"configDout(%i, %i);\", i"
+"nstance, channel))\n  table.insert(OutputCode, string.format(\"setDout(%i, %s"
+");\", instance, Block.InputSignal[1][i]))\nend\n\nreturn {\n  Include = \"por"
+"tConfig.h\",\n  InitCode = InitCode,\n  OutputCode = OutputCode,\n  Require ="
+" Require\n}"
+      MaskType      "Digital Out"
+      MaskDescription "Set a digital output.\n\nThe output is set low if the i"
+"nput signal is zero, it is set high for all other values."
+      MaskHelp      "do_rtbox.html"
+      MaskDisplay   "text(['Digital' char(10) 'Out'])"
+      MaskIconFrame on
+      MaskIconOpaque off
+      MaskIconRotates on
+      MaskInit      "if ~isreal(channel) || ~isvector(channel) ...\n   || any("
+"floor(channel) ~= channel) || any(channel < 0),\n  error('\"Digital output pi"
+"n(s)\" must be a scalar or vector of positive or zero integers.')\nend\n"
+      Parameter {
+        Variable      "channel"
+        Prompt        "Digital output pin(s)"
+        Type          FreeText
+        Value         "7"
+        Show          on
+        Tunable       off
+        TabName       ""
+      }
+      Terminal {
+        Type          Input
+        Position      [-25, 0]
+        Direction     left
+      }
+      Schematic {
+        Location      [297, 85; 805, 589]
+        ZoomFactor    1
+        SliderPosition [0, 0]
+        ShowBrowser   off
+        BrowserWidth  100
+        Component {
+          Type          TargetOutput
+          Name          "1"
+          Show          on
+          Position      [260, 75]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Component {
+          Type          Input
+          Name          "In1"
+          Show          off
+          Position      [120, 75]
+          Direction     right
+          Flipped       off
+          Parameter {
+            Variable      "Index"
+            Value         "1"
+            Show          on
+          }
+          Parameter {
+            Variable      "Width"
+            Value         "numel(channel)"
+            Show          off
+          }
+        }
+        Connection {
+          Type          Signal
+          SrcComponent  "In1"
+          SrcTerminal   1
+          DstComponent  "1"
+          DstTerminal   1
+        }
+      }
+    }
   }
 }

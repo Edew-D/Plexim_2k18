@@ -1,8 +1,12 @@
 /*
  * C-Script file for: Controls/C-Script
  * Generated with   : PLECS 4.2.0-DEV
- * Generated on     : 25 May 2018 10:10:15
+ * Generated on     : 30 Jul 2018 09:00:29
  */
+typedef double real_t;
+#define REAL_MAX DBL_MAX
+#define REAL_MIN DBL_MIN
+#define REAL_EPSILON DBL_EPSILON
 
 struct CScriptStruct
 {

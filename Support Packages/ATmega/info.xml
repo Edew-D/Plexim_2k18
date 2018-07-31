@@ -16,13 +16,7 @@
 
   <CodeFunction lang="Lua"><![CDATA[
   	--_G.package.path = Target.Variables.TARGET_ROOT .. "/lua/?.lua"
-	print("test")
-	print(_G.package.path)
-	print(_G.package.path[1])
-	rawset(_G.package, "path", Target.Variables.TARGET_ROOT .. "/lua/Coder.lua")
-	print("after")
-	print(_G.package.path)
-	print(_G.package.path[1])
+	--rawset(_G.package, "path", Target.Variables.TARGET_ROOT .. "/lua/?.lua")
 	return require "Coder"
 	]]>
   </CodeFunction>
@@ -39,7 +33,7 @@
 
     <Make>
      <Timeout></Timeout>
-     <Makefile>Blink.mk</Makefile>
+     <Makefile>$(BASE_NAME).mk</Makefile>
     </Make>
   </BuildSteps>
  </Target>

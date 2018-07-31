@@ -1,7 +1,7 @@
 /*
  * Implementation file for: test2
  * Generated with         : PLECS 4.2.0-DEV
- * Generated on           : 26 Jul 2018 10:25:38
+ * Generated on           : 30 Jul 2018 08:23:50
  */
 #include "test2.h"
 #ifndef PLECS_HEADER_test2_h_
@@ -38,14 +38,18 @@
 #include <stdbool.h>
 #include <math.h>
 #include <string.h>
+#include "portConfig.h"
 #define PLECSRunTimeError(msg) test2_errorStatus = msg
 const char * test2_errorStatus;
 const double test2_sampleTime = 0.00100000000000000002;
 const char * const test2_checksum =
-   "24dcf187fe9a18f451a41cabdbf5d5a53a5becb1";
+   "f0e9cae8a34a38eef46b4e126986b9f07f2d7b6f";
 void test2_initialize(double time)
 {
    test2_errorStatus = NULL;
+
+   /* Initialization for Digital Out : 'test2/Digital Out2' */
+   configDout(0, 7);
 }
 
 void test2_step()
@@ -54,6 +58,8 @@ void test2_step()
    {
       return;
    }
+   /* Digital Out : 'test2/Digital Out2' */
+   setDout(0, 0.);
    if (test2_errorStatus)
    {
       return;

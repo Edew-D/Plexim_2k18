@@ -1,9 +1,9 @@
 #define SAMPLE_TIME 0.001
 #define prescaler 1
 #define count_V 249
-#define digitalPins 5
-#define MINIMUM_SAMPLE 1.25e-07
-#define MAXIMUM_SAMPLE 4.194368
+#define digitalPins 6
+#define MINIMUM_SAMPLE 4.06e-06
+#define MAXIMUM_SAMPLE 1.04864
 #define System Clock 16000000
 
 #define start_time 0

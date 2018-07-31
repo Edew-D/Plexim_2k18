@@ -18,9 +18,9 @@
 
 include gensrcs.mk
 
-INSTALL_DIR=C:/Users/wede/Documents/GitHub/Plexim_2k18/Atmega_Code/newC/output
+INSTALL_DIR=C:\Users\wede\Documents\GitHub\Plexim_2k18\Sloeber_Workspace\Blink_Again
 MAKEFILE="Blink.mk"
-HFILE = "Blink.h"
+HFILE ="Blink.h"
 
 ##############################################################
 
@@ -48,7 +48,7 @@ export
 
 ##########################################################################
 all:
-	"$(MAKE)" -f -d Blink.mk $(INSTALL_FILES)
+	"$(MAKE)" -f $(MAKEFILE) $(INSTALL_FILES)
 
 ##########################################################################
 $(INSTALL_DIR)/%.c:		%.c

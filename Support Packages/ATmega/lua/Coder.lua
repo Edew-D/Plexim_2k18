@@ -41,7 +41,7 @@ copy_file = function (src, dest, subs)
     local file = io.open(dest, "w")
     io.output(file)
     io.write(src_content)
-    io.input():close()
+    file.close()
   end
 end
 
@@ -82,6 +82,9 @@ function Coder.RegisterPwmOutBlock(pwm)
   return ret1
 end
 
+function Coder.Sysclock()
+  return Target.Variables.sysclock
+end
 
 function Coder.Initialize()
   local Resources = ResourceList:new()

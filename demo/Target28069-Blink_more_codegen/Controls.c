@@ -1,7 +1,7 @@
 /*
  * Implementation file for: Target28069-Blink_more/Controls
  * Generated with         : PLECS 4.2.0-DEV
- * Generated on           : 25 May 2018 10:10:15
+ * Generated on           : 30 Jul 2018 09:00:29
  */
 #include "Controls.h"
 #ifndef PLECS_HEADER_Controls_h_
@@ -9,7 +9,7 @@
 #error include path to see whether this file name conflicts with the name
 #error of another header file.
 #endif /* PLECS_HEADER_Controls_h_ */
-#if defined(__GNUC__) && (__GNUC__ > 3)
+#if defined(__GNUC__) && (__GNUC__ > 4)
 #   define _ALIGNMENT 16
 #   define _RESTRICT __restrict
 #   define _ALIGN __attribute__((aligned(_ALIGNMENT)))
@@ -34,6 +34,8 @@
 #   endif
 #endif
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <math.h>
 #include <string.h>
 #include "hal.h"
@@ -80,6 +82,7 @@ static const uint32_t Controls_taskPeriod[2]= {
 };
 static uint32_t Controls_taskTick[2];
 static char Controls_taskHit[2];
+static double Controls_D_double[1];
 void Controls_0_cScriptStart(const struct CScriptStruct *cScriptStruct);
 void Controls_0_cScriptOutput(const struct CScriptStruct *cScriptStruct);
 void Controls_0_cScriptUpdate(const struct CScriptStruct *cScriptStruct);
@@ -90,7 +93,7 @@ Controls_ModelStates Controls_X _ALIGN;
 const char * Controls_errorStatus;
 const double Controls_sampleTime = 0.000100000000000000005;
 const char * const Controls_checksum =
-   "604fe95a1cb288a19ce07f0b6754c0ea17d0fb40";
+   "774f59694fbccea6b120d90c64f8d8a4062eb220";
 void Controls_initialize(double time)
 {
    uint32_t Controls_tickLo;
@@ -179,7 +182,7 @@ void Controls_initialize(double time)
          1
       };
       static const double* inputPtrs[] = {
-         &Controls_B.LogicalOperator1
+         &Controls_D_double[0]
       };
       static const double** inputs[] = {
          &inputPtrs[0]
@@ -295,6 +298,7 @@ void Controls_step()
    if (Controls_taskHit[1])
    {
       /* C-Script : 'Controls/C-Script' */
+      Controls_D_double[0] = Controls_B.LogicalOperator1;
       Controls_0_cScriptOutput(&Controls_cScriptStruct[0]);
       if (*Controls_cScriptStruct[0].errorStatus)
          Controls_errorStatus = *Controls_cScriptStruct[0].errorStatus;
@@ -330,7 +334,7 @@ void Controls_step()
 
    /* Increment sub-task tick counters */
    {
-      uint32_t i;
+      size_t i;
       for (i = 0; i < 2; ++i)
       {
          Controls_taskTick[i]++;

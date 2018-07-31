@@ -52,7 +52,6 @@ bool configDin(int channel, byte pin) { //Configures digital pin as Input
     digiPin[channel].portAddr = &PIND;
     digiPin[channel].portMask = (1 << (pin));
     digiPin[channel].pin_num = pin;
-    //return &digiPin[channel];
     return true;
   }
 
@@ -62,7 +61,6 @@ bool configDin(int channel, byte pin) { //Configures digital pin as Input
     digiPin[channel].portAddr = &PINB;
     digiPin[channel].portMask = (1 << (pin % 8));
     digiPin[channel].pin_num = pin;
-    //return &digiPin[channel];
     return true;
   }
 
@@ -75,14 +73,11 @@ int getDin(int channel){ //Reads a digital pin and returns its state
 	  dRecord *pin = &digiPin[channel];
 	  byte test_pin = *(pin->portAddr);
 
-	  //byte test_pin = *(pin->portAddr);
 
 	if (test_pin & digiPin[channel].portMask){
-		//Serial.println("returning HIGH");
 		return 1;
 	}
 	else{
-		//Serial.println("Returning LOW");
 		return 0;
 	}
 
@@ -95,12 +90,10 @@ void setDout(int channel, int state) { //sets a digital pin as high or low based
 
   if (state == 1) {
     *(pin->portAddr) |= pin->portMask;
-   // Serial.println("SetHIGH");
     return;
   }
   else {
 	 *(pin->portAddr) &=  ~pin->portMask;
-	// Serial.println("SetLOW");
     return;
   }
 

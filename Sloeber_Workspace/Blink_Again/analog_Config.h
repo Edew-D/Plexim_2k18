@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "portConfig.h"
-//#include <avr/io.h>
+#include <avr/io.h>
 
 #define ON 1
 #define OFF 0
@@ -10,8 +10,6 @@ volatile uint16_t  *Invert16; //holds address to inverted pin's OCRxn
 volatile uint8_t *Invert;     //^^
 int pwmPins[6] = {3, 5, 6, 9, 10, 11};
 
-int val;
-long val16;
 
 #define NOT_ON_TIMER_s 0
 #define TIMER0B_s 5
@@ -78,11 +76,11 @@ void invert_signal(int pin_to_invert){ //sets bits required to start timer in in
 
 
 void analogOut_init(int channel, int analog_prescale, bool inv){ //sets bits for fast pwm Mode and prescaler, also
-    dRecord *pinaddr;											 //calls function to start timer in inverted mode if inv = true
+	dRecord *pinaddr;
     pinaddr = &digiPin[channel];
     int pin = pinaddr->pin_num;
 
-    if (inv) invert_signal(pin);
+    if (inv) invert_signal(pin); //calls function to start timer in inverted mode if inv = true
 
     switch(pin){ //Setting to fast pwm Mode
     case 3:
@@ -106,15 +104,13 @@ void analogOut_init(int channel, int analog_prescale, bool inv){ //sets bits for
     	Timerc = &TCCR0A;
     	break;
     case 9:
-    	ICR1 = 0xFFFF; //set TOP to 16 bit
-    	TCCR1A |= (1 << COM1B1)| (1 << WGM10);
+    	TCCR1A |= (1 << COM1A1) | (1 << WGM10);
     	TCCR1B |= (1 << WGM12);
     	Invert16 = &OCR1B;
     	Timerc = &TCCR1A;
     	break;
     case 10:
-    	ICR1 = 0xFFFF; //set TOP to 16 bit
-    	TCCR1A |= (1 << COM1A1) | (1 << WGM10);
+    	TCCR1A |= (1 << COM1B1) | (1 << WGM10);
     	TCCR1B |= (1 << WGM12);
     	Invert16 = &OCR1A;
     	Timerc = &TCCR1A;
@@ -199,8 +195,7 @@ void analogOut_init(int channel, int analog_prescale, bool inv){ //sets bits for
 
 void set_analogOut(int channel, float pwm, bool inv){ //maps val to OCRxn acceptable range,
 
-		val = map(pwm, 0.0, 1.0, 0, 255);
-		val16 = map(pwm, 0.0, 1.0, 0, 65535);
+		long val = map(pwm, 0.0, 1.0, 0, 255);
 
 		if (inv) *Invert = val;
 		if (inv) *Invert16 = val;
@@ -209,56 +204,44 @@ void set_analogOut(int channel, float pwm, bool inv){ //maps val to OCRxn accept
 	    pinaddr = &digiPin[channel];
 	    int pin = pinaddr->pin_num;
 
-	    if (missing_value(pin, pwmPins, 5)) pin = NOT_ON_TIMER;
+		switch(pin)
+		{
+				case TIMER0A_s:
+						OCR0A = val;
+						break;
 
-        if (val == 0)
-        {
-                setDout(channel, OFF);
-        }
-        else if (val == 255)
-        {
-                setDout(channel, ON);
-        }
-        else
-        {
+				case TIMER0B_s:
+						OCR0B = val;
+						break;
 
-                switch(pin)
-                {
-                        case TIMER0A_s:
-                                OCR0A = val;
-                                break;
+				case TIMER1A_s:
+						OCR1A = val;
+						break;
 
-                        case TIMER0B_s:
-                                OCR0B = val;
-                                break;
+				case TIMER1B_s:
+						OCR1B = val;
+						break;
 
-                        case TIMER1A_s:
-                                OCR1A = 125;
-                                break;
+				case TIMER2A_s:
+						OCR2A = val;
+						break;
 
-                        case TIMER1B_s:
-                                OCR1B = 125;
-                                break;
-
-                        case TIMER2A_s:
-                                OCR2A = val;
-                                break;
-
-                        case TIMER2B_s:
-                                OCR2B = val;
-                                break;
+				case TIMER2B_s:
+						OCR2B = val;
+						break;
 
 
-                        case NOT_ON_TIMER:
-                        default:
-                                if (val < 128) {
-                                        setDout(channel, OFF);
-                                } else {
-                                        setDout(channel, ON);
-                                }
+				case NOT_ON_TIMER:
+				default:
+						if (val < 128) {
+								setDout(channel, OFF);
+						} else {
+								setDout(channel, ON);
+						}
                 }
+
         }
-}
+
 
 void analogIn_init(){
 

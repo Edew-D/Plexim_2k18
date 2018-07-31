@@ -1,4 +1,4 @@
-sloeber.ino.cpp.o: ..\sloeber.ino.cpp \
+blinkDebug.cpp.o: ..\blinkDebug.cpp ..\blinkDebug.h \
  C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/Arduino.h \
  C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/binary.h \
  C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/WCharacter.h \
@@ -10,7 +10,9 @@ sloeber.ino.cpp.o: ..\sloeber.ino.cpp \
  C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/USBAPI.h \
  C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/Arduino.h \
  C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\variants\standard/pins_arduino.h \
- ..\portConfig.h ..\PortConfig.ino ..\analog_Config.h
+ ..\analogConfig.h ..\portConfig.h
+
+..\blinkDebug.h:
 
 C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/Arduino.h:
 
@@ -34,8 +36,6 @@ C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\cores\arduino/Ardu
 
 C:\sloeber\arduinoPlugin\packages\arduino\hardware\avr\1.6.21\variants\standard/pins_arduino.h:
 
+..\analogConfig.h:
+
 ..\portConfig.h:
-
-..\PortConfig.ino:
-
-..\analog_Config.h:

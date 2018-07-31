@@ -44,6 +44,7 @@ else
 FixPath = $(1)
 ClearDir=rm -Rf $(1)/*
 MoveFile=mv $(1) $(2)
+CopyFile=cp $(1) $(2)
 endif 
 
 EXE_PATH=$(TOOLS_PATH)/BIN
