@@ -1,0 +1,19 @@
+div_t2 = [1, 8, 32, 64, 128, 256, 1024]
+div = [1, 8, 64, 256, 1024]
+cycles = 256;
+clock = Coder.Sysclock
+
+
+if tim == 1
+	freq = clock/div[pre0]/cycles 
+elseif tim == 2
+	freq = clock/div_t2[pre1]/cycles
+elseif tim == 3
+	freq = clock/div[pre2]/cycles
+end
+
+subsys_select = tmode
+
+if tmode == 2 
+	numpins += 1 
+end

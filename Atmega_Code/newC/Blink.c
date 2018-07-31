@@ -1,7 +1,7 @@
 /*
  * Implementation file for: ArduinoTest/Blink
  * Generated with         : PLECS 4.2.0-DEV
- * Generated on           : 30 Jul 2018 15:32:26
+ * Generated on           : 31 Jul 2018 08:49:46
  */
 #include "Blink.h"
 #ifndef PLECS_HEADER_Blink_h_
@@ -44,7 +44,7 @@
 const char * Blink_errorStatus;
 const double Blink_sampleTime = 0.00100000000000000002;
 const char * const Blink_checksum =
-   "0b5f24ffbb721ff5192688938b6c7ee27b609083";
+   "842ded2e8b79f6a67f357bedc3944c270e181095";
 void Blink_initialize(double time)
 {
    Blink_errorStatus = NULL;
@@ -59,14 +59,20 @@ void Blink_initialize(double time)
    configDout(2, 8);
 
    /* Initialization for PWM Out : 'Blink/PWM Out (ePWM0)' */
-   configDout(3, 9);
-   analogOut_init(3, 3, 0);
-   configDout(4, 10);
-   analogOut_init(4, 3, 0);
+   configDout(3, 5);
+   analogOut_init(3, 5, 0);
 
    /* Initialization for PWM Out : 'Blink/PWM Out (ePWM0)1' */
-   configDout(5, 3);
-   analogOut_init(5, 4, 0);
+   configDout(4, 3);
+   analogOut_init(4, 4, 0);
+
+   /* Initialization for PWM Out : 'Blink/PWM Out (ePWM0)2' */
+   configDout(5, 9);
+   analogOut_init(5, 3, 0);
+
+   /* Initialization for PWM Out : 'Blink/PWM Out (ePWM0)3' */
+   configDout(6, 10);
+   analogOut_init(6, 3, 0);
 }
 
 void Blink_step()
@@ -80,10 +86,13 @@ void Blink_step()
    /* Digital Out : 'Blink/Digital Out3' */
    setDout(2, getDin(1));
    /* PWM Out : 'Blink/PWM Out (ePWM0)' */
-   set_analogOut(3, 0.5, 0);
-   set_analogOut(4, 0.5, 0);
+   set_analogOut(3, 0.599999999999999978, 0);
    /* PWM Out : 'Blink/PWM Out (ePWM0)1' */
-   set_analogOut(5, 0.800000000000000044, 0);
+   set_analogOut(4, 0.599999999999999978, 0);
+   /* PWM Out : 'Blink/PWM Out (ePWM0)2' */
+   set_analogOut(5, 0.599999999999999978, 0);
+   /* PWM Out : 'Blink/PWM Out (ePWM0)3' */
+   set_analogOut(6, 0.599999999999999978, 0);
    if (Blink_errorStatus)
    {
       return;

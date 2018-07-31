@@ -40,8 +40,8 @@ void config_interrupt(){
 
 void set_prescale(){
 
-	*TimerRB |= (1 << CS20);
-	/*if (TimerRA == &TCCR2A){ //Sets prescalers for Timer2
+	//TimerRB |= (1 << CS20);
+	if (TimerRA == &TCCR2A){ //Sets prescalers for Timer2
 		switch(prescaler){
 		case 1:
 			*TimerRB |= (1 << CS20);
@@ -88,7 +88,7 @@ void set_prescale(){
 			*TimerRB |= (1 << 2) | (1 << 0);
 			break;
 		}
-	}*/
+	}
 
 }
 
@@ -99,16 +99,7 @@ int main(void) {
   set_prescale();
   sei(); //enable global interrupts
 
-  //TCCR1A |= (1 << COM1B1) | (1 << WGM10);
-  //TCCR1B |= (1 << WGM12);
-  //TCCR1B |= (1 << CS10);
-
   Base_Init;
-  //OCR1A= 125;
-  //OCR1B = 125;
-  //TCCR1A |= (1 << COM1A1) | (1 << WGM10);
-  //TCCR1B |= (1 << WGM12);
-  //TCCR1B |= (1 << CS11) | (1 << CS10);// | (1 << CS12);
   for (;;) {
 
   }

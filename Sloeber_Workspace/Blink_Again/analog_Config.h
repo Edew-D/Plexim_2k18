@@ -137,7 +137,7 @@ void analogOut_init(int channel, int analog_prescale, bool inv){ //sets bits for
 			TCCR2B |= (1 << CS20) | (1 << CS22);
 			break;
 		case prescaler_256:
-			TCCR2B |= (1 << CS20) | (1 << CS22);
+			TCCR2B |= (1 << CS21) | (1 << CS22);
 			break;
 		case prescaler_1024:
 			TCCR2B |= (1 << CS20) | (1 << CS21) | (1 << CS22);
